@@ -22,6 +22,13 @@ gitbook install
 
 ## Usage
 
+**fixtures/test.js**
+```js
+console.log("test");
+```
+
+Write following the link with `include` or `import` label.
+
 ```
 [include](fixtures/test.js)
 ```
@@ -31,6 +38,14 @@ or
 ```
 [import](fixtures/test.js)
 ```
+
+Result
+
+    > <a name="test.js"></a>`test.js`
+    
+    ```js
+    console.log("test");
+    ```
 
 ## Tests
 
