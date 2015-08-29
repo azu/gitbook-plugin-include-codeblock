@@ -1,0 +1,47 @@
+{
+  "name": "gitbook-plugin-include-codeblock",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azu/gitbook-plugin-include-codeblock.git"
+  },
+  "author": "azu",
+  "email": "azuciao@gmail.com",
+  "homepage": "https://github.com/azu/gitbook-plugin-include-codeblock",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/azu/gitbook-plugin-include-codeblock/issues"
+  },
+  "version": "1.0.0",
+  "description": "GitBook plugin for including file",
+  "main": "lib/include-codeblock.js",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "babel src --out-dir lib --source-maps",
+    "watch": "babel src --out-dir lib --watch --source-maps",
+    "prepublish": "npm run --if-present build",
+    "test": "mocha"
+  },
+  "keywords": [
+    "gitbook",
+    "plugin",
+    "gitbook-plugin"
+  ],
+  "engines": {
+    "gitbook": "*"
+  },
+  "dependencies": {
+    "bluebird": "^2.9.34"
+  },
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "espower-babel": "^3.3.0",
+    "mocha": "^2.2.5",
+    "power-assert": "^1.0.0"
+  }
+}
