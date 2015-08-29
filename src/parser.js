@@ -14,11 +14,11 @@ function getLang(filePath) {
     var suffix = path.extname(filePath);
     return suffix.substring(1);
 }
-function embedCode(filePath) {
+function embedCode(filePath,originalPath) {
     var code = fs.readFileSync(filePath, "utf-8");
     var fileName = path.basename(filePath);
     var lang = getLang(filePath);
-    return `> <a name="${fileName}"></a>\`${fileName}\`
+    return `> [${fileName}](${originalPath})
 
 \`\`\` ${lang}
 ${code.trim()}
@@ -33,7 +33,7 @@ function parse(content, baseDir) {
         if (containIncludeCommand(commands)) {
             results.push({
                 target: all,
-                replaced: embedCode(path.resolve(baseDir, filePath))
+                replaced: embedCode(path.resolve(baseDir, filePath),filePath)
             });
         }
     }
