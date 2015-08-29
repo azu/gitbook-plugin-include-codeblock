@@ -41,7 +41,7 @@ or
 
 Result
 
-    '> [test.js](fixtures/test.js)
+    > [test.js](fixtures/test.js)
     
     ```js
     console.log("test");
