@@ -1,4 +1,4 @@
-# gitbook-plugin-include-codeblock
+# gitbook-plugin-include-codeblock [![Build Status](https://travis-ci.org/azu/gitbook-plugin-include-codeblock.svg?branch=master)](https://travis-ci.org/azu/gitbook-plugin-include-codeblock)
 
 GitBook Plugin for including file.
 
