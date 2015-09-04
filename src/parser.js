@@ -19,7 +19,7 @@ function embedCode(filePath,originalPath) {
     var fileName = path.basename(filePath);
     var lang = getLang(filePath);
     return `> [${fileName}](${originalPath})
-
+<a name="${fileName}"></a>
 \`\`\` ${lang}
 ${code.trim()}
 \`\`\``
