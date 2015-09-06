@@ -41,9 +41,9 @@ or
 
 Result
 
-    > [test.js](fixtures/test.js)
+    > <a name="test.js" href="fixtures/test.js">test.js</a>
     
-    ```js
+    ``` js
     console.log("test");
     ```
 
