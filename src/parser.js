@@ -18,8 +18,8 @@ function embedCode(filePath,originalPath) {
     var code = fs.readFileSync(filePath, "utf-8");
     var fileName = path.basename(filePath);
     var lang = getLang(filePath);
-    return `> [${fileName}](${originalPath})
-<a name="${fileName}"></a>
+    return `> <a name="${fileName}" href="${originalPath}">${fileName}</a>
+
 \`\`\` ${lang}
 ${code.trim()}
 \`\`\``

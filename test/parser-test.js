@@ -11,9 +11,11 @@ describe("parse", function () {
         assert(results.length > 0);
         var result = results[0];
         assert.equal(result.target, "[include](fixtures/test.js)");
-        assert.equal(result.replaced, '> [test.js](fixtures/test.js)\n' +
-            '<a name="test.js"></a>\n' +
-            '``` js\nconsole.log(\"test\");\n```');
+        var expected = '> <a name="test.js" href="fixtures/test.js">test.js</a>\n'
+            + '\n'
+            + '``` js\nconsole.log(\"test\");\n```';
+        console.log(expected);
+        assert.equal(result.replaced, expected);
     });
 });
 
