@@ -1,7 +1,7 @@
 // LICENSE : MIT
 "use strict";
 import assert from "power-assert"
-import {parse} from "../src/parser"
+import {parse,containIncludeLabel} from "../src/parser"
 var content = `
 [include](fixtures/test.js)
 `;
@@ -17,5 +17,19 @@ describe("parse", function () {
         console.log(expected);
         assert.equal(result.replaced, expected);
     });
+    describe("containIncludeLabel", function () {
+        it("support import", function () {
+            assert(containIncludeLabel("import"));
+        });
+        it("support include", function () {
+            assert(containIncludeLabel("include"));
+        });
+        it("support command split by space", function () {
+            assert(containIncludeLabel("import title"));
+        });
+        it("support command split by ,", function () {
+            assert(containIncludeLabel("import, title"));
+        });
+    })
 });
 

@@ -3,18 +3,19 @@
 var fs = require("fs");
 var path = require('path');
 var re = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
-function containIncludeCommand(commands) {
+export function containIncludeLabel(label) {
     var reg = /^(include|import)$/;
+    var commands = label.split(/[,\s]/);
     return commands.some(command => {
         return reg.test(command.trim());
     })
 }
 
-function getLang(filePath) {
+export function getLang(filePath) {
     var suffix = path.extname(filePath);
     return suffix.substring(1);
 }
-function embedCode(filePath,originalPath) {
+export function embedCode(filePath, originalPath) {
     var code = fs.readFileSync(filePath, "utf-8");
     var fileName = path.basename(filePath);
     var lang = getLang(filePath);
@@ -24,22 +25,17 @@ function embedCode(filePath,originalPath) {
 ${code.trim()}
 \`\`\``
 }
-function parse(content, baseDir) {
+export function parse(content, baseDir) {
     var results = [];
     var res;
     while (res = re.exec(content)) {
         var [all, label, filePath] = res;
-        var commands = label.split(",");
-        if (containIncludeCommand(commands)) {
+        if (containIncludeLabel(label)) {
             results.push({
                 target: all,
-                replaced: embedCode(path.resolve(baseDir, filePath),filePath)
+                replaced: embedCode(path.resolve(baseDir, filePath), filePath)
             });
         }
     }
     return results;
 }
-
-module.exports = {
-    parse: parse
-};
