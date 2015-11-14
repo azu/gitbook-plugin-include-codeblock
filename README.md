@@ -47,6 +47,25 @@ Result
     console.log("test");
     ```
 
+### Sliced Code
+
+If you want to slice imported code and show.
+
+`[import:<start-lineNumber>-<end-lineNumber>](path/to/file)`
+
+- lineNumber start with 1.
+
+All Patterns:
+
+```
+All: [import, hello-world.js](../src/hello-world.js)
+1-2: [import:1-2, hello-world.js](../src/hello-world.js)
+2-3: [import:2-3, hello-world.js](../src/hello-world.js)
+2>=: [import:2-, hello-world.js](../src/hello-world.js)
+<=3: [import:-3, hello-world.js](../src/hello-world.js)
+```
+
+
 ## Tests
 
     npm test
