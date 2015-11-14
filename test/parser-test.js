@@ -17,6 +17,21 @@ describe("parse", function () {
         console.log(expected);
         assert.equal(result.replaced, expected);
     });
+    it("should return sliced object for replace", function () {
+        var multiLineContent = "[include:4-6, line.js](fixtures/line.js)"
+        var results = parse(multiLineContent , __dirname);
+        assert(results.length > 0);
+        var result = results[0];
+        assert.equal(result.target, multiLineContent);
+        var expected = '> <a name="line.js" href="fixtures/line.js">line.js</a>\n'
+            + '\n'
+            + '``` js\n'
+            + 'console.log(\"this is line 4\");\n'
+            + 'console.log(\"this is line 5\");\n'
+            + 'console.log(\"this is line 6\");\n'
+            + '```';
+        assert.equal(result.replaced, expected);
+    });
     describe("containIncludeLabel", function () {
         it("support import", function () {
             assert(containIncludeLabel("import"));
