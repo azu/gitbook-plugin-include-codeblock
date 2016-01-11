@@ -2,6 +2,7 @@
 "use strict";
 var fs = require("fs");
 var path = require('path');
+var language_map = require('language-map');
 var re = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 export function containIncludeLabel(label) {
     var reg = /^(include|import)$/;
@@ -31,9 +32,22 @@ export function getSliceRange(label) {
     return res ? res.slice(1) : [];
 }
 
+export function lookupLanguageByExtension(ext) {
+  for (var key in language_map) {
+    if (language_map.hasOwnProperty(key) && language_map[key].extensions) {
+      if(language_map[key].extensions.indexOf(ext) !== -1) {
+        return language_map[key].aceMode;
+      }
+    }
+  }
+
+  return undefined;
+}
+
 export function getLang(filePath) {
-    var suffix = path.extname(filePath);
-    return suffix.substring(1);
+    var ext = path.extname(filePath);
+
+    return lookupLanguageByExtension(ext) || ext;
 }
 export function embedCode(filePath, originalPath, start, end) {
     var code = fs.readFileSync(filePath, "utf-8");

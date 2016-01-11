@@ -35,7 +35,9 @@
   "engines": {
     "gitbook": "*"
   },
-  "dependencies": {},
+  "dependencies": {
+    "language-map": "^1.1.1"
+  },
   "devDependencies": {
     "babel": "^5.8.23",
     "espower-babel": "^3.3.0",
