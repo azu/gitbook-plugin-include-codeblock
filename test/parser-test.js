@@ -13,7 +13,20 @@ describe("parse", function () {
         assert.equal(result.target, "[include](fixtures/test.js)");
         var expected = '> <a name="test.js" href="fixtures/test.js">test.js</a>\n'
             + '\n'
-            + '``` js\nconsole.log(\"test\");\n```';
+            + '``` javascript\nconsole.log(\"test\");\n```';
+        assert.equal(result.replaced, expected);
+    });
+    it("should translate elixir extensions", function () {
+        var exs_content = `
+        [include](fixtures/test.exs)
+        `;
+        var results = parse(exs_content, __dirname);
+        assert(results.length > 0);
+        var result = results[0];
+        assert.equal(result.target, "[include](fixtures/test.exs)");
+        var expected = '> <a name="test.exs" href="fixtures/test.exs">test.exs</a>\n'
+            + '\n'
+            + '``` elixir\nIO.puts \"test\"\n```';
         assert.equal(result.replaced, expected);
     });
     context("sliced text", function () {
@@ -25,7 +38,7 @@ describe("parse", function () {
             assert.equal(result.target, multiLineContent);
             var expected = '> <a name="line.js" href="fixtures/line.js">line.js</a>\n'
                 + '\n'
-                + '``` js\n'
+                + '``` javascript\n'
                 + 'console.log(\"this is line 4\");\n'
                 + 'console.log(\"this is line 5\");\n'
                 + 'console.log(\"this is line 6\");\n'
@@ -40,7 +53,7 @@ describe("parse", function () {
             assert.equal(result.target, multiLineContent);
             var expected = '> <a name="line.js" href="fixtures/line.js">line.js</a>\n'
                 + '\n'
-                + '``` js\n'
+                + '``` javascript\n'
                 + 'console.log(\"this is line 9\");\n'
                 + 'console.log(\"this is line 10\");\n'
                 + '```';
@@ -54,7 +67,7 @@ describe("parse", function () {
             assert.equal(result.target, multiLineContent);
             var expected = '> <a name="line.js" href="fixtures/line.js">line.js</a>\n'
                 + '\n'
-                + '``` js\n'
+                + '``` javascript\n'
                 + 'console.log(\"this is line 1\");\n'
                 + 'console.log(\"this is line 2\");\n'
                 + '```';
@@ -76,4 +89,3 @@ describe("parse", function () {
         });
     })
 });
-
