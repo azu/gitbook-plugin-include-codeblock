@@ -33,15 +33,24 @@ export function getSliceRange(label) {
 }
 
 export function lookupLanguageByExtension(ext) {
-  for (var key in language_map) {
-    if (language_map.hasOwnProperty(key) && language_map[key].extensions) {
-      if(language_map[key].extensions.indexOf(ext) !== -1) {
-        return language_map[key].aceMode;
-      }
-    }
-  }
-
-  return undefined;
+    let aceMode;
+    Object.keys(language_map).some(langKey => {
+        const extensions = language_map[langKey]["extensions"];
+        /* TODO: These lang has not extensions
+        Ant Build System
+        Isabelle ROOT
+        Maven POMAnt Build System
+         */
+        if (!extensions) {
+            return false;
+        }
+        return extensions.some(extension => {
+            if (ext === extension) {
+                aceMode = language_map[langKey]["aceMode"];
+            }
+        });
+    });
+    return aceMode;
 }
 
 export function getLang(filePath) {
@@ -62,12 +71,18 @@ ${slicedCode.trim()}
 }
 
 function sliceCode(code, start, end) {
-  if (start === '' && end === '') return code;
+    if (start === '' && end === '') {
+        return code;
+    }
 
-  var splitted = code.split('\n');
-  if (start === '') { start = 1; }
-  if (end === '') { end = splitted.length; }
-  return splitted.slice(start - 1, end).join('\n');
+    var splitted = code.split('\n');
+    if (start === '') {
+        start = 1;
+    }
+    if (end === '') {
+        end = splitted.length;
+    }
+    return splitted.slice(start - 1, end).join('\n');
 }
 
 export function parse(content, baseDir) {

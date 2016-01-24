@@ -1,38 +1,53 @@
 // LICENSE : MIT
 "use strict";
 import assert from "power-assert"
-import {parse,containIncludeLabel} from "../src/parser"
+import {parse, containIncludeLabel} from "../src/parser"
 var content = `
 [include](fixtures/test.js)
 `;
 describe("parse", function () {
-    it("should return object for replace", function () {
-        var results = parse(content, __dirname);
-        assert(results.length > 0);
-        var result = results[0];
-        assert.equal(result.target, "[include](fixtures/test.js)");
-        var expected = '> <a name="test.js" href="fixtures/test.js">test.js</a>\n'
-            + '\n'
-            + '``` javascript\nconsole.log(\"test\");\n```';
-        assert.equal(result.replaced, expected);
-    });
-    it("should translate elixir extensions", function () {
-        var exs_content = `
+    context("translate lang", function () {
+        it("should return object for replace", function () {
+            var results = parse(content, __dirname);
+            assert(results.length > 0);
+            var result = results[0];
+            assert.equal(result.target, "[include](fixtures/test.js)");
+            var expected = '> <a name="test.js" href="fixtures/test.js">test.js</a>\n'
+                + '\n'
+                + '``` javascript\nconsole.log(\"test\");\n```';
+            assert.equal(result.replaced, expected);
+        });
+        it("should translate elixir extensions", function () {
+            var exs_content = `
         [include](fixtures/test.exs)
         `;
-        var results = parse(exs_content, __dirname);
-        assert(results.length > 0);
-        var result = results[0];
-        assert.equal(result.target, "[include](fixtures/test.exs)");
-        var expected = '> <a name="test.exs" href="fixtures/test.exs">test.exs</a>\n'
-            + '\n'
-            + '``` elixir\nIO.puts \"test\"\n```';
-        assert.equal(result.replaced, expected);
+            var results = parse(exs_content, __dirname);
+            assert(results.length > 0);
+            var result = results[0];
+            assert.equal(result.target, "[include](fixtures/test.exs)");
+            var expected = '> <a name="test.exs" href="fixtures/test.exs">test.exs</a>\n'
+                + '\n'
+                + '``` elixir\nIO.puts \"test\"\n```';
+            assert.equal(result.replaced, expected);
+        });
+        it("should translate Rust extensions", function () {
+            var exs_content = `
+        [include](fixtures/test.rs)
+        `;
+            var results = parse(exs_content, __dirname);
+            assert(results.length > 0);
+            var result = results[0];
+            assert.equal(result.target, "[include](fixtures/test.rs)");
+            var expected = '> <a name="test.rs" href="fixtures/test.rs">test.rs</a>\n'
+                + '\n'
+                + '``` rust\nextern crate num;\n```';
+            assert.equal(result.replaced, expected);
+        });
     });
     context("sliced text", function () {
         it("should return sliced object for replace", function () {
             var multiLineContent = "[include:4-6, line.js](fixtures/line.js)";
-            var results = parse(multiLineContent , __dirname);
+            var results = parse(multiLineContent, __dirname);
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, multiLineContent);
@@ -47,7 +62,7 @@ describe("parse", function () {
         });
         it("should return sliced `start`- text", function () {
             var multiLineContent = "[include:9-, line.js](fixtures/line.js)";
-            var results = parse(multiLineContent , __dirname);
+            var results = parse(multiLineContent, __dirname);
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, multiLineContent);
@@ -61,7 +76,7 @@ describe("parse", function () {
         });
         it("should return sliced -`end` text", function () {
             var multiLineContent = "[include:-2, line.js](fixtures/line.js)";
-            var results = parse(multiLineContent , __dirname);
+            var results = parse(multiLineContent, __dirname);
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, multiLineContent);
