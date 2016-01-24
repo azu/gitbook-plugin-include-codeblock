@@ -18,9 +18,7 @@ describe("parse", function () {
             assert.equal(result.replaced, expected);
         });
         it("should translate elixir extensions", function () {
-            var exs_content = `
-        [include](fixtures/test.exs)
-        `;
+            var exs_content = `[include](fixtures/test.exs)`;
             var results = parse(exs_content, __dirname);
             assert(results.length > 0);
             var result = results[0];
@@ -31,9 +29,7 @@ describe("parse", function () {
             assert.equal(result.replaced, expected);
         });
         it("should translate Rust extensions", function () {
-            var exs_content = `
-        [include](fixtures/test.rs)
-        `;
+            var exs_content = `[include](fixtures/test.rs)`;
             var results = parse(exs_content, __dirname);
             assert(results.length > 0);
             var result = results[0];
