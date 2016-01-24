@@ -29,6 +29,19 @@ describe("parse", function () {
             + '``` elixir\nIO.puts \"test\"\n```';
         assert.equal(result.replaced, expected);
     });
+    it("should translate Rust extensions", function () {
+        var exs_content = `
+        [include](fixtures/test.rs)
+        `;
+        var results = parse(exs_content, __dirname);
+        assert(results.length > 0);
+        var result = results[0];
+        assert.equal(result.target, "[include](fixtures/test.rs)");
+        var expected = '> <a name="test.rs" href="fixtures/test.rs">test.rs</a>\n'
+            + '\n'
+            + '``` rust\nextern crate num;\n```';
+        assert.equal(result.replaced, expected);
+    });
     context("sliced text", function () {
         it("should return sliced object for replace", function () {
             var multiLineContent = "[include:4-6, line.js](fixtures/line.js)";
