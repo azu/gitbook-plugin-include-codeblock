@@ -1,29 +1,50 @@
 // LICENSE : MIT
 "use strict";
-var fs = require("fs");
-var path = require('path');
-var language_map = require('language-map');
-var re = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
-export function containIncludeLabel(label) {
+const fs = require("fs");
+const path = require('path');
+const {getLang} = require("./language-detection");
+const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
+/**
+ * split label to commands
+ * @param {string} label
+ * @returns {Array}
+ */
+export function splitLabelToCommands(label = "") {
+    const result = label.split(/(:|[,\s])/);
+    if (!result) {
+        return [];
+    }
+    // remove null command
+    return result.map(command => {
+        return command.trim();
+    }).filter(command => {
+        return command.length > 0;
+    });
+}
+/**
+ * if contain "include" or "import" command, then return true
+ * @param {Array} commands
+ * @returns {boolean}
+ */
+export function containIncludeCommand(commands = []) {
     var reg = /^(include|import)$/;
-    var commands = label.split(/(:|[,\s])/);
     return commands.some(command => {
         return reg.test(command.trim());
     })
 }
 
 /*
-format: [import:<start-lineNumber>-<end-lineNumber>](path/to/file)
-lineNumber start with 1.
+ format: [import:<start-lineNumber>-<end-lineNumber>](path/to/file)
+ lineNumber start with 1.
 
-Patterns:
+ Patterns:
 
-All: [import, hello-world.js](../src/hello-world.js)
-1-2: [import:1-2, hello-world.js](../src/hello-world.js)
-2-3: [import:2-3, hello-world.js](../src/hello-world.js)
-2>=: [import:2-, hello-world.js](../src/hello-world.js)
-<=3: [import:-3, hello-world.js](../src/hello-world.js)
-*/
+ All: [import, hello-world.js](../src/hello-world.js)
+ 1-2: [import:1-2, hello-world.js](../src/hello-world.js)
+ 2-3: [import:2-3, hello-world.js](../src/hello-world.js)
+ 2>=: [import:2-, hello-world.js](../src/hello-world.js)
+ <=3: [import:-3, hello-world.js](../src/hello-world.js)
+ */
 export function getSliceRange(label) {
     var reg = /^(?:include|import):?(\d*)-?(\d*)[,\s]?.*$/;
     var res = reg.exec(label);
@@ -32,41 +53,19 @@ export function getSliceRange(label) {
     return res ? res.slice(1) : [];
 }
 
-export function lookupLanguageByExtension(ext) {
-    let aceMode;
-    Object.keys(language_map).some(langKey => {
-        const extensions = language_map[langKey]["extensions"];
-        /* TODO: These lang has not extensions
-        Ant Build System
-        Isabelle ROOT
-        Maven POMAnt Build System
-         */
-        if (!extensions) {
-            return false;
-        }
-        return extensions.some(extension => {
-            if (ext === extension) {
-                aceMode = language_map[langKey]["aceMode"];
-            }
-        });
-    });
-    return aceMode;
+export function embedCode(lang, filePath, originalPath, start, end) {
+    const code = fs.readFileSync(filePath, "utf-8");
+    const slicedCode = sliceCode(code, start, end);
+    const fileName = path.basename(filePath);
+    const content = slicedCode.trim();
+    return generateEmbedCode(lang, fileName, originalPath, content);
 }
 
-export function getLang(filePath) {
-    var ext = path.extname(filePath);
-
-    return lookupLanguageByExtension(ext) || ext;
-}
-export function embedCode(filePath, originalPath, start, end) {
-    var code = fs.readFileSync(filePath, "utf-8");
-    var slicedCode = sliceCode(code, start, end);
-    var fileName = path.basename(filePath);
-    var lang = getLang(filePath);
+export function generateEmbedCode(lang, fileName, originalPath, content) {
     return `> <a name="${fileName}" href="${originalPath}">${fileName}</a>
 
 \`\`\` ${lang}
-${slicedCode.trim()}
+${content}
 \`\`\``
 }
 
@@ -86,15 +85,19 @@ function sliceCode(code, start, end) {
 }
 
 export function parse(content, baseDir) {
-    var results = [];
-    var res;
-    while (res = re.exec(content)) {
-        var [all, label, filePath] = res;
-        if (containIncludeLabel(label)) {
-            var [start, end] = getSliceRange(label)
+    const results = [];
+    let res;
+    while (res = markdownLinkFormatRegExp.exec(content)) {
+        const [all, label, filePath] = res;
+        const commands = splitLabelToCommands(label);
+        if (containIncludeCommand(commands)) {
+            const lang = getLang(commands, filePath);
+            const [start, end] = getSliceRange(label);
+            const absolutePath = path.resolve(baseDir, filePath);
+            const replacedContent = embedCode(lang, absolutePath, filePath, start, end);
             results.push({
                 target: all,
-                replaced: embedCode(path.resolve(baseDir, filePath), filePath, start, end)
+                replaced: replacedContent
             });
         }
     }
