@@ -47,6 +47,25 @@ Result
     console.log("test");
     ```
 
+### Hardcoded class
+
+When you import a TypeScript file `.ts`:
+The parser correctly finds `.ts` in the [language-map](https://github.com/blakeembrey/language-map "language-map") extensions for both TypeScript and XML, then automatically chooses `XML`.
+
+If you want to specify language type, put `lang-<lang-name>` to label.
+
+```markdown
+[import, lang-typescript](hello-world.ts)
+```
+
+You can choose `<lang-name>` of `lang-<lang-name>` from language-map's `aceMode` value.
+
+- [blakeembrey/language-map: JSON version of the programming language map used in Linguist](https://github.com/blakeembrey/language-map "blakeembrey/language-map: JSON version of the programming language map used in Linguist")
+
+e.g.) typescript's aceMode value is `typescript`. 
+
+- https://github.com/blakeembrey/language-map/blob/b72edb8c2cb1b05d098782aa85dd2f573ed96ba3/languages.json#L4140
+
 ### Sliced Code
 
 If you want to slice imported code and show.
