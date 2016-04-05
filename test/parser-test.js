@@ -1,7 +1,7 @@
 // LICENSE : MIT
 "use strict";
 import assert from "power-assert"
-import {parse, containIncludeLabel} from "../src/parser"
+import {parse, containIncludeCommand, splitLabelToCommands} from "../src/parser"
 var content = `
 [include](fixtures/test.js)
 `;
@@ -15,6 +15,17 @@ describe("parse", function () {
             var expected = '> <a name="test.js" href="fixtures/test.js">test.js</a>\n'
                 + '\n'
                 + '``` javascript\nconsole.log(\"test\");\n```';
+            assert.equal(result.replaced, expected);
+        });
+        it("should prefer use lang-<aceMode>", function () {
+            var exs_content = `[include, lang-typescript](fixtures/test.ts)`;
+            var results = parse(exs_content, __dirname);
+            assert(results.length > 0);
+            var result = results[0];
+            assert.equal(result.target, "[include, lang-typescript](fixtures/test.ts)");
+            var expected = '> <a name="test.ts" href="fixtures/test.ts">test.ts</a>\n'
+                + '\n'
+                + '``` typescript\nconsole.log(\"test\");\n```';
             assert.equal(result.replaced, expected);
         });
         it("should translate elixir extensions", function () {
@@ -85,18 +96,37 @@ describe("parse", function () {
             assert.equal(result.replaced, expected);
         });
     });
+    describe("#splitLabelToCommands", function () {
+        it("should split label to commands", function () {
+            const commands = splitLabelToCommands("import");
+            assert.equal(commands.length, 1);
+            assert.equal(commands[0], "import");
+        });
+        it("should not contain space in command", function () {
+            const commands = splitLabelToCommands("command1 command2, command3    ");
+            // Should 3 but 4..
+            assert(commands.length > 3);
+            assert(commands.indexOf("command1") !== -1);
+            assert(commands.indexOf("command2") !== -1);
+            assert(commands.indexOf("command3") !== -1);
+        });
+    });
     describe("containIncludeLabel", function () {
         it("support import", function () {
-            assert(containIncludeLabel("import"));
+            const commands = splitLabelToCommands("import");
+            assert(containIncludeCommand(commands));
         });
         it("support include", function () {
-            assert(containIncludeLabel("include"));
+            const commands = splitLabelToCommands("include");
+            assert(containIncludeCommand(commands));
         });
         it("support command split by space", function () {
-            assert(containIncludeLabel("import title"));
+            const commands = splitLabelToCommands("import title");
+            assert(containIncludeCommand(commands));
         });
         it("support command split by ,", function () {
-            assert(containIncludeLabel("import, title"));
+            const commands = splitLabelToCommands("import title");
+            assert(containIncludeCommand(commands));
         });
     })
 });
