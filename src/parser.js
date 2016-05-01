@@ -53,12 +53,34 @@ export function getSliceRange(label) {
     return res ? res.slice(1) : [];
 }
 
-export function embedCode(lang, filePath, originalPath, start, end) {
+/*
+ format: [import:<markername>](path/to/file)
+ marker name start with alpha [a-Z] char.
+
+ Example:
+
+ [import:markname, hello-world.js](../src/hello-world.js)
+ */
+export function getMarkerName(label) {
+    var reg = /^(?:include|import):?([a-zA-z]\w*)[,\s]?.*$/;
+    var res = reg.exec(label);
+
+    // return ['', ''] if not matched.
+    return res ? res.slice(1) : [];
+}
+
+export function embedCode(lang, filePath, originalPath, start, end, marker) {
     const code = fs.readFileSync(filePath, "utf-8");
     const slicedCode = sliceCode(code, start, end);
     const fileName = path.basename(filePath);
     const content = slicedCode.trim();
-    return generateEmbedCode(lang, fileName, originalPath, content);
+    const content2 = markersSliceCode( code, marker );
+    if(marker!='') {
+        return generateEmbedCode(lang, fileName, originalPath, content2);
+    }
+    else {
+        return generateEmbedCode(lang, fileName, originalPath, content);
+    }
 }
 
 export function generateEmbedCode(lang, fileName, originalPath, content) {
@@ -84,6 +106,32 @@ function sliceCode(code, start, end) {
     return splitted.slice(start - 1, end).join('\n');
 }
 
+export function markersSliceCode( code, markername )
+{
+    if( markername === '' ) {
+        return code;
+    }
+    else {
+        // various language comment
+        var commentOpen="(\/+\/+|#|%|\/\\*)";
+        var commentClose="(\\*\/)?";
+        var balise="\\["+markername+"\\]";
+        var pattern=commentOpen + ".*\\s*" + balise + ".*\\s*" + commentClose;
+        var regstr=pattern+"([\\s\\S]*)"+pattern;
+        var reg = new RegExp(regstr);
+
+        //var reg = /\[toto\]([\s\S]*)\[toto\]/;
+        var res = code.match(reg);
+        if(res) {
+            return res[3];
+        }
+        else {
+            console.warn('marker `'+markername+'` not found');
+            return [];
+        }
+    }
+}
+
 export function parse(content, baseDir) {
     const results = [];
     let res;
@@ -93,8 +141,9 @@ export function parse(content, baseDir) {
         if (containIncludeCommand(commands)) {
             const lang = getLang(commands, filePath);
             const [start, end] = getSliceRange(label);
+            const marker = getMarkerName(label);
             const absolutePath = path.resolve(baseDir, filePath);
-            const replacedContent = embedCode(lang, absolutePath, filePath, start, end);
+            const replacedContent = embedCode(lang, absolutePath, filePath, start, end, marker);
             results.push({
                 target: all,
                 replaced: replacedContent
