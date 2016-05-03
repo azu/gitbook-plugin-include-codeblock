@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require('path');
 const {getLang} = require("./language-detection");
-const {getMarkerName, hasMarker} = require("./marker");
+const {getMarkerName, hasMarker, markersSliceCode, removeMarkers} = require("./marker");
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 /**
  * split label to commands
@@ -59,7 +59,7 @@ export function embedCode(lang, filePath, originalPath, start, end, marker) {
     const slicedCode = sliceCode(code, start, end);
     const fileName = path.basename(filePath);
     const content = slicedCode.trim();
-    const markerContent = markersSliceCode( code, marker );
+    const markerContent = removeMarkers( markersSliceCode( code, marker ) );
     if(hasMarker(marker)) {
         return generateEmbedCode(lang, fileName, originalPath, markerContent);
     }
@@ -89,32 +89,6 @@ function sliceCode(code, start, end) {
         end = splitted.length;
     }
     return splitted.slice(start - 1, end).join('\n');
-}
-
-export function markersSliceCode( code, markername )
-{
-    if( hasMarker(markername) ) {
-        // various language comment
-        const commentOpen="(\/+\/+|#|%|\/\\*)";
-        const commentClose="(\\*\/)?";
-        const balise="\\["+markername+"\\]";
-        const pattern=commentOpen + ".*\\s*" + balise + ".*\\s*" + commentClose;
-        const regstr=pattern+"([\\s\\S]*)"+pattern;
-        const reg = new RegExp(regstr);
-
-        //var reg = /\[toto\]([\s\S]*)\[toto\]/;
-        const res = code.match(reg);
-        if(res) {
-            return res[3];
-        }
-        else {
-            throw new Error(`marker:${markername} not found`);
-            return [];
-        }
-    }
-    else {
-        return code;
-    }
 }
 
 export function parse(content, baseDir) {
