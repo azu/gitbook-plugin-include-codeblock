@@ -89,7 +89,7 @@ All: [import, hello-world.js](../src/hello-world.js)
 You can also import snippet code similarly to doxygen.
 `[import:<markername>](path/to/file)`
 
-- markername begins with a alpha character
+- markername begins with an alphabet character
 
 For example, considering the following C++ source code
 
@@ -97,15 +97,26 @@ For example, considering the following C++ source code
 // test.cpp source code
 int main()
 {
+    /// [marker0]
     int a;
-    // [marker1]
+    //! [marker1]
     int b;
-    // [marker1]
+    //! [marker1]
     int c;
+    /// [marker0]
 }
 ```
-it can be imported in gitbook with the command `[import:marker1](path/to/test.cpp)`
-with the embed code result `int b;`.
+In gitbook, the following commands `[import:marker1](path/to/test.cpp)`
+will result to
+```cpp
+    int b;
+```
+the command `[import:marker1](path/to/test.cpp)` will result to
+```cpp
+    int a;
+    int b;
+    int c;
+```
 
 ## Tests
 
