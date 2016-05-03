@@ -3,6 +3,8 @@
 const fs = require("fs");
 const path = require('path');
 const {getLang} = require("./language-detection");
+const {getMarkerName} = require("./marker");
+const {hasMarker} = require("./marker");
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 /**
  * split label to commands
@@ -53,30 +55,14 @@ export function getSliceRange(label) {
     return res ? res.slice(1) : [];
 }
 
-/*
- format: [import:<markername>](path/to/file)
- marker name start with alpha [a-Z] char.
-
- Example:
-
- [import:markname, hello-world.js](../src/hello-world.js)
- */
-export function getMarkerName(label) {
-    var reg = /^(?:include|import):?([a-zA-z]\w*)[,\s]?.*$/;
-    var res = reg.exec(label);
-
-    // return ['', ''] if not matched.
-    return res ? res.slice(1) : [];
-}
-
 export function embedCode(lang, filePath, originalPath, start, end, marker) {
     const code = fs.readFileSync(filePath, "utf-8");
     const slicedCode = sliceCode(code, start, end);
     const fileName = path.basename(filePath);
     const content = slicedCode.trim();
-    const content2 = markersSliceCode( code, marker );
-    if(marker!='') {
-        return generateEmbedCode(lang, fileName, originalPath, content2);
+    const markerContent = markersSliceCode( code, marker );
+    if(hasMarker(marker)) {
+        return generateEmbedCode(lang, fileName, originalPath, markerContent);
     }
     else {
         return generateEmbedCode(lang, fileName, originalPath, content);
@@ -108,27 +94,27 @@ function sliceCode(code, start, end) {
 
 export function markersSliceCode( code, markername )
 {
-    if( markername === '' ) {
-        return code;
-    }
-    else {
+    if( hasMarker(markername) ) {
         // various language comment
-        var commentOpen="(\/+\/+|#|%|\/\\*)";
-        var commentClose="(\\*\/)?";
-        var balise="\\["+markername+"\\]";
-        var pattern=commentOpen + ".*\\s*" + balise + ".*\\s*" + commentClose;
-        var regstr=pattern+"([\\s\\S]*)"+pattern;
-        var reg = new RegExp(regstr);
+        const commentOpen="(\/+\/+|#|%|\/\\*)";
+        const commentClose="(\\*\/)?";
+        const balise="\\["+markername+"\\]";
+        const pattern=commentOpen + ".*\\s*" + balise + ".*\\s*" + commentClose;
+        const regstr=pattern+"([\\s\\S]*)"+pattern;
+        const reg = new RegExp(regstr);
 
         //var reg = /\[toto\]([\s\S]*)\[toto\]/;
-        var res = code.match(reg);
+        const res = code.match(reg);
         if(res) {
             return res[3];
         }
         else {
-            console.warn('marker `'+markername+'` not found');
+            throw new Error(`marker:${markername} not found`);
             return [];
         }
+    }
+    else {
+        return code;
     }
 }
 
