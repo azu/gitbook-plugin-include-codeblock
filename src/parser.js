@@ -3,8 +3,7 @@
 const fs = require("fs");
 const path = require('path');
 const {getLang} = require("./language-detection");
-const {getMarkerName} = require("./marker");
-const {hasMarker} = require("./marker");
+const {getMarkerName, hasMarker} = require("./marker");
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 /**
  * split label to commands
