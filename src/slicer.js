@@ -46,7 +46,7 @@ export function hasRangeCommand(label) {
  * @param {string} code
  * @param {number|undefined} [start]
  * @param {number|undefined} [end]
- * @returns {*}
+ * @returns {string}
  */
 export function sliceCode(code, start, end) {
     if (start === undefined && end === undefined) {
