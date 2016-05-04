@@ -89,7 +89,7 @@ All: [import, hello-world.js](../src/hello-world.js)
 You can also import snippet code similarly to [doxygen](https://www.stack.nl/~dimitri/doxygen/manual/commands.html#cmdsnippet).
 `[import:<markername>](path/to/file)`
 
-- :information_source: markername begins with an alphabet character
+- :information_source: **markername** begins with an alphabet character
 
 For example, considering the following C++ source code
 
