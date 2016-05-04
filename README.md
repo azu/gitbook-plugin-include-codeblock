@@ -29,13 +29,13 @@ console.log("test");
 
 Write following the link with `include` or `import` label.
 
-```
+```markdown
 [include](fixtures/test.js)
 ```
 
 or
 
-```
+```markdown
 [import](fixtures/test.js)
 ```
 
@@ -69,7 +69,9 @@ e.g.) typescript's aceMode value is `typescript`.
 
 If you want to slice imported code and show.
 
-`[import:<start-lineNumber>-<end-lineNumber>](path/to/file)`
+```markdown
+[import:<start-lineNumber>-<end-lineNumber>](path/to/file)
+```
 
 - :information_source: lineNumber start with 1.
 
