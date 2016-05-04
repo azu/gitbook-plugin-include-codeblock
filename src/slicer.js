@@ -35,7 +35,7 @@ export function getSliceRange(label) {
  * @param {string} label
  * @returns {boolean}
  */
-export function hasRange(label) {
+export function hasSliceRange(label) {
     const range = getSliceRange(label);
     const [start, end] = range;
     return start !== undefined || end !== undefined;

@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 import {getLang} from "./language-detection";
 import {getMarkerName, hasMarker, markersSliceCode, removeMarkers} from "./marker";
-import {sliceCode, hasRange, getSliceRange} from "./slicer";
+import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 /**
  * split label to commands
@@ -45,7 +45,7 @@ export function containIncludeCommand(commands = []) {
 export function embedCode({lang, filePath, originalPath, label}) {
     const code = fs.readFileSync(filePath, "utf-8");
     const fileName = path.basename(filePath);
-    if (hasRange(label)) {
+    if (hasSliceRange(label)) {
         const [start, end] = getSliceRange(label);
         const content = sliceCode(code, start, end);
         return generateEmbedCode(lang, fileName, originalPath, content);
