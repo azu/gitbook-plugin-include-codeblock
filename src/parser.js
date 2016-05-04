@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 import {getLang} from "./language-detection";
 import {getMarkerName, hasMarker, markersSliceCode, removeMarkers} from "./marker";
-import {sliceCode, getSliceRange} from "./slicer";
+import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 /**
  * split label to commands
@@ -40,20 +40,21 @@ export function containIncludeCommand(commands = []) {
  * @param {string} lang
  * @param {string} filePath
  * @param {string} originalPath
- * @param {number|undefined} start
- * @param {number|undefined} end
- * @param {string|undefined} marker
+ * @param {string} label
  */
-export function embedCode({lang, filePath, originalPath, start, end, marker}) {
+export function embedCode({lang, filePath, originalPath, label}) {
     const code = fs.readFileSync(filePath, "utf-8");
-    const slicedCode = sliceCode(code, start, end);
     const fileName = path.basename(filePath);
-    const content = slicedCode.trim();
-    const markerContent = removeMarkers(markersSliceCode(code, marker));
-    if (hasMarker(marker)) {
-        return generateEmbedCode(lang, fileName, originalPath, markerContent);
-    } else {
+    if (hasSliceRange(label)) {
+        const [start, end] = getSliceRange(label);
+        const content = sliceCode(code, start, end);
         return generateEmbedCode(lang, fileName, originalPath, content);
+    } else if (hasMarker(label)) {
+        const marker = getMarkerName(label);
+        const content = removeMarkers(markersSliceCode(code, marker));
+        return generateEmbedCode(lang, fileName, originalPath, content);
+    } else {
+        return generateEmbedCode(lang, fileName, originalPath, code);
     }
 }
 
@@ -73,16 +74,12 @@ export function parse(content, baseDir) {
         const commands = splitLabelToCommands(label);
         if (containIncludeCommand(commands)) {
             const lang = getLang(commands, originalPath);
-            const [start, end] = getSliceRange(label);
-            const marker = getMarkerName(label);
             const absolutePath = path.resolve(baseDir, originalPath);
             const replacedContent = embedCode({
                 lang,
                 filePath: absolutePath,
                 originalPath: originalPath,
-                start,
-                end,
-                marker
+                label
             });
             results.push({
                 target: all,

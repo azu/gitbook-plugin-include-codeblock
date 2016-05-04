@@ -3,26 +3,26 @@
 const assert = require("power-assert");
 const fs = require("fs");
 const path = require("path");
-import {getSliceRange,hasRangeCommand, sliceCode} from "../src/slicer";
+import {getSliceRange, hasSliceRange, sliceCode} from "../src/slicer";
 const lineFixture = fs.readFileSync(path.join(__dirname, "fixtures/line.js"), "utf-8");
 describe("slicer-test", function () {
-    describe("#hasRangeCommand", function () {
+    describe("#hasSliceRange", function () {
         context("when range is defined", function () {
             it("should return [undefined, undefined]", function () {
-                assert(hasRangeCommand(`import:0-0 ,`));
-                assert(hasRangeCommand(`import:1-2 ,`));
-                assert(hasRangeCommand(`import:2-3 ,`));
-                assert(hasRangeCommand(`import:2- ,`));
-                assert(hasRangeCommand(`import:-3 ,`));
+                assert(hasSliceRange(`import:0-0 ,`));
+                assert(hasSliceRange(`import:1-2 ,`));
+                assert(hasSliceRange(`import:2-3 ,`));
+                assert(hasSliceRange(`import:2- ,`));
+                assert(hasSliceRange(`import:-3 ,`));
             });
         });
         context("when range is not defined", function () {
             it("should return [undefined, undefined]", function () {
-                assert(!hasRangeCommand(`import:0`));
-                assert(!hasRangeCommand(`import:test`));
-                assert(!hasRangeCommand(`import`));
-                assert(!hasRangeCommand(`1-5 only`));
-                assert(!hasRangeCommand(`1-5`));
+                assert(!hasSliceRange(`import:0`));
+                assert(!hasSliceRange(`import:test`));
+                assert(!hasSliceRange(`import`));
+                assert(!hasSliceRange(`1-5 only`));
+                assert(!hasSliceRange(`1-5`));
             });
         });
     });
