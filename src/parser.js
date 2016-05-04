@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require('path');
 const {getLang} = require("./language-detection");
+const {getMarkerName, hasMarker, markersSliceCode, removeMarkers} = require("./marker");
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 /**
  * split label to commands
@@ -53,12 +54,18 @@ export function getSliceRange(label) {
     return res ? res.slice(1) : [];
 }
 
-export function embedCode(lang, filePath, originalPath, start, end) {
+export function embedCode(lang, filePath, originalPath, start, end, marker) {
     const code = fs.readFileSync(filePath, "utf-8");
     const slicedCode = sliceCode(code, start, end);
     const fileName = path.basename(filePath);
     const content = slicedCode.trim();
-    return generateEmbedCode(lang, fileName, originalPath, content);
+    const markerContent = removeMarkers( markersSliceCode( code, marker ) );
+    if(hasMarker(marker)) {
+        return generateEmbedCode(lang, fileName, originalPath, markerContent);
+    }
+    else {
+        return generateEmbedCode(lang, fileName, originalPath, content);
+    }
 }
 
 export function generateEmbedCode(lang, fileName, originalPath, content) {
@@ -93,8 +100,9 @@ export function parse(content, baseDir) {
         if (containIncludeCommand(commands)) {
             const lang = getLang(commands, filePath);
             const [start, end] = getSliceRange(label);
+            const marker = getMarkerName(label);
             const absolutePath = path.resolve(baseDir, filePath);
-            const replacedContent = embedCode(lang, absolutePath, filePath, start, end);
+            const replacedContent = embedCode(lang, absolutePath, filePath, start, end, marker);
             results.push({
                 target: all,
                 replaced: replacedContent
