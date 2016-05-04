@@ -24,7 +24,7 @@ const markerNameFormat = "(\\s*[a-zA-Z][\\w\\s]*)"; // Must contain a char.
  */
 export function getMarkerName(label) {
     // regex
-    const regstr = "\^(?:include|import):?" + markerNameFormat + "[,\\s]?.*\$"
+    const regstr = "\^(?:include|import):" + markerNameFormat + "[,\\s]?.*\$";
     const reg = new RegExp(regstr);
     const res = label.match(reg);
 
