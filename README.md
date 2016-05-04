@@ -58,9 +58,8 @@ If you want to specify language type, put `lang-<lang-name>` to label.
 [import, lang-typescript](hello-world.ts)
 ```
 
-You can choose `<lang-name>` of `lang-<lang-name>` from language-map's `aceMode` value.
-
-- [blakeembrey/language-map: JSON version of the programming language map used in Linguist](https://github.com/blakeembrey/language-map "blakeembrey/language-map: JSON version of the programming language map used in Linguist")
+- :information_source: choose `<lang-name>` of `lang-<lang-name>` from language-map's `aceMode` value.
+    - [blakeembrey/language-map: JSON version of the programming language map used in Linguist](https://github.com/blakeembrey/language-map "blakeembrey/language-map: JSON version of the programming language map used in Linguist")
 
 e.g.) typescript's aceMode value is `typescript`. 
 
@@ -72,7 +71,7 @@ If you want to slice imported code and show.
 
 `[import:<start-lineNumber>-<end-lineNumber>](path/to/file)`
 
-- lineNumber start with 1.
+- :information_source: lineNumber start with 1.
 
 All Patterns:
 
@@ -87,7 +86,10 @@ All: [import, hello-world.js](../src/hello-world.js)
 ### Snippet code
 
 You can also import snippet code similarly to [doxygen](https://www.stack.nl/~dimitri/doxygen/manual/commands.html#cmdsnippet).
-`[import:<markername>](path/to/file)`
+
+```markdown
+[import:<markername>](path/to/file)
+```
 
 - :information_source: **markername** begins with an alphabet character
 
