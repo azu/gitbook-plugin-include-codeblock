@@ -31,41 +31,48 @@ export function getMarkerName(label) {
     return res ? res[1] : '';
 }
 
-/*
+
+/**
  * format: [import:<markername>](path/to/file)
  * check if the import filled has a markername.
- * Example:
- *      hasMarker(getMarkerName(label))
+ * @example:
+ *      hasMarker(label)
+ * @param {string} label
+ * @returns {boolean}
  */
 export function hasMarker(label) {
-    return (label !== '');
+    const marker = getMarkerName(label);
+    return (marker !== '');
 }
 
 /* Parse the code from given markers
  *
  * see test/marker-test.js
  */
+/**
+ * get sliced code by {@link markername}
+ * @param {string} code
+ * @param {string} markername
+ * @returns {string}
+ */
 export function markersSliceCode(code, markername) {
-    if (hasMarker(markername)) {
-        // regex
-        const balise = "\\[" + markername + "\\]";
-        const pattern = "\\n" + spacesAny + commentOpen + doxChar + spaces + balise
-            + spaces + commentClose + spaces;
-
-        const regstr = pattern + "\\n*([\\s\\S]*)" + pattern;
-        const reg = new RegExp(regstr);
-        const res = code.match(reg);
-
-        if (res) {
-            return res[3]; // count parenthesis in pattern.
-        }
-        else {
-            console.warn('markersSliceCode(): marker `' + markername + '` not found');
-            return 'Error: marker `' + markername + '` not found'
-        }
-    }
-    else {
+    if (markername === undefined) {
         return code;
+    }
+    // regex
+    const balise = "\\[" + markername + "\\]";
+    const pattern = "\\n" + spacesAny + commentOpen + doxChar + spaces + balise
+        + spaces + commentClose + spaces;
+
+    const regstr = pattern + "\\n*([\\s\\S]*)" + pattern;
+    const reg = new RegExp(regstr);
+    const res = code.match(reg);
+
+    if (res) {
+        return res[3]; // count parenthesis in pattern.
+    } else {
+        console.warn('markersSliceCode(): marker `' + markername + '` not found');
+        return 'Error: marker `' + markername + '` not found'
     }
 }
 

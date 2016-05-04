@@ -108,8 +108,8 @@ describe("parse", function () {
             assert.equal(result.target, multiLineContent);
             const expected = '> <a name="marker.cpp" href="fixtures/marker.cpp">marker.cpp</a>\n'
                 + '\n'
-                + '``` cpp\n'
-                + expectedMarker01
+                + '``` c_cpp\n'
+                + expectedMarker01 + "\n"
                 + '```';
             assert.equal(result.replaced, expected);
         });

@@ -35,7 +35,7 @@ export function getSliceRange(label) {
  * @param {string} label
  * @returns {boolean}
  */
-export function hasRangeCommand(label) {
+export function hasRange(label) {
     const range = getSliceRange(label);
     const [start, end] = range;
     return start !== undefined || end !== undefined;
@@ -59,5 +59,5 @@ export function sliceCode(code, start, end) {
     if (end === undefined) {
         end = slitted.length;
     }
-    return slitted.slice(start - 1, end).join('\n');
+    return slitted.slice(start - 1, end).join('\n').trim();
 }
