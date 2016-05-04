@@ -21,4 +21,4 @@
 
 ### Snippet code
 
-[import:marker1](src/marker.cpp)
+[import:marker0, lang-typescript](src/marker.ts)
