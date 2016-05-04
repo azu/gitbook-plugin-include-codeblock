@@ -133,6 +133,10 @@ the command `[import:marker1](path/to/test.cpp)` will result to
     int c;
 ```
 
+## Example
+
+Please See [example/](example/).
+
 ## Tests
 
     npm test
