@@ -96,6 +96,24 @@ describe("parse", function () {
             assert.equal(result.replaced, expected);
         });
     });
+    context("marker text", function () {
+        it("should return sliced object for replace", function () {
+            const multiLineContent = "[include:marker0, marker.cpp](fixtures/marker.cpp)";
+            const expectedMarker01 = `    int a;
+    int b;
+    int c;`;
+            const results = parse(multiLineContent, __dirname);
+            assert(results.length > 0);
+            const result = results[0];
+            assert.equal(result.target, multiLineContent);
+            const expected = '> <a name="marker.cpp" href="fixtures/marker.cpp">marker.cpp</a>\n'
+                + '\n'
+                + '``` cpp\n'
+                + expectedMarker01
+                + '```';
+            assert.equal(result.replaced, expected);
+        });
+    });
     describe("#splitLabelToCommands", function () {
         it("should split label to commands", function () {
             const commands = splitLabelToCommands("import");
