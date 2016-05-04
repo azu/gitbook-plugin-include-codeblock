@@ -1,0 +1,7 @@
+{
+  "gitbook": ">=2.5.2",
+  "title": "gitbook-plugin-include-codeblok example",
+  "plugins": [
+    "include-codeblock"
+  ]
+}

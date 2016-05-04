@@ -25,7 +25,8 @@
     "build": "NODE_ENV=production babel src --out-dir lib --source-maps",
     "watch": "babel src --out-dir lib --watch --source-maps",
     "prepublish": "npm run --if-present build",
-    "test": "mocha"
+    "test": "mocha",
+    "test:example": "cd example && npm i && npm run build"
   },
   "keywords": [
     "gitbook",
