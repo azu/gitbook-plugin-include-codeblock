@@ -12,9 +12,9 @@
  *     line range.
  */
 
-const commentOpen="(\/+\/+|#|%|\/\\*)";
-const commentClose="(\\*\/)?";
-const doxChar="[\*!\/]" // doxygen documentation character
+const commentOpen = "(\/+\/+|#|%|\/\\*)";
+const commentClose = "(\\*\/)?";
+const doxChar = "[\*!\/]"; // doxygen documentation character
 const spaces = "[ \t]*"; // h spaces
 const spacesAny = "\\s*"; // h+v spaces
 const markerNameFormat = "(\\s*[a-zA-Z][\\w\\s]*)"; // Must contain a char.
@@ -26,7 +26,7 @@ export function getMarkerName(label) {
     // regex
     const regstr = "\^(?:include|import):?" + markerNameFormat + "[,\\s]?.*\$"
     const reg = new RegExp(regstr);
-    const res = label.match(reg)
+    const res = label.match(reg);
 
     return res ? res[1] : '';
 }
@@ -38,31 +38,30 @@ export function getMarkerName(label) {
  *      hasMarker(getMarkerName(label))
  */
 export function hasMarker(label) {
-    return ( label === '' ) ? false:true;
+    return (label !== '');
 }
 
 /* Parse the code from given markers
  *
  * see test/marker-test.js
  */
-export function markersSliceCode( code, markername )
-{
-    if( hasMarker(markername) ) {
+export function markersSliceCode(code, markername) {
+    if (hasMarker(markername)) {
         // regex
-        const balise="\\["+ markername +"\\]";
-        const pattern= "\\n" + spacesAny + commentOpen + doxChar + spaces + balise
-                      + spaces + commentClose + spaces;
+        const balise = "\\[" + markername + "\\]";
+        const pattern = "\\n" + spacesAny + commentOpen + doxChar + spaces + balise
+            + spaces + commentClose + spaces;
 
-        const regstr=pattern+"\\n*([\\s\\S]*)"+pattern;
+        const regstr = pattern + "\\n*([\\s\\S]*)" + pattern;
         const reg = new RegExp(regstr);
         const res = code.match(reg);
 
-        if(res) {
+        if (res) {
             return res[3]; // count parenthesis in pattern.
         }
         else {
-            console.warn('markersSliceCode(): marker `'+markername+'` not found');
-            return 'Error: marker `'+ markername +'` not found'
+            console.warn('markersSliceCode(): marker `' + markername + '` not found');
+            return 'Error: marker `' + markername + '` not found'
         }
     }
     else {
@@ -77,12 +76,11 @@ export function replaceAll(str, reg, sub) {
 }
 
 // Function that remove all markers in the given code
-export function removeMarkers( code )
-{
-        // various language comment
-        const balise="\\["+ markerNameFormat +"\\]";
-        const pattern= spacesAny + commentOpen + doxChar + spaces + balise
-            + spaces + commentClose + spaces;
+export function removeMarkers(code) {
+    // various language comment
+    const balise = "\\[" + markerNameFormat + "\\]";
+    const pattern = spacesAny + commentOpen + doxChar + spaces + balise
+        + spaces + commentClose + spaces;
 
-        return replaceAll(code,pattern,'')
+    return replaceAll(code, pattern, '')
 }
