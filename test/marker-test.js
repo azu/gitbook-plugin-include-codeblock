@@ -69,6 +69,13 @@ describe("marker", function () {
                 const result = getMarkerName(command);
                 assert.equal(result, "my marker ");
             });
+            context("when use the slice code", function () {
+                it("should marker is empty", function(){
+                    const command = "import:1-10, test.cpp";
+                    const result = getMarkerName(command);
+                    assert.equal(result, "");
+                });
+            });
             context("when : is luck", function () {
                 it("should return empty", function(){
                     const command = "import my marker , test.cpp";
