@@ -86,12 +86,15 @@ All: [import, hello-world.js](../src/hello-world.js)
 
 ### Snippet code
 
-You can also import snippet code similarly to doxygen.
+You can also import snippet code similarly to [doxygen](https://www.stack.nl/~dimitri/doxygen/manual/commands.html#cmdsnippet).
 `[import:<markername>](path/to/file)`
 
-- markername begins with an alphabet character
+- :information_source: markername begins with an alphabet character
 
 For example, considering the following C++ source code
+
+- :information_source: should use **triple** comment mark for **markername**.
+    - `///`, `//!` or `###` etc.. 
 
 ```cpp
 // test.cpp source code
@@ -106,12 +109,20 @@ int main()
     /// [marker0]
 }
 ```
-In gitbook, the following commands `[import:marker1](path/to/test.cpp)`
+In GitBook, the following commands 
+
+```markdown
+[import:marker1](path/to/test.cpp)
+```
+
 will result to
+
 ```cpp
     int b;
 ```
+
 the command `[import:marker1](path/to/test.cpp)` will result to
+
 ```cpp
     int a;
     int b;
