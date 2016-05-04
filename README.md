@@ -137,6 +137,8 @@ the command `[import:marker1](path/to/test.cpp)` will result to
 
 Please See [example/](example/).
 
+[![screenshot](https://monosnap.com/file/ydUDWzqXtC2bvPPBmqtplldO8l2QJK.png)](example/)
+
 ## Tests
 
     npm test
