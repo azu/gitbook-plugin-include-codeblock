@@ -1,9 +1,10 @@
 // LICENSE : MIT
 "use strict";
 const fs = require("fs");
-const path = require('path');
-const {getLang} = require("./language-detection");
-const {getMarkerName, hasMarker, markersSliceCode, removeMarkers} = require("./marker");
+const path = require("path");
+import {getLang} from "./language-detection";
+import {getMarkerName, hasMarker, markersSliceCode, removeMarkers} from "./marker";
+import {sliceCode, getSliceRange} from "./slicer";
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 /**
  * split label to commands
@@ -34,36 +35,24 @@ export function containIncludeCommand(commands = []) {
     })
 }
 
-/*
- format: [import:<start-lineNumber>-<end-lineNumber>](path/to/file)
- lineNumber start with 1.
-
- Patterns:
-
- All: [import, hello-world.js](../src/hello-world.js)
- 1-2: [import:1-2, hello-world.js](../src/hello-world.js)
- 2-3: [import:2-3, hello-world.js](../src/hello-world.js)
- 2>=: [import:2-, hello-world.js](../src/hello-world.js)
- <=3: [import:-3, hello-world.js](../src/hello-world.js)
+/**
+ * generate code with options
+ * @param {string} lang
+ * @param {string} filePath
+ * @param {string} originalPath
+ * @param {number|undefined} start
+ * @param {number|undefined} end
+ * @param {string|undefined} marker
  */
-export function getSliceRange(label) {
-    var reg = /^(?:include|import):?(\d*)-?(\d*)[,\s]?.*$/;
-    var res = reg.exec(label);
-
-    // return ['', ''] if not matched.
-    return res ? res.slice(1) : [];
-}
-
-export function embedCode(lang, filePath, originalPath, start, end, marker) {
+export function embedCode({lang, filePath, originalPath, start, end, marker}) {
     const code = fs.readFileSync(filePath, "utf-8");
     const slicedCode = sliceCode(code, start, end);
     const fileName = path.basename(filePath);
     const content = slicedCode.trim();
-    const markerContent = removeMarkers( markersSliceCode( code, marker ) );
-    if(hasMarker(marker)) {
+    const markerContent = removeMarkers(markersSliceCode(code, marker));
+    if (hasMarker(marker)) {
         return generateEmbedCode(lang, fileName, originalPath, markerContent);
-    }
-    else {
+    } else {
         return generateEmbedCode(lang, fileName, originalPath, content);
     }
 }
@@ -76,33 +65,25 @@ ${content}
 \`\`\``
 }
 
-function sliceCode(code, start, end) {
-    if (start === '' && end === '') {
-        return code;
-    }
-
-    var splitted = code.split('\n');
-    if (start === '') {
-        start = 1;
-    }
-    if (end === '') {
-        end = splitted.length;
-    }
-    return splitted.slice(start - 1, end).join('\n');
-}
-
 export function parse(content, baseDir) {
     const results = [];
     let res;
     while (res = markdownLinkFormatRegExp.exec(content)) {
-        const [all, label, filePath] = res;
+        const [all, label, originalPath] = res;
         const commands = splitLabelToCommands(label);
         if (containIncludeCommand(commands)) {
-            const lang = getLang(commands, filePath);
+            const lang = getLang(commands, originalPath);
             const [start, end] = getSliceRange(label);
             const marker = getMarkerName(label);
-            const absolutePath = path.resolve(baseDir, filePath);
-            const replacedContent = embedCode(lang, absolutePath, filePath, start, end, marker);
+            const absolutePath = path.resolve(baseDir, originalPath);
+            const replacedContent = embedCode({
+                lang,
+                filePath: absolutePath,
+                originalPath: originalPath,
+                start,
+                end,
+                marker
+            });
             results.push({
                 target: all,
                 replaced: replacedContent
