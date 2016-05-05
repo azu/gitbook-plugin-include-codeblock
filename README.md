@@ -113,6 +113,7 @@ int main()
     /// [marker0]
 }
 ```
+
 In GitBook, the following commands 
 
 ```markdown
@@ -125,7 +126,7 @@ will result to
     int b;
 ```
 
-the command `[import:marker1](path/to/test.cpp)` will result to
+The command `[import:marker0](path/to/test.cpp)` will result to
 
 ```cpp
     int a;
