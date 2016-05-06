@@ -2,8 +2,10 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
+// https://www.npmjs.com/package/handlebars
+const Handlebars = require("handlebars")
 import {getLang} from "./language-detection";
-import {getMarkerName, hasMarker, markersSliceCode, removeMarkers} from "./marker";
+import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "./marker";
 import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
 import {parseTitle} from "./title"
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
@@ -35,6 +37,31 @@ export function containIncludeCommand(commands = []) {
         return reg.test(command.trim());
     })
 }
+/** Parse the command label and return key-value object
+ * @example
+ *      [import,title:"<thetitle>",label:"<thelabel>"](path/to/file.ext)
+ * @param {string} label
+ */
+export function parseVariablesFromLabel(label) {
+    var keyvals = {
+        "title":undefined,
+        "id":undefined,
+        "marker":undefined
+    };
+    for(var key in keyvals) {
+        var keyReg=key;
+        if(key=="marker") {
+            keyReg="import|include";
+        }
+        const regStr = "\^.*,?\\s*("+keyReg+")\\s*:\\s*[\"']([^'\"]*)[\"'],?.*\$";
+        const reg = new RegExp(regStr);
+        const res = label.match(reg);
+        if(res) {
+            keyvals[key]=res[2];
+        }
+    }
+    return keyvals;
+}
 
 /**
  * generate code with options
@@ -47,37 +74,48 @@ export function containIncludeCommand(commands = []) {
 export function embedCode({lang, filePath, originalPath, label}) {
     const code = fs.readFileSync(filePath, "utf-8");
     const fileName = path.basename(filePath);
-    const title = parseTitle(label,fileName);
+    const keyValueObject = parseVariablesFromLabel(label);
+    var content = code;
+    // Slice content via line numbers.
     if (hasSliceRange(label)) {
         const [start, end] = getSliceRange(label);
-        const content = sliceCode(code, start, end);
-        return generateEmbedCode(lang, title, fileName, originalPath, content);
-    } else if (hasMarker(label)) {
-        const marker = getMarkerName(label);
-        const content = removeMarkers(markersSliceCode(code, marker));
-        return generateEmbedCode(lang, title, fileName, originalPath, content);
-    } else {
-        return generateEmbedCode(lang, title, fileName, originalPath, code);
+        content = sliceCode(code, start, end);
     }
+    // Slice content via markers.
+    else if (hasMarker(keyValueObject)) {
+        const marker = getMarker(keyValueObject);
+        content = removeMarkers(markerSliceCode(code, marker));
+    }
+    return generateEmbedCode(keyValueObject, lang, fileName, originalPath, content);
 }
 
-export function generateEmbedCode(lang, title, fileName, originalPath, content) {
-    const [hasTitle,theTitle] = title;
-    var mdTitle ='';
-    var mdContent='';
-    if(hasTitle) {
-        mdTitle= `> <a name="${fileName}" href="${originalPath}">${theTitle}</a>`;
-        mdContent= mdContent+mdTitle;
-    }
+export function generateEmbedCode(keyValueObject, lang, fileName, originalPath, content) {
+    // merge objects
+    // if keyValueObject has `lang` key, that is overwrited by `lang` of right.
+    const context = Object.assign({}, keyValueObject, { lang, fileName, originalPath, content });
 
-    mdContent= mdContent+`
+    // if has the title, add anchor link
+    const source =`\
+{{#if title}}
+    {{#if id}}
+> <a id="{{id}}" href="{{originalPath}}">{{title}}</a>
+    {{else}}
+> <a id="{{title}}" href="{{originalPath}}">{{title}}</a>
+    {{/if}}
+{{else}}
 
-\`\`\` ${lang}
-${content}
-\`\`\``
+{{/if}}
 
-    return mdContent;
-}
+\`\`\` {{lang}}
+{{{content}}}
+\`\`\``;
+
+    const template = Handlebars.compile(source);
+    // compile with data
+    const output = template(context);
+    // => markdown strings
+    return output;
+};
 
 export function parse(content, baseDir) {
     const results = [];

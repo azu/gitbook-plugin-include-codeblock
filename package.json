@@ -37,7 +37,8 @@
     "gitbook": "*"
   },
   "dependencies": {
-    "language-map": "^1.1.1"
+    "language-map": "^1.1.1",
+    "handlebars":"^4.0.5"
   },
   "devDependencies": {
     "babel-cli": "^6.7.7",

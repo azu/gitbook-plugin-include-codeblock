@@ -22,13 +22,8 @@ const markerNameFormat = "(\\s*[a-zA-Z][\\w\\s]*)"; // Must contain a char.
 /*
  * format: [import:<markername>](path/to/file)
  */
-export function getMarkerName(label) {
-    // regex
-    const regstr = "\^(?:include|import):" + markerNameFormat + "[,\\s]?.*\$";
-    const reg = new RegExp(regstr);
-    const res = label.match(reg);
-
-    return res ? res[1] : '';
+export function getMarker(keyValObject) {
+    return keyValObject.marker;
 }
 
 
@@ -37,12 +32,11 @@ export function getMarkerName(label) {
  * check if the import filled has a markername.
  * @example:
  *      hasMarker(label)
- * @param {string} label
  * @returns {boolean}
  */
-export function hasMarker(label) {
-    const marker = getMarkerName(label);
-    return (marker !== '');
+export function hasMarker(keyValObject) {
+    const marker = getMarker(keyValObject);
+    return (marker !== undefined);
 }
 
 /* Parse the code from given markers
@@ -55,7 +49,7 @@ export function hasMarker(label) {
  * @param {string} markername
  * @returns {string}
  */
-export function markersSliceCode(code, markername) {
+export function markerSliceCode(code, markername) {
     if (markername === undefined) {
         return code;
     }
