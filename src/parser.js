@@ -5,6 +5,7 @@ const path = require("path");
 import {getLang} from "./language-detection";
 import {getMarkerName, hasMarker, markersSliceCode, removeMarkers} from "./marker";
 import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
+import {parseTitle} from "./title"
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 /**
  * split label to commands
@@ -38,6 +39,7 @@ export function containIncludeCommand(commands = []) {
 /**
  * generate code with options
  * @param {string} lang
+ * @param {bool,string} title
  * @param {string} filePath
  * @param {string} originalPath
  * @param {string} label
@@ -45,25 +47,36 @@ export function containIncludeCommand(commands = []) {
 export function embedCode({lang, filePath, originalPath, label}) {
     const code = fs.readFileSync(filePath, "utf-8");
     const fileName = path.basename(filePath);
+    const title = parseTitle(label,fileName);
     if (hasSliceRange(label)) {
         const [start, end] = getSliceRange(label);
         const content = sliceCode(code, start, end);
-        return generateEmbedCode(lang, fileName, originalPath, content);
+        return generateEmbedCode(lang, title, fileName, originalPath, content);
     } else if (hasMarker(label)) {
         const marker = getMarkerName(label);
         const content = removeMarkers(markersSliceCode(code, marker));
-        return generateEmbedCode(lang, fileName, originalPath, content);
+        return generateEmbedCode(lang, title, fileName, originalPath, content);
     } else {
-        return generateEmbedCode(lang, fileName, originalPath, code);
+        return generateEmbedCode(lang, title, fileName, originalPath, code);
     }
 }
 
-export function generateEmbedCode(lang, fileName, originalPath, content) {
-    return `> <a name="${fileName}" href="${originalPath}">${fileName}</a>
+export function generateEmbedCode(lang, title, fileName, originalPath, content) {
+    const [hasTitle,theTitle] = title;
+    var mdTitle ='';
+    var mdContent='';
+    if(hasTitle) {
+        mdTitle= `> <a name="${fileName}" href="${originalPath}">${theTitle}</a>`;
+        mdContent= mdContent+mdTitle;
+    }
+
+    mdContent= mdContent+`
 
 \`\`\` ${lang}
 ${content}
 \`\`\``
+
+    return mdContent;
 }
 
 export function parse(content, baseDir) {
