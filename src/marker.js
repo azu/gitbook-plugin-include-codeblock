@@ -71,12 +71,20 @@ export function markerSliceCode(code, markername) {
 }
 
 
-// Replace all regex occurence by sub in the string str,
+/** Replace all regex occurence by sub in the string str,
+ * @param {string} str
+ * @param {string} reg
+ * @param {string} sub
+ * @return {string}
+ */
 export function replaceAll(str, reg, sub) {
     return str.replace(new RegExp(reg, 'g'), sub);
 }
 
-// Function that remove all markers in the given code
+/** Function that remove all markers in the given code
+ * @param {string} code
+ * @return {string}
+ */
 export function removeMarkers(code) {
     // various language comment
     const balise = "\\[" + markerNameFormat + "\\]";

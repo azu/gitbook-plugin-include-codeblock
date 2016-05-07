@@ -50,6 +50,7 @@ export function containIncludeCommand(commands = []) {
  * @example
  *      [import,title:"<thetitle>",label:"<thelabel>"](path/to/file.ext)
  * @param {string} label
+ * @return {Array}
  */
 export function parseVariablesFromLabel(label) {
     var keyvals = {
@@ -75,10 +76,10 @@ export function parseVariablesFromLabel(label) {
 /**
  * generate code with options
  * @param {string} lang
- * @param {bool,string} title
  * @param {string} filePath
  * @param {string} originalPath
  * @param {string} label
+ * @return {string}
  */
 export function embedCode({lang, filePath, originalPath, label}) {
     const code = fs.readFileSync(filePath, "utf-8");
@@ -98,6 +99,15 @@ export function embedCode({lang, filePath, originalPath, label}) {
     return generateEmbedCode(keyValueObject, lang, fileName, originalPath, content);
 }
 
+/**
+ * generate code from options
+ * @param keyValueObject
+ * @param {string} lang
+ * @param {string} fileName
+ * @param {string} originalPath
+ * @param {string} content
+ * @return {string}
+ */
 export function generateEmbedCode(keyValueObject, lang, fileName, originalPath, content) {
     const count = hasTitle(keyValueObject) ? codeCounter():-1;
     // merge objects
@@ -137,6 +147,12 @@ anchor:{{title}}[Code {{count}}]
     return output;
 };
 
+/**
+ * generate code with options
+ * @param {string} content
+ * @param {string} baseDir
+ * @return {string}
+ */
 export function parse(content, baseDir) {
     const results = [];
     let res;
