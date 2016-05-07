@@ -1,7 +1,7 @@
 // LICENSE : MIT
 "use strict";
 const assert = require("power-assert");
-import {getMarkerName, hasMarker, markerSliceCode, removeMarkers} from "../src/marker";
+import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "../src/marker";
 
 //-------------------------------------------------------------------------------
 // Test C++ Code
@@ -62,46 +62,27 @@ const expectedMarker6 = `    int h;`;
 
 
 describe("marker", function () {
-//    describe("#hasMarker", function () {
-//        context("when have not marker", function () {
-//            it("should return false", function () {
-//                assert(!hasMarker("import:1-2, test.cpp"));
-//                assert(!hasMarker("import test.cpp"));
-//                assert(!hasMarker("import, test.cpp"));
-//                assert(!hasMarker("import, lang-typescript"));
-//            });
-//        });
-//        context("when have marker", function () {
-//            it("should return true", function () {
-//                assert(hasMarker("import:mark, test.cpp"));
-//                assert(hasMarker("import:mark ,test.cpp"));
-//                assert(hasMarker("import:mark2"));
-//            });
-//        });
-//    });
-//    describe("marker-label", function () {
-//        describe("#getMarkerName", function () {
-//            it("should return", function () {
-//                const command = "import:my marker , test.cpp";
-//                const result = getMarkerName(command);
-//                assert.equal(result, "my marker ");
-//            });
-//            context("when use the slice code", function () {
-//                it("should marker is empty", function () {
-//                    const command = "import:1-10, test.cpp";
-//                    const result = getMarkerName(command);
-//                    assert.equal(result, "");
-//                });
-//            });
-//            context("when : is luck", function () {
-//                it("should return empty", function () {
-//                    const command = "import my marker , test.cpp";
-//                    const result = getMarkerName(command);
-//                    assert.equal(result, "");
-//                });
-//            });
-//        });
-//    });
+    describe("#hasMarker", function () {
+        context("when have not marker", function () {
+            it("should return false", function () {
+                assert(!hasMarker(new Object({title:undefined,id:undefined,marker:undefined})));
+            });
+        });
+        context("when have marker", function () {
+            it("should return true", function () {
+                assert(hasMarker(new Object({title:undefined,id:undefined,marker:'test'})));
+            });
+        });
+    });
+    describe("marker-label", function () {
+        describe("#getMarkerName", function () {
+            it("should return", function () {
+                const command = "import:my marker , test.cpp";
+                const result = getMarker(new Object({title:undefined,id:undefined,marker:"my marker"}));
+                assert.equal(result, "my marker");
+            });
+        });
+    });
     describe("marker-slice", function () {
         context("#nested", function () {
             it("should slice code between [marker0] keeping inner markers", function () {
