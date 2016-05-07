@@ -17,3 +17,7 @@ export function getTitle(keyValObject) {
     return keyValObject.title;
 }
 
+export function hasTitle(keyValObject) {
+    const title = getTitle(keyValObject);
+    return (title !== undefined);
+}

@@ -7,8 +7,17 @@ const Handlebars = require("handlebars")
 import {getLang} from "./language-detection";
 import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "./marker";
 import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
-import {parseTitle} from "./title"
+import {hasTitle,parseTitle} from "./title"
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
+
+/**
+ * A counter to count how many code are imported.
+ */
+var codeCounter = (function() {
+    var count = 0;
+        return function() { return count++; };  // Return and increment
+})();
+
 /**
  * split label to commands
  * @param {string} label
@@ -90,17 +99,28 @@ export function embedCode({lang, filePath, originalPath, label}) {
 }
 
 export function generateEmbedCode(keyValueObject, lang, fileName, originalPath, content) {
+    const count = hasTitle(keyValueObject) ? codeCounter():-1;
     // merge objects
     // if keyValueObject has `lang` key, that is overwrited by `lang` of right.
-    const context = Object.assign({}, keyValueObject, { lang, fileName, originalPath, content });
+    const context = Object.assign({}, keyValueObject, { lang, fileName, originalPath, content, count });
 
     // if has the title, add anchor link
     const source =`\
 {{#if title}}
     {{#if id}}
+        {% if file.type=="asciidoc" %}
+> .link:{{originalPath}}[Code {{count}}: {{title}}]
+anchor:{{id}}[Code {{count}}]
+        {% else %}
 > <a id="{{id}}" href="{{originalPath}}">{{title}}</a>
+        {% endif %}
     {{else}}
+        {% if file.type=="asciidoc" %}
+> .link:{{originalPath}}[Code {{count}}: {{title}}]
+anchor:{{title}}[Code {{count}}]
+        {% else %}
 > <a id="{{title}}" href="{{originalPath}}">{{title}}</a>
+        {% endif %}
     {{/if}}
 {{else}}
 
