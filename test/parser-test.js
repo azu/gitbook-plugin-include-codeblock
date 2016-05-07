@@ -12,9 +12,18 @@ describe("parse", function () {
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, "[include,title:\"test.js\"](fixtures/test.js)");
-            var expected = '> <a id="test.js" href="fixtures/test.js">test.js</a>\n'
+//------------------------------------------------------------------------------
+            var expected =`\
+        {% if file.type=="asciidoc" %}
+> .link:fixtures/test.js[Code 0: test.js]
+anchor:test.js[Code 0]
+        {% else %}
+> <a id="test.js" href="fixtures/test.js">test.js</a>
+        {% endif %}
+`
                 + '\n'
                 + '``` javascript\nconsole.log(\"test\");\n```';
+//------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should prefer use lang-<aceMode>", function () {
@@ -23,9 +32,18 @@ describe("parse", function () {
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, "[include, title:\"test.ts\", lang-typescript](fixtures/test.ts)");
-            var expected = '> <a id="test.ts" href="fixtures/test.ts">test.ts</a>\n'
+//------------------------------------------------------------------------------
+            var expected =`\
+        {% if file.type=="asciidoc" %}
+> .link:fixtures/test.ts[Code 1: test.ts]
+anchor:test.ts[Code 1]
+        {% else %}
+> <a id="test.ts" href="fixtures/test.ts">test.ts</a>
+        {% endif %}
+`
                 + '\n'
                 + '``` typescript\nconsole.log(\"test\");\n```';
+//------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should translate elixir extensions", function () {
@@ -34,9 +52,18 @@ describe("parse", function () {
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, "[include, title:\"test.exs\"](fixtures/test.exs)");
-            var expected = '> <a id="test.exs" href="fixtures/test.exs">test.exs</a>\n'
+//------------------------------------------------------------------------------
+            var expected =`\
+        {% if file.type=="asciidoc" %}
+> .link:fixtures/test.exs[Code 2: test.exs]
+anchor:test.exs[Code 2]
+        {% else %}
+> <a id="test.exs" href="fixtures/test.exs">test.exs</a>
+        {% endif %}
+`
                 + '\n'
                 + '``` elixir\nIO.puts \"test\"\n```';
+//------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should translate Rust extensions", function () {
@@ -45,9 +72,18 @@ describe("parse", function () {
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, "[include, title:\"test.rs\"](fixtures/test.rs)");
-            var expected = '> <a id="test.rs" href="fixtures/test.rs">test.rs</a>\n'
+//------------------------------------------------------------------------------
+            var expected =`\
+        {% if file.type=="asciidoc" %}
+> .link:fixtures/test.rs[Code 3: test.rs]
+anchor:test.rs[Code 3]
+        {% else %}
+> <a id="test.rs" href="fixtures/test.rs">test.rs</a>
+        {% endif %}
+`
                 + '\n'
                 + '``` rust\nextern crate num;\n```';
+//------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
     });
@@ -58,13 +94,22 @@ describe("parse", function () {
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, multiLineContent);
-            var expected = '> <a id="line.js" href="fixtures/line.js">line.js</a>\n'
+//------------------------------------------------------------------------------
+            var expected =`\
+        {% if file.type=="asciidoc" %}
+> .link:fixtures/line.js[Code 4: line.js]
+anchor:line.js[Code 4]
+        {% else %}
+> <a id="line.js" href="fixtures/line.js">line.js</a>
+        {% endif %}
+`
                 + '\n'
                 + '``` javascript\n'
                 + 'console.log(\"this is line 4\");\n'
                 + 'console.log(\"this is line 5\");\n'
                 + 'console.log(\"this is line 6\");\n'
                 + '```';
+//------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should return sliced `start`- text", function () {
@@ -73,12 +118,21 @@ describe("parse", function () {
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, multiLineContent);
-            var expected = '> <a id="line.js" href="fixtures/line.js">line.js</a>\n'
+//------------------------------------------------------------------------------
+            var expected =`\
+        {% if file.type=="asciidoc" %}
+> .link:fixtures/line.js[Code 5: line.js]
+anchor:line.js[Code 5]
+        {% else %}
+> <a id="line.js" href="fixtures/line.js">line.js</a>
+        {% endif %}
+`
                 + '\n'
                 + '``` javascript\n'
                 + 'console.log(\"this is line 9\");\n'
                 + 'console.log(\"this is line 10\");\n'
                 + '```';
+//------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should return sliced -`end` text", function () {
@@ -87,12 +141,21 @@ describe("parse", function () {
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, multiLineContent);
-            var expected = '> <a id="line.js" href="fixtures/line.js">line.js</a>\n'
+//------------------------------------------------------------------------------
+            var expected =`\
+        {% if file.type=="asciidoc" %}
+> .link:fixtures/line.js[Code 6: line.js]
+anchor:line.js[Code 6]
+        {% else %}
+> <a id="line.js" href="fixtures/line.js">line.js</a>
+        {% endif %}
+`
                 + '\n'
                 + '``` javascript\n'
                 + 'console.log(\"this is line 1\");\n'
                 + 'console.log(\"this is line 2\");\n'
                 + '```';
+//------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
     });
@@ -106,11 +169,20 @@ describe("parse", function () {
             assert(results.length > 0);
             const result = results[0];
             assert.equal(result.target, multiLineContent);
-            const expected = '> <a id="marker.cpp" href="fixtures/marker.cpp">marker.cpp</a>\n'
+//------------------------------------------------------------------------------
+            var expected =`\
+        {% if file.type=="asciidoc" %}
+> .link:fixtures/marker.cpp[Code 7: marker.cpp]
+anchor:marker.cpp[Code 7]
+        {% else %}
+> <a id="marker.cpp" href="fixtures/marker.cpp">marker.cpp</a>
+        {% endif %}
+`
                 + '\n'
                 + '``` c_cpp\n'
                 + expectedMarker01 + "\n"
                 + '```';
+//------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
     });
@@ -163,9 +235,19 @@ describe("parse", function () {
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, "[include, title:'This is a title'](fixtures/test.js)");
-            var expected = '> <a id="This is a title" href="fixtures/test.js">This is a title</a>\n'
-                + '\n'
-                + '``` javascript\nconsole.log("test");\n```';
+//------------------------------------------------------------------------------
+            var expected =`\
+        {% if file.type=="asciidoc" %}
+> .link:fixtures/test.js[Code 8: This is a title]
+anchor:This is a title[Code 8]
+        {% else %}
+> <a id="This is a title" href="fixtures/test.js">This is a title</a>
+        {% endif %}
+
+\`\`\` javascript
+console.log("test");
+\`\`\``;
+//------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
     });
