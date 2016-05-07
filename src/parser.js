@@ -122,14 +122,14 @@ export function generateEmbedCode(keyValueObject, lang, fileName, originalPath, 
 > .link:{{originalPath}}[Code {{count}}: {{title}}]
 anchor:{{id}}[Code {{count}}]
         {% else %}
-> <a id="{{id}}" href="{{originalPath}}">{{title}}</a>
+> <a id="{{id}}" href="{{originalPath}}">Code {{count}}: {{title}}</a>
         {% endif %}
     {{else}}
         {% if file.type=="asciidoc" %}
 > .link:{{originalPath}}[Code {{count}}: {{title}}]
 anchor:{{title}}[Code {{count}}]
         {% else %}
-> <a id="{{title}}" href="{{originalPath}}">{{title}}</a>
+> <a id="{{title}}" href="{{originalPath}}">Code {{count}}: {{title}}</a>
         {% endif %}
     {{/if}}
 {{else}}

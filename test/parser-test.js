@@ -18,7 +18,7 @@ describe("parse", function () {
 > .link:fixtures/test.js[Code 0: test.js]
 anchor:test.js[Code 0]
         {% else %}
-> <a id="test.js" href="fixtures/test.js">test.js</a>
+> <a id="test.js" href="fixtures/test.js">Code 0: test.js</a>
         {% endif %}
 `
                 + '\n'
@@ -38,7 +38,7 @@ anchor:test.js[Code 0]
 > .link:fixtures/test.ts[Code 1: test.ts]
 anchor:test.ts[Code 1]
         {% else %}
-> <a id="test.ts" href="fixtures/test.ts">test.ts</a>
+> <a id="test.ts" href="fixtures/test.ts">Code 1: test.ts</a>
         {% endif %}
 `
                 + '\n'
@@ -58,7 +58,7 @@ anchor:test.ts[Code 1]
 > .link:fixtures/test.exs[Code 2: test.exs]
 anchor:test.exs[Code 2]
         {% else %}
-> <a id="test.exs" href="fixtures/test.exs">test.exs</a>
+> <a id="test.exs" href="fixtures/test.exs">Code 2: test.exs</a>
         {% endif %}
 `
                 + '\n'
@@ -78,7 +78,7 @@ anchor:test.exs[Code 2]
 > .link:fixtures/test.rs[Code 3: test.rs]
 anchor:test.rs[Code 3]
         {% else %}
-> <a id="test.rs" href="fixtures/test.rs">test.rs</a>
+> <a id="test.rs" href="fixtures/test.rs">Code 3: test.rs</a>
         {% endif %}
 `
                 + '\n'
@@ -100,7 +100,7 @@ anchor:test.rs[Code 3]
 > .link:fixtures/line.js[Code 4: line.js]
 anchor:line.js[Code 4]
         {% else %}
-> <a id="line.js" href="fixtures/line.js">line.js</a>
+> <a id="line.js" href="fixtures/line.js">Code 4: line.js</a>
         {% endif %}
 `
                 + '\n'
@@ -124,7 +124,7 @@ anchor:line.js[Code 4]
 > .link:fixtures/line.js[Code 5: line.js]
 anchor:line.js[Code 5]
         {% else %}
-> <a id="line.js" href="fixtures/line.js">line.js</a>
+> <a id="line.js" href="fixtures/line.js">Code 5: line.js</a>
         {% endif %}
 `
                 + '\n'
@@ -147,7 +147,7 @@ anchor:line.js[Code 5]
 > .link:fixtures/line.js[Code 6: line.js]
 anchor:line.js[Code 6]
         {% else %}
-> <a id="line.js" href="fixtures/line.js">line.js</a>
+> <a id="line.js" href="fixtures/line.js">Code 6: line.js</a>
         {% endif %}
 `
                 + '\n'
@@ -175,7 +175,7 @@ anchor:line.js[Code 6]
 > .link:fixtures/marker.cpp[Code 7: marker.cpp]
 anchor:marker.cpp[Code 7]
         {% else %}
-> <a id="marker.cpp" href="fixtures/marker.cpp">marker.cpp</a>
+> <a id="marker.cpp" href="fixtures/marker.cpp">Code 7: marker.cpp</a>
         {% endif %}
 `
                 + '\n'
@@ -241,7 +241,7 @@ anchor:marker.cpp[Code 7]
 > .link:fixtures/test.js[Code 8: This is a title]
 anchor:This is a title[Code 8]
         {% else %}
-> <a id="This is a title" href="fixtures/test.js">This is a title</a>
+> <a id="This is a title" href="fixtures/test.js">Code 8: This is a title</a>
         {% endif %}
 
 \`\`\` javascript
