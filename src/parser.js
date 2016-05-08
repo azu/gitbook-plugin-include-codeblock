@@ -58,9 +58,9 @@ export function parseVariablesFromLabel(label) {
         "id":undefined,
         "marker":undefined
     };
-    for(var key in keyvals) {
+    Object.keys(keyvals).forEach(key => {
         var keyReg=key;
-        if(key=="marker") {
+        if(key==="marker") {
             keyReg="import|include";
         }
         const regStr = "\^.*,?\\s*("+keyReg+")\\s*:\\s*[\"']([^'\"]*)[\"'],?.*\$";
@@ -69,7 +69,7 @@ export function parseVariablesFromLabel(label) {
         if(res) {
             keyvals[key]=res[2];
         }
-    }
+    });
     return keyvals;
 }
 
@@ -101,7 +101,7 @@ export function embedCode({lang, filePath, originalPath, label}) {
 
 /**
  * generate code from options
- * @param keyValueObject
+ * @param {Object} keyValueObject
  * @param {string} lang
  * @param {string} fileName
  * @param {string} originalPath
@@ -114,7 +114,8 @@ export function generateEmbedCode(keyValueObject, lang, fileName, originalPath, 
     // if keyValueObject has `lang` key, that is overwrited by `lang` of right.
     const context = Object.assign({}, keyValueObject, { lang, fileName, originalPath, content, count });
 
-    // if has the title, add anchor link
+    // if has the title, display the title with an anchor link.
+    // Mix of handlerbars and markdown templates to handle file types.
     const source =`\
 {{#if title}}
     {{#if id}}
@@ -143,7 +144,6 @@ anchor:{{title}}[Code {{count}}]
     const template = Handlebars.compile(source);
     // compile with data
     const output = template(context);
-    // => markdown strings
     return output;
 };
 

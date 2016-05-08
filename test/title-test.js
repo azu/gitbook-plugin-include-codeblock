@@ -1,7 +1,6 @@
 // LICENSE : MIT
 "use strict";
 const assert = require("power-assert");
-//import {getTitle,hasTitle,hasTitleCustom} from "../src/title";
 import {getTitle} from "../src/title";
 
 describe("title", function () {

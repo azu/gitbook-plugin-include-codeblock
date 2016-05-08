@@ -21,6 +21,8 @@ const markerNameFormat = "(\\s*[a-zA-Z][\\w\\s]*)"; // Must contain a char.
 
 /*
  * format: [import:<markername>](path/to/file)
+ * @param {Object} keyValObject
+ * @return {string}
  */
 export function getMarker(keyValObject) {
     return keyValObject.marker;
@@ -32,6 +34,7 @@ export function getMarker(keyValObject) {
  * check if the import filled has a markername.
  * @example:
  *      hasMarker(label)
+ * @param {Object} keyValObject
  * @returns {boolean}
  */
 export function hasMarker(keyValObject) {

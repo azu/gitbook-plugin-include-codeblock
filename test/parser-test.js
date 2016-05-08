@@ -11,7 +11,7 @@ describe("parse", function () {
             var results = parse(content, __dirname);
             assert(results.length > 0);
             var result = results[0];
-            assert.equal(result.target, "[include,title:\"test.js\"](fixtures/test.js)");
+            assert.equal(result.target, '[include,title:"test.js"](fixtures/test.js)');
 //------------------------------------------------------------------------------
             var expected =`\
         {% if file.type=="asciidoc" %}
@@ -22,7 +22,7 @@ anchor:test.js[Code 0]
         {% endif %}
 `
                 + '\n'
-                + '``` javascript\nconsole.log(\"test\");\n```';
+                + '``` javascript\nconsole.log("test");\n```';
 //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
@@ -31,7 +31,7 @@ anchor:test.js[Code 0]
             var results = parse(exs_content, __dirname);
             assert(results.length > 0);
             var result = results[0];
-            assert.equal(result.target, "[include, title:\"test.ts\", lang-typescript](fixtures/test.ts)");
+            assert.equal(result.target, '[include, title:"test.ts", lang-typescript](fixtures/test.ts)');
 //------------------------------------------------------------------------------
             var expected =`\
         {% if file.type=="asciidoc" %}
@@ -42,7 +42,7 @@ anchor:test.ts[Code 1]
         {% endif %}
 `
                 + '\n'
-                + '``` typescript\nconsole.log(\"test\");\n```';
+                + '``` typescript\nconsole.log("test");\n```';
 //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
@@ -51,7 +51,7 @@ anchor:test.ts[Code 1]
             var results = parse(exs_content, __dirname);
             assert(results.length > 0);
             var result = results[0];
-            assert.equal(result.target, "[include, title:\"test.exs\"](fixtures/test.exs)");
+            assert.equal(result.target, '[include, title:"test.exs"](fixtures/test.exs)');
 //------------------------------------------------------------------------------
             var expected =`\
         {% if file.type=="asciidoc" %}
@@ -62,7 +62,7 @@ anchor:test.exs[Code 2]
         {% endif %}
 `
                 + '\n'
-                + '``` elixir\nIO.puts \"test\"\n```';
+                + '``` elixir\nIO.puts "test"\n```';
 //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
@@ -71,7 +71,7 @@ anchor:test.exs[Code 2]
             var results = parse(exs_content, __dirname);
             assert(results.length > 0);
             var result = results[0];
-            assert.equal(result.target, "[include, title:\"test.rs\"](fixtures/test.rs)");
+            assert.equal(result.target, '[include, title:"test.rs"](fixtures/test.rs)');
 //------------------------------------------------------------------------------
             var expected =`\
         {% if file.type=="asciidoc" %}
@@ -89,7 +89,7 @@ anchor:test.rs[Code 3]
     });
     context("sliced text", function () {
         it("should return sliced object for replace", function () {
-            var multiLineContent = "[include:4-6, title:\"line.js\"](fixtures/line.js)";
+            var multiLineContent = '[include:4-6, title:"line.js"](fixtures/line.js)';
             var results = parse(multiLineContent, __dirname);
             assert(results.length > 0);
             var result = results[0];
@@ -105,15 +105,15 @@ anchor:line.js[Code 4]
 `
                 + '\n'
                 + '``` javascript\n'
-                + 'console.log(\"this is line 4\");\n'
-                + 'console.log(\"this is line 5\");\n'
-                + 'console.log(\"this is line 6\");\n'
+                + 'console.log("this is line 4");\n'
+                + 'console.log("this is line 5");\n'
+                + 'console.log("this is line 6");\n'
                 + '```';
 //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should return sliced `start`- text", function () {
-            var multiLineContent = "[include:9-, title:\"line.js\", line.js](fixtures/line.js)";
+            var multiLineContent = '[include:9-, title:"line.js", line.js](fixtures/line.js)';
             var results = parse(multiLineContent, __dirname);
             assert(results.length > 0);
             var result = results[0];
@@ -129,14 +129,14 @@ anchor:line.js[Code 5]
 `
                 + '\n'
                 + '``` javascript\n'
-                + 'console.log(\"this is line 9\");\n'
-                + 'console.log(\"this is line 10\");\n'
+                + 'console.log("this is line 9");\n'
+                + 'console.log("this is line 10");\n'
                 + '```';
 //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should return sliced -`end` text", function () {
-            var multiLineContent = "[include:-2, title:\"line.js\", line.js](fixtures/line.js)";
+            var multiLineContent = '[include:-2, title:"line.js", line.js](fixtures/line.js)';
             var results = parse(multiLineContent, __dirname);
             assert(results.length > 0);
             var result = results[0];
@@ -152,8 +152,8 @@ anchor:line.js[Code 6]
 `
                 + '\n'
                 + '``` javascript\n'
-                + 'console.log(\"this is line 1\");\n'
-                + 'console.log(\"this is line 2\");\n'
+                + 'console.log("this is line 1");\n'
+                + 'console.log("this is line 2");\n'
                 + '```';
 //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
@@ -161,7 +161,7 @@ anchor:line.js[Code 6]
     });
     context("marker text", function () {
         it("should return sliced object for replace", function () {
-            const multiLineContent = "[include:\"marker0\", title:\"marker.cpp\", marker.cpp](fixtures/marker.cpp)";
+            const multiLineContent = '[include:"marker0", title:"marker.cpp", marker.cpp](fixtures/marker.cpp)';
             const expectedMarker01 = `    int a;
     int b;
     int c;`;

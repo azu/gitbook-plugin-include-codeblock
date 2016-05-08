@@ -8,15 +8,15 @@
 /* Get the specified <the title>
  * @example:
  *     getTitle(keyValObject)
- * @param keyValObject
- * @return {boolean,string}
+ * @param {Object} keyValObject
+ * @return {string}
  */
 export function getTitle(keyValObject) {
     return keyValObject.title;
 }
 
 /* Check if a title is specified in the option
- * @param keyValObject
+ * @param {Object} keyValObject
  * @return {boolean}
  */
 export function hasTitle(keyValObject) {
