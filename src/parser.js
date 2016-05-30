@@ -117,36 +117,12 @@ export function generateEmbedCode(keyValueObject, lang, fileName, originalPath, 
 
     // if has the title, display the title with an anchor link.
     // Mix of handlerbars and markdown templates to handle file types.
-    const source = `\
-{{#if title}}
-    {{#if id}}
-        {% if file.type=="asciidoc" %}
-> .link:{{originalPath}}[Code {{count}}: {{title}}]
-anchor:{{id}}[Code {{count}}]
-        {% else %}
-> <a id="{{id}}" href="{{originalPath}}">Code {{count}}: {{title}}</a>
-        {% endif %}
-    {{else}}
-        {% if file.type=="asciidoc" %}
-> .link:{{originalPath}}[Code {{count}}: {{title}}]
-anchor:{{title}}[Code {{count}}]
-        {% else %}
-> <a id="{{title}}" href="{{originalPath}}">Code {{count}}: {{title}}</a>
-        {% endif %}
-    {{/if}}
-{{else}}
-
-{{/if}}
-
-\`\`\` {{lang}}
-{{{content}}}
-\`\`\``;
+    const source = fs.readFileSync(path.join(__dirname, "..", "template", "default-template.hbs"), "utf-8");
 
     const template = Handlebars.compile(source);
     // compile with data
-    const output = template(context);
-    return output;
-};
+    return template(context);
+}
 
 /**
  * generate code with options
