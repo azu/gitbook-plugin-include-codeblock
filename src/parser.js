@@ -51,7 +51,7 @@ export function containIncludeCommand(commands = []) {
  * @example
  *      [import,title:"<thetitle>",label:"<thelabel>"](path/to/file.ext)
  * @param {string} label
- * @return {Array}
+ * @return {Object}
  */
 export function parseVariablesFromLabel(label) {
     var keyvals = {
@@ -128,7 +128,7 @@ export function generateEmbedCode(keyValueObject, lang, fileName, originalPath, 
  * generate code with options
  * @param {string} content
  * @param {string} baseDir
- * @return {string}
+ * @return {Array}
  */
 export function parse(content, baseDir) {
     const results = [];
