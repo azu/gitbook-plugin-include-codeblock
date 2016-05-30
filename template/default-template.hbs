@@ -1,21 +1,23 @@
 {{#if title}}
-    {{#if id}}
-        {% if file.type=="asciidoc" %}
-> .link:{{originalPath}}[Code {{count}}: {{title}}]
-        anchor:{{id}}[Code {{count}}]
-        {% else %}
-> <a id="{{id}}" href="{{originalPath}}">Code {{count}}: {{title}}</a>
-        {% endif %}
-    {{else}}
-        {% if file.type=="asciidoc" %}
-> .link:{{originalPath}}[Code {{count}}: {{title}}]
-anchor:{{title}}[Code {{count}}]
-        {% else %}
-> <a id="{{title}}" href="{{originalPath}}">Code {{count}}: {{title}}</a>
-        {% endif %}
-    {{/if}}
+{{#if id}}
+{% if file.type=="asciidoc" %}
+> [[{{id}}]]link:{{originalPath}}[{{title}}]
+{% else %}
+> <a id="{{id}}" href="{{originalPath}}">{{title}}</a>
+{% endif %}
 {{else}}
-
+{% if file.type=="asciidoc" %}
+> [[{{title}}]]link:{{originalPath}}[{{title}}]
+{% else %}
+> <a id="{{title}}" href="{{originalPath}}">{{title}}</a>
+{% endif %}
+{{/if}}
+{{else}}
+{% if file.type=="asciidoc" %}
+> [[{{fileName}}]]link:{{originalPath}}[{{fileName}}]
+{% else %}
+> <a id="{{fileName}}" href="{{originalPath}}">{{fileName}}</a>
+{% endif %}
 {{/if}}
 
 ``` {{lang}}
