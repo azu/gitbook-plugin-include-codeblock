@@ -65,12 +65,12 @@ describe("marker", function () {
     describe("#hasMarker", function () {
         context("when have not marker", function () {
             it("should return false", function () {
-                assert(!hasMarker({title:undefined,id:undefined,marker:undefined}));
+                assert(!hasMarker({title: undefined, id: undefined, marker: undefined}));
             });
         });
         context("when have marker", function () {
             it("should return true", function () {
-                assert(hasMarker({title:undefined,id:undefined,marker:'test'}));
+                assert(hasMarker({title: undefined, id: undefined, marker: 'test'}));
             });
         });
     });
@@ -78,7 +78,7 @@ describe("marker", function () {
         describe("#getMarkerName", function () {
             it("should return", function () {
                 const command = "import:my marker , test.cpp";
-                const result = getMarker({title:undefined,id:undefined,marker:"my marker"});
+                const result = getMarker({title: undefined, id: undefined, marker: "my marker"});
                 assert.equal(result, "my marker");
             });
         });

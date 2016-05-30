@@ -12,8 +12,8 @@ describe("parse", function () {
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, '[include,title:"test.js"](fixtures/test.js)');
-//------------------------------------------------------------------------------
-            var expected =`\
+            //------------------------------------------------------------------------------
+            var expected = `\
         {% if file.type=="asciidoc" %}
 > .link:fixtures/test.js[Code 0: test.js]
 anchor:test.js[Code 0]
@@ -23,7 +23,7 @@ anchor:test.js[Code 0]
 `
                 + '\n'
                 + '``` javascript\nconsole.log("test");\n```';
-//------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should prefer use lang-<aceMode>", function () {
@@ -32,8 +32,8 @@ anchor:test.js[Code 0]
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, '[include, title:"test.ts", lang-typescript](fixtures/test.ts)');
-//------------------------------------------------------------------------------
-            var expected =`\
+            //------------------------------------------------------------------------------
+            var expected = `\
         {% if file.type=="asciidoc" %}
 > .link:fixtures/test.ts[Code 1: test.ts]
 anchor:test.ts[Code 1]
@@ -43,7 +43,7 @@ anchor:test.ts[Code 1]
 `
                 + '\n'
                 + '``` typescript\nconsole.log("test");\n```';
-//------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should translate elixir extensions", function () {
@@ -52,8 +52,8 @@ anchor:test.ts[Code 1]
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, '[include, title:"test.exs"](fixtures/test.exs)');
-//------------------------------------------------------------------------------
-            var expected =`\
+            //------------------------------------------------------------------------------
+            var expected = `\
         {% if file.type=="asciidoc" %}
 > .link:fixtures/test.exs[Code 2: test.exs]
 anchor:test.exs[Code 2]
@@ -63,7 +63,7 @@ anchor:test.exs[Code 2]
 `
                 + '\n'
                 + '``` elixir\nIO.puts "test"\n```';
-//------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should translate Rust extensions", function () {
@@ -72,8 +72,8 @@ anchor:test.exs[Code 2]
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, '[include, title:"test.rs"](fixtures/test.rs)');
-//------------------------------------------------------------------------------
-            var expected =`\
+            //------------------------------------------------------------------------------
+            var expected = `\
         {% if file.type=="asciidoc" %}
 > .link:fixtures/test.rs[Code 3: test.rs]
 anchor:test.rs[Code 3]
@@ -83,7 +83,7 @@ anchor:test.rs[Code 3]
 `
                 + '\n'
                 + '``` rust\nextern crate num;\n```';
-//------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
     });
@@ -94,8 +94,8 @@ anchor:test.rs[Code 3]
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, multiLineContent);
-//------------------------------------------------------------------------------
-            var expected =`\
+            //------------------------------------------------------------------------------
+            var expected = `\
         {% if file.type=="asciidoc" %}
 > .link:fixtures/line.js[Code 4: line.js]
 anchor:line.js[Code 4]
@@ -109,7 +109,7 @@ anchor:line.js[Code 4]
                 + 'console.log("this is line 5");\n'
                 + 'console.log("this is line 6");\n'
                 + '```';
-//------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should return sliced `start`- text", function () {
@@ -118,8 +118,8 @@ anchor:line.js[Code 4]
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, multiLineContent);
-//------------------------------------------------------------------------------
-            var expected =`\
+            //------------------------------------------------------------------------------
+            var expected = `\
         {% if file.type=="asciidoc" %}
 > .link:fixtures/line.js[Code 5: line.js]
 anchor:line.js[Code 5]
@@ -132,7 +132,7 @@ anchor:line.js[Code 5]
                 + 'console.log("this is line 9");\n'
                 + 'console.log("this is line 10");\n'
                 + '```';
-//------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
         it("should return sliced -`end` text", function () {
@@ -141,8 +141,8 @@ anchor:line.js[Code 5]
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, multiLineContent);
-//------------------------------------------------------------------------------
-            var expected =`\
+            //------------------------------------------------------------------------------
+            var expected = `\
         {% if file.type=="asciidoc" %}
 > .link:fixtures/line.js[Code 6: line.js]
 anchor:line.js[Code 6]
@@ -155,7 +155,7 @@ anchor:line.js[Code 6]
                 + 'console.log("this is line 1");\n'
                 + 'console.log("this is line 2");\n'
                 + '```';
-//------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
     });
@@ -169,8 +169,8 @@ anchor:line.js[Code 6]
             assert(results.length > 0);
             const result = results[0];
             assert.equal(result.target, multiLineContent);
-//------------------------------------------------------------------------------
-            var expected =`\
+            //------------------------------------------------------------------------------
+            var expected = `\
         {% if file.type=="asciidoc" %}
 > .link:fixtures/marker.cpp[Code 7: marker.cpp]
 anchor:marker.cpp[Code 7]
@@ -182,7 +182,7 @@ anchor:marker.cpp[Code 7]
                 + '``` c_cpp\n'
                 + expectedMarker01 + "\n"
                 + '```';
-//------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
     });
@@ -235,8 +235,8 @@ anchor:marker.cpp[Code 7]
             assert(results.length > 0);
             var result = results[0];
             assert.equal(result.target, "[include, title:'This is a title'](fixtures/test.js)");
-//------------------------------------------------------------------------------
-            var expected =`\
+            //------------------------------------------------------------------------------
+            var expected = `\
         {% if file.type=="asciidoc" %}
 > .link:fixtures/test.js[Code 8: This is a title]
 anchor:This is a title[Code 8]
@@ -247,7 +247,7 @@ anchor:This is a title[Code 8]
 \`\`\` javascript
 console.log("test");
 \`\`\``;
-//------------------------------------------------------------------------------
+            //------------------------------------------------------------------------------
             assert.equal(result.replaced, expected);
         });
     });

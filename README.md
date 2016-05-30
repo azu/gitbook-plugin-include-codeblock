@@ -46,11 +46,11 @@ Result
 
 ### Title
 
-A title can be added using `title` or `title:<the title>`. In the first case,
-the filename will be displayed.
+A title can be added using `title:<the title>`.
+In the first case, the filename will be displayed.
 
 ```
-[include,title](fixtures/test.js)
+[include, title:"test.js"](fixtures/test.js)
 ```
 
 Result

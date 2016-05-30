@@ -2,20 +2,21 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
-// https://www.npmjs.com/package/handlebars
-const Handlebars = require("handlebars")
+const Handlebars = require("handlebars");
 import {getLang} from "./language-detection";
 import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "./marker";
 import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
-import {hasTitle,parseTitle} from "./title"
+import {hasTitle, parseTitle} from "./title"
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 
 /**
  * A counter to count how many code are imported.
  */
-var codeCounter = (function() {
+var codeCounter = (function () {
     var count = 0;
-        return function() { return count++; };  // Return and increment
+    return function () {
+        return count++;
+    };  // Return and increment
 })();
 
 /**
@@ -54,20 +55,20 @@ export function containIncludeCommand(commands = []) {
  */
 export function parseVariablesFromLabel(label) {
     var keyvals = {
-        "title":undefined,
-        "id":undefined,
-        "marker":undefined
+        "title": undefined,
+        "id": undefined,
+        "marker": undefined
     };
     Object.keys(keyvals).forEach(key => {
-        var keyReg=key;
-        if(key==="marker") {
-            keyReg="import|include";
+        var keyReg = key;
+        if (key === "marker") {
+            keyReg = "import|include";
         }
-        const regStr = "\^.*,?\\s*("+keyReg+")\\s*:\\s*[\"']([^'\"]*)[\"'],?.*\$";
+        const regStr = "\^.*,?\\s*(" + keyReg + ")\\s*:\\s*[\"']([^'\"]*)[\"'],?.*\$";
         const reg = new RegExp(regStr);
         const res = label.match(reg);
-        if(res) {
-            keyvals[key]=res[2];
+        if (res) {
+            keyvals[key] = res[2];
         }
     });
     return keyvals;
@@ -109,14 +110,14 @@ export function embedCode({lang, filePath, originalPath, label}) {
  * @return {string}
  */
 export function generateEmbedCode(keyValueObject, lang, fileName, originalPath, content) {
-    const count = hasTitle(keyValueObject) ? codeCounter():-1;
+    const count = hasTitle(keyValueObject) ? codeCounter() : -1;
     // merge objects
     // if keyValueObject has `lang` key, that is overwrited by `lang` of right.
-    const context = Object.assign({}, keyValueObject, { lang, fileName, originalPath, content, count });
+    const context = Object.assign({}, keyValueObject, {lang, fileName, originalPath, content, count});
 
     // if has the title, display the title with an anchor link.
     // Mix of handlerbars and markdown templates to handle file types.
-    const source =`\
+    const source = `\
 {{#if title}}
     {{#if id}}
         {% if file.type=="asciidoc" %}
