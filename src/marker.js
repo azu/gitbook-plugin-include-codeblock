@@ -21,14 +21,11 @@ const markerNameFormat = "(\\s*[a-zA-Z][\\w\\s]*)"; // Must contain a char.
 
 /*
  * format: [import:<markername>](path/to/file)
+ * @param {Object} keyValObject
+ * @return {string}
  */
-export function getMarkerName(label) {
-    // regex
-    const regstr = "\^(?:include|import):" + markerNameFormat + "[,\\s]?.*\$";
-    const reg = new RegExp(regstr);
-    const res = label.match(reg);
-
-    return res ? res[1] : '';
+export function getMarker(keyValObject) {
+    return keyValObject.marker;
 }
 
 
@@ -37,12 +34,12 @@ export function getMarkerName(label) {
  * check if the import filled has a markername.
  * @example:
  *      hasMarker(label)
- * @param {string} label
+ * @param {Object} keyValObject
  * @returns {boolean}
  */
-export function hasMarker(label) {
-    const marker = getMarkerName(label);
-    return (marker !== '');
+export function hasMarker(keyValObject) {
+    const marker = getMarker(keyValObject);
+    return (marker !== undefined);
 }
 
 /* Parse the code from given markers
@@ -55,7 +52,7 @@ export function hasMarker(label) {
  * @param {string} markername
  * @returns {string}
  */
-export function markersSliceCode(code, markername) {
+export function markerSliceCode(code, markername) {
     if (markername === undefined) {
         return code;
     }
@@ -77,12 +74,20 @@ export function markersSliceCode(code, markername) {
 }
 
 
-// Replace all regex occurence by sub in the string str,
+/** Replace all regex occurence by sub in the string str,
+ * @param {string} str
+ * @param {string} reg
+ * @param {string} sub
+ * @return {string}
+ */
 export function replaceAll(str, reg, sub) {
     return str.replace(new RegExp(reg, 'g'), sub);
 }
 
-// Function that remove all markers in the given code
+/** Function that remove all markers in the given code
+ * @param {string} code
+ * @return {string}
+ */
 export function removeMarkers(code) {
     // various language comment
     const balise = "\\[" + markerNameFormat + "\\]";

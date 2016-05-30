@@ -38,11 +38,37 @@ or
 ```markdown
 [import](fixtures/test.js)
 ```
+Result
+
+    ``` js
+    console.log("test");
+    ```
+
+### Title
+
+A title can be added using `title` or `title:<the title>`. In the first case,
+the filename will be displayed.
+
+```
+[include,title](fixtures/test.js)
+```
 
 Result
 
     > <a name="test.js" href="fixtures/test.js">test.js</a>
-    
+
+    ``` js
+    console.log("test");
+    ```
+
+```
+[include,title:"Example of title"](fixtures/test.js)
+```
+
+Result
+
+    > <a name="test.js" href="fixtures/test.js">Example of title</a>
+
     ``` js
     console.log("test");
     ```
