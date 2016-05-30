@@ -44,7 +44,8 @@ Result
     console.log("test");
     ```
 
-### Title
+<!--
+### Title(from v)
 
 A title can be added using `title:<the title>`.
 In the first case, the filename will be displayed.
@@ -72,6 +73,7 @@ Result
     ``` js
     console.log("test");
     ```
+-->
 
 ### Hardcoded class
 
