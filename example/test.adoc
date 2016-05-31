@@ -1,4 +1,4 @@
-# Example 
+# Example
 
 ## Usage
 
@@ -23,6 +23,13 @@
 
 [import:marker0, lang-typescript](src/marker.ts)
 
-### Custom Title
 
-[import:marker0, title:"Custom Title", lang-typescript](src/marker.ts)
+{% if file.type=="asciidoc" %}
+> link:test.js[test.js]
+{% else %}
+> <a id="test.js" href="test.js">test.js</a>
+{% endif %}
+
+``` javascript
+console.log("test");
+```

@@ -1,0 +1,1 @@
+[import:"marker1"](test.ts)

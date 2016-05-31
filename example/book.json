@@ -1,6 +1,6 @@
 {
-  "gitbook": ">=2.5.2",
-  "title": "gitbook-plugin-include-codeblok example",
+  "gitbook": "3.x.x",
+  "title": "gitbook-plugin-include-codeblock example",
   "plugins": [
     "include-codeblock"
   ]
