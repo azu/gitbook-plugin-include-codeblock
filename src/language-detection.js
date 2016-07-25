@@ -19,6 +19,10 @@ export function lookupLanguageByAceMode(commands) {
                 resultAceMode = aceMode;
             }
         });
+        // not found the `matchLang` in AceMode
+        if (resultAceMode === undefined) {
+            resultAceMode = matchLang;
+        }
     });
     return resultAceMode;
 }
