@@ -20,6 +20,28 @@ and
 gitbook install
 ```
 
+## Options
+
+You can put your template into `book.js`(`book.json`) by `template` option.
+
+```js
+const fs = require("fs");
+module.exports = {
+    "gitbook": "3.x.x",
+    "title": "gitbook-plugin-include-codeblock example",
+    "plugins": [
+        "include-codeblock"
+    ],
+    "pluginsConfig": {
+        "include-codeblock": {
+            "template": fs.readFileSync(__dirname + "/user-template.hbs", "utf-8")
+        }
+    }
+};
+```
+
+See [template/](template/) and [example/](example/) for details.
+
 ## Usage
 
 **fixtures/test.js**

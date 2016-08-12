@@ -12,9 +12,9 @@ const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 /**
  * A counter to count how many code are imported.
  */
-var codeCounter = (function () {
+var codeCounter = (function() {
     var count = 0;
-    return function () {
+    return function() {
         return count++;
     };  // Return and increment
 })();
@@ -57,6 +57,8 @@ export function parseVariablesFromLabel(label) {
     var keyvals = {
         "title": undefined,
         "id": undefined,
+        "class": undefined,
+        "name": undefined,
         "marker": undefined
     };
     Object.keys(keyvals).forEach(key => {
@@ -80,9 +82,10 @@ export function parseVariablesFromLabel(label) {
  * @param {string} filePath
  * @param {string} originalPath
  * @param {string} label
+ * @param {string} template
  * @return {string}
  */
-export function embedCode({lang, filePath, originalPath, label}) {
+export function embedCode({lang, filePath, originalPath, label, template}) {
     const code = fs.readFileSync(filePath, "utf-8");
     const fileName = path.basename(filePath);
     const keyValueObject = parseVariablesFromLabel(label);
@@ -97,7 +100,14 @@ export function embedCode({lang, filePath, originalPath, label}) {
         const marker = getMarker(keyValueObject);
         content = removeMarkers(markerSliceCode(code, marker));
     }
-    return generateEmbedCode(keyValueObject, lang, fileName, originalPath, content);
+    return generateEmbedCode({
+        keyValueObject,
+        lang,
+        fileName,
+        originalPath,
+        content,
+        template
+    });
 }
 
 /**
@@ -107,31 +117,42 @@ export function embedCode({lang, filePath, originalPath, label}) {
  * @param {string} fileName
  * @param {string} originalPath
  * @param {string} content
+ * @param {string} template handlebars template
  * @return {string}
  */
-export function generateEmbedCode(keyValueObject, lang, fileName, originalPath, content) {
+export function generateEmbedCode({
+    keyValueObject,
+    lang,
+    fileName,
+    originalPath,
+    content,
+    template
+}) {
     const count = hasTitle(keyValueObject) ? codeCounter() : -1;
     // merge objects
     // if keyValueObject has `lang` key, that is overwrited by `lang` of right.
     const context = Object.assign({}, keyValueObject, {lang, fileName, originalPath, content, count});
 
-    // if has the title, display the title with an anchor link.
-    // Mix of handlerbars and markdown templates to handle file types.
-    const source = fs.readFileSync(path.join(__dirname, "..", "template", "default-template.hbs"), "utf-8");
-
-    const template = Handlebars.compile(source);
+    // compile template
+    const handlebars = Handlebars.compile(template);
     // compile with data
-    return template(context);
+    return handlebars(context);
 }
 
+
+const defaultOptions = {
+    template: fs.readFileSync(path.join(__dirname, "..", "template", "default-template.hbs"), "utf-8")
+};
 /**
  * generate code with options
  * @param {string} content
  * @param {string} baseDir
+ * @param {{template?: string}} options
  * @return {Array}
  */
-export function parse(content, baseDir) {
+export function parse(content, baseDir, options = {}) {
     const results = [];
+    const template = options.template || defaultOptions.template;
     let res;
     while (res = markdownLinkFormatRegExp.exec(content)) {
         const [all, label, originalPath] = res;
@@ -143,7 +164,8 @@ export function parse(content, baseDir) {
                 lang,
                 filePath: absolutePath,
                 originalPath: originalPath,
-                label
+                label,
+                template
             });
             results.push({
                 target: all,
