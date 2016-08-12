@@ -57,6 +57,8 @@ export function parseVariablesFromLabel(label) {
     var keyvals = {
         "title": undefined,
         "id": undefined,
+        "class": undefined,
+        "name": undefined,
         "marker": undefined
     };
     Object.keys(keyvals).forEach(key => {
