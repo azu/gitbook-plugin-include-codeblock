@@ -6,7 +6,8 @@
   "scripts": {
     "prepublish": "gitbook install",
     "start": "gitbook serve",
-    "build": "gitbook build"
+    "build": "gitbook build",
+    "test": "npm rm gitbook-plugin-include-codeblock && npm i && npm run build"
   },
   "keywords": [
     "gitbook"

@@ -37,6 +37,15 @@
   "engines": {
     "gitbook": "*"
   },
+  "gitbook": {
+    "properties": {
+      "template": {
+        "type": "string",
+        "description": "Template string",
+        "required": false
+      }
+    }
+  },
   "dependencies": {
     "language-map": "^1.1.1",
     "handlebars": "^4.0.5"
