@@ -22,7 +22,7 @@ gitbook install
 
 ## Options
 
-You can use your template by `template` option.
+You can put your template into `book.js`(`book.json`) by `template` option.
 
 ```js
 const fs = require("fs");
