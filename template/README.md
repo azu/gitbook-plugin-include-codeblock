@@ -20,7 +20,9 @@
 You should write with no space(indent).
 Spacing conflict GitBook behavior.
 
-## Example
+## Template Example
+
+Version 1.x template.
 
     {{#if title}}
     {{#if id}}
@@ -46,4 +48,22 @@ Spacing conflict GitBook behavior.
     
     ``` {{lang}}
     {{{content}}}
+    ```
+
+### Compile Example
+
+If use version 1.x template
+
+    [import](test.rs)
+    
+to be
+    
+    {% if file.type=="asciidoc" %}
+    > [[test.rs]]link:test.rs[test.rs]
+    {% else %}
+    > <a id="test.rs" href="test.rs">test.rs</a>
+    {% endif %}
+    
+    ``` rust
+    extern crate num;
     ```
