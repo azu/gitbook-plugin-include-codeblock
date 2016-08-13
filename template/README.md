@@ -2,7 +2,9 @@
 
 - Should remove space each line
 - `{{` and `}}` is GitBook template
+    - [Templating · GitBook Toolchain Documentation](http://toolchain.gitbook.com/templating/)
 - `{%` and `%}` is handlebar template
+    - [Handlebars.js: Minimal Templating on Steroids](http://handlebarsjs.com/)
 
 ## Values
 
