@@ -10,12 +10,15 @@ function trim(str) {
 
 describe('generate test', () => {
     const fixturesDir = path.join(__dirname, 'patterns');
+    const options = {
+        template: fs.readFileSync(__dirname + "/fixtures/template.hbs", "utf-8")
+    };
     fs.readdirSync(fixturesDir).map((caseName) => {
         it(`should ${caseName.split('-').join(' ')}`, () => {
             const fixtureDir = path.join(fixturesDir, caseName);
             let actualPath = path.join(fixtureDir, 'actual.md');
             let content = fs.readFileSync(actualPath, "utf-8");
-            const results = parse(content, fixtureDir);
+            const results = parse(content, fixtureDir, options);
             results.forEach(result => {
                 const {target, replaced} = result;
                 content = content.replace(target, replaced);
