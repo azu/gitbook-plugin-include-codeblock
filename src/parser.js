@@ -59,7 +59,8 @@ export function parseVariablesFromLabel(label) {
         "id": undefined,
         "class": undefined,
         "name": undefined,
-        "marker": undefined
+        "marker": undefined,
+        "unindent": undefined
     };
     Object.keys(keyvals).forEach(key => {
         var keyReg = key;
@@ -85,7 +86,7 @@ export function parseVariablesFromLabel(label) {
  * @param {string} template
  * @return {string}
  */
-export function embedCode({lang, filePath, originalPath, label, template}) {
+export function embedCode({lang, filePath, originalPath, label, template, unindent}) {
     const code = fs.readFileSync(filePath, "utf-8");
     const fileName = path.basename(filePath);
     const keyValueObject = parseVariablesFromLabel(label);
@@ -100,6 +101,9 @@ export function embedCode({lang, filePath, originalPath, label, template}) {
         const marker = getMarker(keyValueObject);
         content = removeMarkers(markerSliceCode(code, marker));
     }
+    if (unindent || keyValueObject.unindent) {
+      content = strip(content)
+    }
     return generateEmbedCode({
         keyValueObject,
         lang,
@@ -108,6 +112,13 @@ export function embedCode({lang, filePath, originalPath, label, template}) {
         content,
         template
     });
+}
+
+export function strip(s) {
+  // inspired from https://github.com/rails/rails/blob/master/activesupport/lib/active_support/core_ext/string/strip.rb
+  const indents = s.split(/\n/).map(s => s.match(/^[ \t]*(?=\S)/)).filter(m => m).map(m => m[0])
+  const smallestIndent = indents.sort((a,b) => a.length-b.length)[0]
+  return s.replace(new RegExp(`^${smallestIndent}`, 'gm'), '')
 }
 
 /**
@@ -141,7 +152,8 @@ export function generateEmbedCode({
 
 
 const defaultOptions = {
-    template: fs.readFileSync(path.join(__dirname, "..", "template", "default-template.hbs"), "utf-8")
+    template: fs.readFileSync(path.join(__dirname, "..", "template", "default-template.hbs"), "utf-8"),
+    unindent: false
 };
 /**
  * generate code with options
@@ -153,6 +165,7 @@ const defaultOptions = {
 export function parse(content, baseDir, options = {}) {
     const results = [];
     const template = options.template || defaultOptions.template;
+    const unindent = options.unindent || defaultOptions.unindent;
     let res;
     while (res = markdownLinkFormatRegExp.exec(content)) {
         const [all, label, originalPath] = res;
@@ -165,7 +178,8 @@ export function parse(content, baseDir, options = {}) {
                 filePath: absolutePath,
                 originalPath: originalPath,
                 label,
-                template
+                template,
+                unindent
             });
             results.push({
                 target: all,

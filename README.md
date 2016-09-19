@@ -42,6 +42,18 @@ module.exports = {
 
 See [template/](template/) and [example/](example/) for details.
 
+You can also unindent the included text by specifying the `unindent` option:
+
+```js
+"pluginsConfig": {
+    "include-codeblock": {
+        "unindent": true
+    }
+}
+```
+
+Alternatively, unindent can be specified on a per-tag basis (see below)
+
 ## Usage
 
 **fixtures/test.js**
@@ -111,7 +123,7 @@ If you want to specify language type, put `lang-<lang-name>` to label.
 - :information_source: choose `<lang-name>` of `lang-<lang-name>` from language-map's `aceMode` value.
     - [blakeembrey/language-map: JSON version of the programming language map used in Linguist](https://github.com/blakeembrey/language-map "blakeembrey/language-map: JSON version of the programming language map used in Linguist")
 
-e.g.) typescript's aceMode value is `typescript`. 
+e.g.) typescript's aceMode value is `typescript`.
 
 - https://github.com/blakeembrey/language-map/blob/b72edb8c2cb1b05d098782aa85dd2f573ed96ba3/languages.json#L4140
 
@@ -148,7 +160,7 @@ You can also import snippet code similarly to [doxygen](https://www.stack.nl/~di
 For example, considering the following C++ source code
 
 - :information_source: should use **triple** comment mark for **markername**.
-    - `///`, `//!` or `###` etc.. 
+    - `///`, `//!` or `###` etc..
 
 ```cpp
 // test.cpp source code
@@ -164,7 +176,7 @@ int main()
 }
 ```
 
-In GitBook, the following commands 
+In GitBook, the following commands
 
 ```markdown
 [import:marker1](path/to/test.cpp)
@@ -183,6 +195,36 @@ The command `[import:marker0](path/to/test.cpp)` will result to
     int b;
     int c;
 ```
+
+### Unindented code
+
+Consider the following source code:
+
+```java
+class Hello {
+    /// [some-marker]
+    void world() {
+        // nice
+    }
+    /// [some-marker]
+}
+```
+
+And the following command:
+
+```
+[import:"some-marker",unindent:"true"](path/to/test.java)
+```
+
+This will result in unindented code:
+
+```java
+void world() {
+    // nice
+}
+```
+
+Unindent behaviour can also be specified globally in the plugin configuration.
 
 ## Example
 
@@ -223,11 +265,11 @@ Version 1.x template.
     > <a id="{{fileName}}" href="{{originalPath}}">{{fileName}}</a>
     {% endif %}
     {{/if}}
-    
+
     ``` {{lang}}
     {{{content}}}
     ```
-    
+
 Version 2.x template.
 
     ``` {{lang}}
