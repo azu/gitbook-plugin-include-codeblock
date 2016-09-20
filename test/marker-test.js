@@ -42,6 +42,15 @@ int main()
     /// [ marker 6 ]
 }
 `;
+
+const rubycode = `
+class Hello
+  ### [marker0]
+  def world; end
+  ### [marker0]
+end
+`;
+
 //-------------------------------------------------------------------------------
 
 // Expected results.
@@ -60,6 +69,7 @@ const expectedMarker4 = `    int f;`;
 const expectedMarker5 = `    int g;`;
 const expectedMarker6 = `    int h;`;
 
+const expectedRubyMarker0 = `  def world; end`;
 
 describe("marker", function () {
     describe("#hasMarker", function () {
@@ -107,6 +117,11 @@ describe("marker", function () {
                 const result = markerSliceCode(cppcode, markerName);
                 assert.equal(result, expectedMarker3);
             });
+            it("should slice code between [marker0] using comment ###", function () {
+                const markerName = "marker0";
+                const result = markerSliceCode(rubycode, markerName);
+                assert.equal(result, expectedRubyMarker0);
+            });
         });
         context("#comment-style", function () {
             it("should slice code between [marker 4]", function () {
@@ -136,4 +151,3 @@ describe("marker", function () {
         });
     });
 });
-
