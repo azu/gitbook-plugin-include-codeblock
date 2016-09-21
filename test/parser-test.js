@@ -1,7 +1,7 @@
 // LICENSE : MIT
 "use strict";
 import assert from "power-assert"
-import {parse, parseVariablesFromLabel, containIncludeCommand, splitLabelToCommands} from "../src/parser"
+import {parse, parseVariablesFromLabel, containIncludeCommand, splitLabelToCommands, strip} from "../src/parser"
 var content = `
 [include,title:"test.js"](fixtures/test.js)
 `;
@@ -65,4 +65,23 @@ describe("parse", function () {
             assert.equal(results.marker, undefined);
         });
     });
+    // inspired from https://github.com/rails/rails/blob/master/activesupport/test/core_ext/string_ext_test.rb
+    describe("strip", function () {
+        it("strips leading space from empty string", function () {
+            const stripped = strip("");
+            assert.equal(stripped, "");
+        });
+        it("strips leading space from one-liner", function () {
+            const stripped = strip("    x");
+            assert.equal(stripped, "x");
+        });
+        it("strips leading space from multi-liner with no margin", function () {
+            const stripped = strip("foo\n  bar\nbaz\n");
+            assert.equal(stripped, "foo\n  bar\nbaz\n");
+        });
+        it("strips leading space from multi-liner", function () {
+            const stripped = strip("      foo\n        bar\n      baz\n");
+            assert.equal(stripped, "foo\n  bar\nbaz\n");
+        });
+    })
 });
