@@ -10,7 +10,7 @@ function trim(str) {
 
 describe('generate test', () => {
     const fixturesDir = path.join(__dirname, 'patterns');
-    const options = {
+    const defaultOptions = {
         template: fs.readFileSync(__dirname + "/fixtures/template.hbs", "utf-8")
     };
     fs.readdirSync(fixturesDir).map((caseName) => {
@@ -18,6 +18,14 @@ describe('generate test', () => {
             const fixtureDir = path.join(fixturesDir, caseName);
             let actualPath = path.join(fixtureDir, 'actual.md');
             let content = fs.readFileSync(actualPath, "utf-8");
+            let bookjs = path.join(fixtureDir, 'book.js');
+            let options = {};
+            try {
+                const book = require(bookjs);
+                Object.assign(options, defaultOptions, book["pluginsConfig"]["include-codeblock"]);
+            } catch (e) {
+                Object.assign(options, defaultOptions);
+            }
             const results = parse(content, fixtureDir, options);
             results.forEach(result => {
                 const {target, replaced} = result;
