@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/azu/gitbook-plugin-include-codeblock/issues"
   },
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "GitBook plugin for including file",
   "main": "lib/include-codeblock.js",
   "files": [
