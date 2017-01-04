@@ -152,7 +152,7 @@ All: [import, hello-world.js](../src/hello-world.js)
 You can also import snippet code similarly to [doxygen](https://www.stack.nl/~dimitri/doxygen/manual/commands.html#cmdsnippet).
 
 ```markdown
-[import:<markername>](path/to/file)
+[import:'<markername>'](path/to/file)
 ```
 
 - :information_source: **markername** begins with an alphabet character
@@ -179,7 +179,7 @@ int main()
 In GitBook, the following commands
 
 ```markdown
-[import:marker1](path/to/test.cpp)
+[import:'marker1'](path/to/test.cpp)
 ```
 
 will result to
@@ -188,7 +188,7 @@ will result to
     int b;
 ```
 
-The command `[import:marker0](path/to/test.cpp)` will result to
+The command `[import:'marker0'](path/to/test.cpp)` will result to
 
 ```cpp
     int a;
