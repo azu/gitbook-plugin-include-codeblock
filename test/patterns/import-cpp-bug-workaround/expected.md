@@ -4,6 +4,6 @@
 > <a id="test.cpp" href="test.cpp">test.cpp</a>
 {% endif %}
 
-``` c_cpp
+``` cpp
 int i:
 ```
