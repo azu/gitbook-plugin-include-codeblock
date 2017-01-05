@@ -149,18 +149,20 @@ All: [import, hello-world.js](../src/hello-world.js)
 
 ### Snippet code
 
-You can also import snippet code similarly to [doxygen](https://www.stack.nl/~dimitri/doxygen/manual/commands.html#cmdsnippet).
+You can also import snippet code delimited by a tag. It follows the
+[doxygen snippet standard](https://www.stack.nl/~dimitri/doxygen/manual/commands.html#cmdsnippet)
+Snippet is doxygen compatible.
+(See also [how to document the code](https://www.stack.nl/~dimitri/doxygen/manual/docblocks.html))
 
 ```markdown
 [import:'<markername>'](path/to/file)
 ```
 
+#### Remarks
 - :information_source: **markername** begins with an alphabet character
+- :information_source: tags follows the doxygen standard: **language comment for documenting code** + **tag between bracket**
 
 For example, considering the following C++ source code
-
-- :information_source: should use **triple** comment mark for **markername**.
-    - `///`, `//!` or `###` etc..
 
 ```cpp
 // test.cpp source code
@@ -173,9 +175,13 @@ int main()
     //! [marker1]
     int c;
     /// [marker0]
-}
-```
 
+    // [notmarked]
+    int d;
+    // [notmarked]
+}
+
+```
 In GitBook, the following commands
 
 ```markdown
@@ -195,6 +201,10 @@ The command `[import:'marker0'](path/to/test.cpp)` will result to
     int b;
     int c;
 ```
+
+But the command `[import:'notmarked'](path/to/test.cpp)` will fail as it
+does not respect the doxygen documenting standard.
+(See [documenting the code](https://www.stack.nl/~dimitri/doxygen/manual/docblocks.html))
 
 ### Unindented code
 

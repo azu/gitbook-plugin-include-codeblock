@@ -14,7 +14,7 @@
 
 const commentOpen = "(\/+\/+|#|%|\/\\*)";
 const commentClose = "(\\*\/)?";
-const doxChar = "[\*!\/]"; // doxygen documentation character
+const doxChar = "[\*!\/#]"; // doxygen documentation character
 const spaces = "[ \t]*"; // h spaces
 const spacesAny = "\\s*"; // h+v spaces
 const markerNameFormat = "(\\s*[a-zA-Z][\\w\\s]*)"; // Must contain a char.
