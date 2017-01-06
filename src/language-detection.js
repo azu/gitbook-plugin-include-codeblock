@@ -2,6 +2,17 @@
 "use strict";
 const path = require('path');
 const language_map = require('language-map');
+
+// Workaround for not working languages.
+// Redefine aceMode locally.
+export function languageAceModeFix(resultAceMode) {
+    if (resultAceMode == 'c_cpp')
+    {
+        resultAceMode = 'cpp';
+    }
+    return resultAceMode;
+}
+
 export function lookupLanguageByAceMode(commands) {
     let resultAceMode;
     commands.forEach(command => {
@@ -23,6 +34,7 @@ export function lookupLanguageByAceMode(commands) {
         if (resultAceMode === undefined) {
             resultAceMode = matchLang;
         }
+        resultAceMode = languageAceModeFix(resultAceMode);
     });
     return resultAceMode;
 }
@@ -45,6 +57,7 @@ export function lookupLanguageByExtension(ext) {
             }
         });
     });
+    aceMode = languageAceModeFix(aceMode);
     return aceMode;
 }
 

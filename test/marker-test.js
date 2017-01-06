@@ -27,19 +27,22 @@ int main()
     /// [marker3]
     int e;
     /// [marker3]
+    ## [marker4]
+    int f;
+    ## [marker4]
 
     // Test different naming and spacing.
 
-    /// [marker 4]
-    int f;
-    /// [marker 4]
-
-    ///     [marker5 space]
+    /// [marker 5]
     int g;
-    ///  [marker5 space]
-    /// [ marker 6 ]
+    /// [marker 5]
+
+    ///     [marker6 space]
     int h;
-    /// [ marker 6 ]
+    ///  [marker6 space]
+    /// [ marker 7 ]
+    int i;
+    /// [ marker 7 ]
 }
 `;
 //-------------------------------------------------------------------------------
@@ -59,6 +62,7 @@ const expectedMarker3 = `    int e;`;
 const expectedMarker4 = `    int f;`;
 const expectedMarker5 = `    int g;`;
 const expectedMarker6 = `    int h;`;
+const expectedMarker7 = `    int i;`;
 
 
 describe("marker", function () {
@@ -107,22 +111,27 @@ describe("marker", function () {
                 const result = markerSliceCode(cppcode, markerName);
                 assert.equal(result, expectedMarker3);
             });
-        });
-        context("#comment-style", function () {
-            it("should slice code between [marker 4]", function () {
-                const markerName = "marker 4";
+            it("should slice code between [marker4] using comment ##", function () {
+                const markerName = "marker4";
                 const result = markerSliceCode(cppcode, markerName);
                 assert.equal(result, expectedMarker4);
             });
-            it("should slice code between [marker5 space]", function () {
-                const markerName = "marker5 space";
+        });
+        context("#comment-style", function () {
+            it("should slice code between [marker 5]", function () {
+                const markerName = "marker 5";
                 const result = markerSliceCode(cppcode, markerName);
                 assert.equal(result, expectedMarker5);
             });
-            it("should slice code between [ marker 6 ]", function () {
-                const markerName = " marker 6 ";
+            it("should slice code between [marker6 space]", function () {
+                const markerName = "marker6 space";
                 const result = markerSliceCode(cppcode, markerName);
                 assert.equal(result, expectedMarker6);
+            });
+            it("should slice code between [ marker 7 ]", function () {
+                const markerName = " marker 7 ";
+                const result = markerSliceCode(cppcode, markerName);
+                assert.equal(result, expectedMarker7);
             });
         });
     });
