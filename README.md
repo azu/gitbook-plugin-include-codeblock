@@ -22,37 +22,65 @@ gitbook install
 
 ## Options
 
-You can put your template into `book.js`(`book.json`) by `template` option.
+Several options can be set in `book.json` to customize the plugin.
+
+| option | value | Description |
+| --- | --- | --- |
+| `template` | `{default,full,ace,...}` or custom path | reindent code if marker or slice is used |
+| `unindent` | `{true,false}` | reindent code if marker or slice is used |
+| `edit` | `{true,false}` | allow edit code (**ace template required**) |
+| `check` | `{true,false}` | check syntax (**ace template required**) |
+| `theme` | `{monokai,coffee,...}` | check syntax (**ace template required**) |
+
+Just add the desired optin under `pluginConfig` in the `book.json` file
 
 ```js
-const fs = require("fs");
-module.exports = {
+{
     "gitbook": "3.x.x",
-    "title": "gitbook-plugin-include-codeblock example",
-    "plugins": [
-        "include-codeblock"
-    ],
     "pluginsConfig": {
         "include-codeblock": {
-            "template": fs.readFileSync(__dirname + "/user-template.hbs", "utf-8")
+            "template": "ace",
+            "unindent": "true",
+            "theme": "monokai"
         }
-    }
-};
-```
-
-See [template/](template/) and [example/](example/) for details.
-
-You can also unindent the included text by specifying the `unindent` option:
-
-```js
-"pluginsConfig": {
-    "include-codeblock": {
-        "unindent": true
     }
 }
 ```
 
-Alternatively, unindent can be specified on a per-tag basis (see below)
+### Templates
+
+Templates let customize the rendered code. Several default templates are available
+
+| template | description |
+| --- | --- |
+| `default` | default template, standard markdown code style |
+| `full` | enable title, labeling, id, ... |
+| `ace` | enable ace code rendering |
+| `acefull` | enable ace code rendering with title, label, id, ... |
+
+For more template, consult the list in [template/](templates/).
+
+Custom templates can be created to render the code by specifying a custom path
+to the template file.
+```js
+{
+    "gitbook": "3.x.x",
+    "pluginsConfig": {
+        "include-codeblock": {
+            "template": __dirname + "/" + "path/to/custom.hbs",
+        }
+    }
+}
+```
+See [template/](templates/) and [example/](example/) for details.
+
+Any contribution is welcome. Propose your new templates via pull-requests.
+
+### Ace plugin
+
+It is possible to use the gitbook ace plugin to have code numbering or custom themes
+(See [gitbook-ace-plugin](https://github.com/ymcatar/gitbook-plugin-ace) for more details).
+To use ace within include-codeblock, an "ace" template is required.
 
 ## Usage
 
@@ -74,9 +102,27 @@ or
 ```
 Result
 
-    ``` js
-    console.log("test");
-    ```
+``` js
+console.log("test");
+```
+
+### Local options
+
+Option can be passed locally and may depend on the template your are using.
+
+| option | value | Description |
+| --- | --- | --- |
+| `unindent` | `{"true","false"}` | reindent code if marker or slice is used |
+| `title`| `"<your title>"` | Title for the code **full template required**|
+| `filename` | `"<your_filename>"` | name of the included file  **full template required** |
+| `originalPath` | `"</path/to/file/>"` | name of the included file  **full template required** |
+| `id` | `"<your_id>"` | hmlt class for custom style **full template required** |
+| `label` | `"<your_ref_label>"` | reference label (latex like) **full template required** |
+| `edit` | `{"true","false"}` | allow edit code (**ace template required**) |
+| `check` | `{"true","false"}` | check syntax (**ace template required**) |
+| `theme` | `{"monokai","coffee",...}` | check syntax (**ace template required**) |
+
+For more details see sections below.
 
 <!--
 ### Title(from v)
@@ -126,6 +172,7 @@ If you want to specify language type, put `lang-<lang-name>` to label.
 e.g.) typescript's aceMode value is `typescript`.
 
 - https://github.com/blakeembrey/language-map/blob/b72edb8c2cb1b05d098782aa85dd2f573ed96ba3/languages.json#L4140
+
 
 ### Sliced Code
 

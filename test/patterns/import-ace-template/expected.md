@@ -1,7 +1,7 @@
 {% if file.type=="asciidoc" %}
 +++
 {% endif %}
-{%ace lang=javascript%}
+{%ace edit="true", check="false", theme="", lang="javascript" %}
 foo;
 bar;
 baz;

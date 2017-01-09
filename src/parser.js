@@ -60,13 +60,17 @@ export function parseVariablesFromLabel(label) {
         "class": undefined,
         "name": undefined,
         "marker": undefined,
-        "unindent": undefined
+        "unindent": undefined,
+        "edit": undefined,
+        "theme": undefined,
+        "check": undefined
     };
     Object.keys(keyvals).forEach(key => {
         var keyReg = key;
         if (key === "marker") {
             keyReg = "import|include";
         }
+
         const regStr = "\^.*,?\\s*(" + keyReg + ")\\s*:\\s*[\"']([^'\"]*)[\"'],?.*\$";
         const reg = new RegExp(regStr);
         const res = label.match(reg);
@@ -90,6 +94,7 @@ export function embedCode({lang, filePath, originalPath, label, template, uninde
     const code = fs.readFileSync(filePath, "utf-8");
     const fileName = path.basename(filePath);
     const keyValueObject = parseVariablesFromLabel(label);
+
     var content = code;
     // Slice content via line numbers.
     if (hasSliceRange(label)) {
@@ -110,7 +115,7 @@ export function embedCode({lang, filePath, originalPath, label, template, uninde
         fileName,
         originalPath,
         content,
-        template
+        template,
     });
 }
 
@@ -137,7 +142,7 @@ export function generateEmbedCode({
     fileName,
     originalPath,
     content,
-    template
+    template,
 }) {
     const count = hasTitle(keyValueObject) ? codeCounter() : -1;
     // merge objects
@@ -172,7 +177,8 @@ const defaultOptions = {
 export function parse(content, baseDir, options = {}) {
     const results = [];
     const isPath = templatePath[options.template] == undefined;
-    const tPath = isPath ? options.template : // get existing template
+    // Find template path in existing templates map, or use a custom relative path.
+    const tPath = isPath ? options.template :
         templatePath[options.template] || templatePath[defaultOptions.template];
     const template = fs.readFileSync( tPath, "utf-8")
     const unindent = options.unindent || defaultOptions.unindent;

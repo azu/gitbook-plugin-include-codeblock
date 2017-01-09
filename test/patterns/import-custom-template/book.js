@@ -1,7 +1,7 @@
 module.exports = {
     "pluginsConfig": {
         "include-codeblock": {
-            "template": "ace",
+            "template": __dirname + "/" + "../../fixtures/custom.hbs"
         }
     }
 };

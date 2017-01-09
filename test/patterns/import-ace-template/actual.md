@@ -1,1 +1,1 @@
-[import](test.js)
+[import,check:"false",edit:"true"](test.js)
