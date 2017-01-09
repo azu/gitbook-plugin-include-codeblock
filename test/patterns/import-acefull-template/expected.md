@@ -4,15 +4,11 @@
 > <a id="test.js" href="test.js">test.js</a>
 {% endif %}
 
-{% if file.type=="asciidoc" %}
-+++
-{% endif %}
+{% if file.type=="asciidoc" %}+++{% endif %}
 {%ace edit="", check="", theme="", lang="javascript" %}
 foo;
 bar;
 baz;
 
 {%endace%}
-{% if file.type=="asciidoc" %}
-+++
-{% endif %}
+{% if file.type=="asciidoc" %}+++{% endif %}

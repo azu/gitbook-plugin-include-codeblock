@@ -20,12 +20,8 @@
 {% endif %}
 {{/if}}
 
-{% if file.type=="asciidoc" %}
-+++
-{% endif %}
+{% if file.type=="asciidoc" %}+++{% endif %}
 {%ace edit="{{edit}}", check="{{check}}", theme="{{theme}}", lang="{{lang}}" %}
 {{{content}}}
 {%endace%}
-{% if file.type=="asciidoc" %}
-+++
-{% endif %}
+{% if file.type=="asciidoc" %}+++{% endif %}
