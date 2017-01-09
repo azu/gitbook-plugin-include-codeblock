@@ -176,11 +176,22 @@ const defaultOptions = {
  */
 export function parse(content, baseDir, options = {}) {
     const results = [];
-    const isPath = templatePath[options.template] == undefined;
-    // Find template path in existing templates map, or use a custom relative path.
-    const tPath = isPath ? options.template :
-        templatePath[options.template] || templatePath[defaultOptions.template];
-    const template = fs.readFileSync( tPath, "utf-8")
+    const isTemplateDefault = (options.template == undefined);
+    const isTemplatePath = (templatePath[options.template] == undefined);
+    var tPath;
+    // No template option.
+    if(isTemplateDefault) {
+        tPath = templatePath[defaultOptions.template];
+    }
+    // Template option is a path.
+    else if (isTemplatePath && fs.existSync(options.template)) {
+        tPath = options.template;
+    }
+    // Template option one of template/ directory.
+    else {
+        tPath = templatePath[options.template] || templatePath[defaultOptions.template];
+    }
+    const template = fs.readFileSync( tPath, "utf-8");
     const unindent = options.unindent || defaultOptions.unindent;
     //console.log(options.template)
     //console.log("TEMPLATE\n")
