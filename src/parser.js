@@ -150,11 +150,18 @@ export function generateEmbedCode({
     return handlebars(context);
 }
 
+const templatePath = {
+    default: path.join(__dirname, "..", "templates", "default-template.hbs"),
+    full: path.join(__dirname, "..", "templates", "full-template.hbs"),
+    ace: path.join(__dirname, "..", "templates", "ace-template.hbs"),
+    acefull: path.join(__dirname, "..", "templates", "acefull-template.hbs")
+};
 
 const defaultOptions = {
-    template: fs.readFileSync(path.join(__dirname, "..", "template", "default-template.hbs"), "utf-8"),
+    template: "default",
     unindent: false
 };
+
 /**
  * generate code with options
  * @param {string} content
@@ -164,8 +171,14 @@ const defaultOptions = {
  */
 export function parse(content, baseDir, options = {}) {
     const results = [];
-    const template = options.template || defaultOptions.template;
+    const isPath = templatePath[options.template] == undefined;
+    const tPath = isPath ? options.template : // get existing template
+        templatePath[options.template] || templatePath[defaultOptions.template];
+    const template = fs.readFileSync( tPath, "utf-8")
     const unindent = options.unindent || defaultOptions.unindent;
+    //console.log(options.template)
+    //console.log("TEMPLATE\n")
+    //console.log(template)
     let res;
     while (res = markdownLinkFormatRegExp.exec(content)) {
         const [all, label, originalPath] = res;

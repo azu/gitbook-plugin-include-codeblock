@@ -11,7 +11,7 @@ function trim(str) {
 describe('generate test', () => {
     const fixturesDir = path.join(__dirname, 'patterns');
     const defaultOptions = {
-        template: fs.readFileSync(__dirname + "/fixtures/template.hbs", "utf-8")
+        template: __dirname + "/fixtures/template.hbs"
     };
     fs.readdirSync(fixturesDir).map((caseName) => {
         it(`should ${caseName.split('-').join(' ')}`, () => {
