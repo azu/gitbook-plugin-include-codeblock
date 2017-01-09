@@ -63,7 +63,8 @@ export function parseVariablesFromLabel(label) {
         "unindent": undefined,
         "edit": undefined,
         "theme": undefined,
-        "check": undefined
+        "check": undefined,
+        "fixlang": undefined
     };
     Object.keys(keyvals).forEach(key => {
         var keyReg = key;
@@ -107,7 +108,7 @@ export function embedCode({lang, filePath, originalPath, label, template, uninde
         content = removeMarkers(markerSliceCode(code, marker));
     }
     if (unindent || keyValueObject.unindent) {
-      content = strip(content)
+      content = strip(content);
     }
     return generateEmbedCode({
         keyValueObject,
@@ -164,7 +165,8 @@ const templatePath = {
 
 const defaultOptions = {
     template: "default",
-    unindent: false
+    unindent: false,
+    fixlang: false
 };
 
 /**
@@ -184,7 +186,7 @@ export function parse(content, baseDir, options = {}) {
         tPath = templatePath[defaultOptions.template];
     }
     // Template option is a path.
-    else if (isTemplatePath && fs.existSync(options.template)) {
+    else if (isTemplatePath && fs.existsSync(options.template)) {
         tPath = options.template;
     }
     // Template option one of template/ directory.
@@ -193,15 +195,14 @@ export function parse(content, baseDir, options = {}) {
     }
     const template = fs.readFileSync( tPath, "utf-8");
     const unindent = options.unindent || defaultOptions.unindent;
-    //console.log(options.template)
-    //console.log("TEMPLATE\n")
-    //console.log(template)
+    const fixlang = options.fixlang || defaultOptions.fixlang;
+
     let res;
     while (res = markdownLinkFormatRegExp.exec(content)) {
         const [all, label, originalPath] = res;
         const commands = splitLabelToCommands(label);
         if (containIncludeCommand(commands)) {
-            const lang = getLang(commands, originalPath);
+            const lang = getLang(commands, originalPath, fixlang );
             const absolutePath = path.resolve(baseDir, originalPath);
             const replacedContent = embedCode({
                 lang,
