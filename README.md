@@ -31,6 +31,7 @@ Several options can be set in `book.json` to customize the plugin.
 | `edit` | `{true,false}` | allow edit code (**ace template required**) |
 | `check` | `{true,false}` | check syntax (**ace template required**) |
 | `theme` | `{monokai,coffee,...}` | check syntax (**ace template required**) |
+| `fixlang` | {true,false} | fix some errors with code lang (e.g C++, ...) |
 
 Just add the desired optin under `pluginConfig` in the `book.json` file
 
