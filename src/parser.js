@@ -195,7 +195,7 @@ export function parse(content, baseDir, options = {}) {
     }
     const template = fs.readFileSync( tPath, "utf-8");
     const unindent = options.unindent || defaultOptions.unindent;
-    const fixlang = options.fixlang || defaultOptions.fixlang;
+    const fixlang = (options.fixlang != undefined) ? options.fixlang : defaultOptions.fixlang;
 
     let res;
     while (res = markdownLinkFormatRegExp.exec(content)) {
