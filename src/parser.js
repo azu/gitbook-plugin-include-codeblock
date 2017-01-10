@@ -180,7 +180,7 @@ export function parse(content, baseDir, options = {}) {
     const results = [];
     const isTemplateDefault = (options.template == undefined);
     const isTemplatePath = (templatePath[options.template] == undefined);
-    var tPath;
+    let tPath;
     // No template option.
     if(isTemplateDefault) {
         tPath = templatePath[defaultOptions.template];
