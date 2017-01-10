@@ -17,6 +17,12 @@
 - `{{id}}`: if label contain `id:` like this `[import, id:<value>]`
 - `{{class}}`: if label contain `class:` like this `[import, class:<value>]`
 
+### ace plugin specific
+
+- {{edit}} : allow code edition
+- {{check}} : allow syntax validation
+- {{theme}} : label for the theme
+
 ## Limitation
 
 You should write with no space(indent).
