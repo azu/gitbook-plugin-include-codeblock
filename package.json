@@ -16,7 +16,7 @@
   "main": "lib/include-codeblock.js",
   "files": [
     "lib",
-    "template",
+    "templates",
     "src"
   ],
   "directories": {
@@ -43,12 +43,38 @@
         "type": "string",
         "description": "Template string",
         "required": false
+      },
+      "unindent": {
+        "type": "string",
+        "description": "undindent inner snippets",
+        "required": false
+      },
+      "edit": {
+        "type": "string",
+        "description": "ace code edition (ace* template required)",
+        "required": false
+      },
+      "check": {
+        "type": "string",
+        "description": "ace syntax validation (ace* template required)",
+        "required": false
+      },
+      "theme": {
+        "type": "string",
+        "description": "ace code editor theme (ace* template required)",
+        "required": false
+      },
+      "fixlang": {
+        "type": "Fix lang label (c++,...)",
+        "description": "",
+        "required": false
       }
     }
   },
   "dependencies": {
     "language-map": "^1.1.1",
-    "handlebars": "^4.0.5"
+    "handlebars": "^4.0.5",
+    "ace": "^0.3.2"
   },
   "devDependencies": {
     "babel-cli": "^6.7.7",

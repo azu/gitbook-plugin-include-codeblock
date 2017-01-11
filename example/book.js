@@ -7,7 +7,7 @@ module.exports = {
     ],
     "pluginsConfig": {
         "include-codeblock": {
-            "template": fs.readFileSync(__dirname + "/user-template.hbs", "utf-8")
+            "template": __dirname + "/user-template.hbs"
         }
     }
 };

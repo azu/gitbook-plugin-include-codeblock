@@ -13,7 +13,7 @@ export function languageAceModeFix(resultAceMode) {
     return resultAceMode;
 }
 
-export function lookupLanguageByAceMode(commands) {
+export function lookupLanguageByAceMode(commands, fixlang=false) {
     let resultAceMode;
     commands.forEach(command => {
         const matchAceModes = /lang\-(.+)/g.exec(command);
@@ -34,12 +34,14 @@ export function lookupLanguageByAceMode(commands) {
         if (resultAceMode === undefined) {
             resultAceMode = matchLang;
         }
-        resultAceMode = languageAceModeFix(resultAceMode);
     });
+    if(fixlang) {
+        resultAceMode = languageAceModeFix(resultAceMode);
+    }
     return resultAceMode;
 }
 
-export function lookupLanguageByExtension(ext) {
+export function lookupLanguageByExtension(ext, fixlang=false) {
     let aceMode;
     Object.keys(language_map).some(langKey => {
         const extensions = language_map[langKey]["extensions"];
@@ -57,15 +59,17 @@ export function lookupLanguageByExtension(ext) {
             }
         });
     });
-    aceMode = languageAceModeFix(aceMode);
+    if(fixlang) {
+        aceMode = languageAceModeFix(aceMode);
+    }
     return aceMode;
 }
 
-export function getLang(commands, filePath) {
+export function getLang(commands, filePath, fixlang=false ) {
     const lang = lookupLanguageByAceMode(commands);
     if (lang) {
         return lang;
     }
     const ext = path.extname(filePath);
-    return lookupLanguageByExtension(ext) || ext;
+    return lookupLanguageByExtension(ext, fixlang) || ext;
 }
