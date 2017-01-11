@@ -27,11 +27,11 @@ Several options can be set in `book.json` to customize the plugin.
 | option | value | Description |
 | --- | --- | --- |
 | `template` | `{default,full,ace,...}` or custom path | reindent code if marker or slice is used |
-| `unindent` | `{true,false}` | reindent code if marker or slice is used |
+| `unindent` | `{true,false}` default:`false` | reindent code if marker or slice is used |
+| `fixlang` | `{true,false}` default:`false` | fix some errors with code lang (e.g C++, ...) |
 | `edit` | `{true,false}` | [allow edit code](https://github.com/ymcatar/gitbook-plugin-ace/blob/master/README.md) (**ace template required**) |
 | `check` | `{true,false}` | [syntax validation](https://github.com/ymcatar/gitbook-plugin-ace/blob/master/README.md) (**ace template required**) |
 | `theme` | `{monokai,coffee,...}` | [check syntax](https://github.com/ymcatar/gitbook-plugin-ace/blob/master/README.md) (**ace template required**) |
-| `fixlang` | `{true,false}` | fix some errors with code lang (e.g C++, ...) |
 
 Just add the desired optin under `pluginConfig` in the `book.json` file
 
