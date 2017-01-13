@@ -56,10 +56,11 @@ Templates let customize the rendered code. Several default templates are availab
 | --- | --- |
 | `default` | default template, standard markdown code style |
 | `full` | enable title, labeling, id, ... |
-| `ace` | enable ace code rendering |
-| `acefull` | enable ace code rendering with title, label, id, ... |
+| `ace` | enable ace code rendering (**ace plugin required**) |
+| `acefull` | enable ace code rendering with title, label, id, ... (**ace plugin required**) |
 
-For more template, consult the list in [template/](templates/).
+- :information_source: For ace template, see [Ace section](#ace-plugin)
+- :information_source: For more template, consult the list in [template/](templates/).
 
 Custom templates can be created to render the code by specifying a custom path
 to the template file.
@@ -81,7 +82,23 @@ Any contribution is welcome. Propose your new templates via pull-requests.
 
 It is possible to use the gitbook ace plugin to have code numbering or custom themes
 (See [gitbook-ace-plugin](https://github.com/ymcatar/gitbook-plugin-ace) for more details).
-To use ace within include-codeblock, an "ace" template is required.
+To use ace within include-codeblock, you have to **load the ace plugin after include-codeblock!**
+and choose an ace temple (see [template/](templates/))
+
+```js
+{
+    "gitbook": "3.x.x",
+    "plugins" : [
+        include-codeblock,
+        ace
+    ]
+    "pluginsConfig": {
+        "include-codeblock": {
+            "template": "ace", // or acefull
+        }
+    }
+}
+```
 
 ## Usage
 
