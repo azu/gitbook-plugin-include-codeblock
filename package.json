@@ -27,7 +27,9 @@
     "watch": "babel src --out-dir lib --watch --source-maps",
     "prepublish": "npm run --if-present build",
     "test": "mocha",
-    "test:example": "cd example && npm i && npm run build"
+    "test:example-default": "cd examples/default && npm i && npm run build",
+    "test:example-ace": "cd examples/ace && npm i && npm run build",
+    "test:example-custom": "cd examples/custom && npm i && npm run build"
   },
   "keywords": [
     "gitbook",

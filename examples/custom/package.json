@@ -1,0 +1,21 @@
+{
+  "name": "example-custom",
+  "version": "1.0.0",
+  "description": "gitbook-plugin-include-codeblock",
+  "private": true,
+  "scripts": {
+    "prepublish": "gitbook install",
+    "start": "gitbook serve",
+    "build": "gitbook build",
+    "test": "npm rm gitbook-plugin-include-codeblock && npm i && npm run build"
+  },
+  "keywords": [
+    "gitbook"
+  ],
+  "author": "azu",
+  "license": "MIT",
+  "devDependencies": {
+    "gitbook-cli": "^2.1.3",
+    "gitbook-plugin-include-codeblock": "file:../../"
+  }
+}
