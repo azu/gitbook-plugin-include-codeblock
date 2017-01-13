@@ -75,8 +75,7 @@
   },
   "dependencies": {
     "language-map": "^1.1.1",
-    "handlebars": "^4.0.5",
-    "ace": "^0.3.2"
+    "handlebars": "^4.0.5"
   },
   "devDependencies": {
     "babel-cli": "^6.7.7",
