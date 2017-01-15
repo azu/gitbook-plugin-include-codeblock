@@ -29,6 +29,6 @@ try {
     }
 } catch(e) {
     console.log(""); // flush
-    logger.warn("ace features disabled (=> `gitbook-plugin-ace`");
+    logger.warn("ace features disabled (`gitbook-plugin-ace` required)");
 
 }
