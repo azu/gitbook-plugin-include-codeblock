@@ -3,4 +3,6 @@ language: node_js
 node_js: "stable"
 script:
 - npm test
-- npm run test:example
+- npm run test:example-default
+- npm run test:example-ace
+- npm run test:example-custom
