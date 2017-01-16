@@ -1,0 +1,35 @@
+# Example
+
+## Usage
+
+    npm install
+    npm start
+    open http://localhost:4000/
+
+## import/include
+
+[import, test.js](./src/test.js)
+
+## Hardcoded class
+
+
+[import, test.ts, lang-typescript](src/test.ts)
+
+### Sliced Code
+
+[import:5-8](src/line.js)
+
+### Snippet code
+
+[import:marker0, lang-typescript](src/marker.ts)
+
+
+{% if file.type=="asciidoc" %}
+> link:test.js[test.js]
+{% else %}
+> <a id="test.js" href="test.js">test.js</a>
+{% endif %}
+
+``` javascript
+console.log("test");
+```
