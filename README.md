@@ -89,8 +89,8 @@ and choose an ace temple (see [template/](templates/))
 {
     "gitbook": "3.x.x",
     "plugins" : [
-        include-codeblock,
-        ace
+        "include-codeblock",
+        "ace"
     ]
     "pluginsConfig": {
         "include-codeblock": {
