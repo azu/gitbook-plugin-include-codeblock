@@ -1,3 +1,4 @@
+const path = require("path")
 const fs = require("fs");
 module.exports = {
     "gitbook": "3.x.x",
@@ -7,7 +8,7 @@ module.exports = {
     ],
     "pluginsConfig": {
         "include-codeblock": {
-            "template": __dirname + "user-template.hbs"
+            "template": path.join(__dirname,"user-template.hbs")
         }
     }
 };
