@@ -261,8 +261,6 @@ export function parse(content, baseDir, options = {}) {
     });
     const kvMap = immutable.Map(kv);
 
-    console.log(kvMap)
-
     let res;
     while (res = markdownLinkFormatRegExp.exec(content)) {
         const [all, label, originalPath] = res;
