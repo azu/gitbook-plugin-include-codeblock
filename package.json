@@ -74,6 +74,7 @@
     }
   },
   "dependencies": {
+    "immutable": "^3.8.1",
     "language-map": "^1.1.1",
     "handlebars": "^4.0.5",
     "winston-color": "^1.0.0"

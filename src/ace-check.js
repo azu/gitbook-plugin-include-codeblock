@@ -1,4 +1,4 @@
-var logger = require('winston-color');
+const logger = require('winston-color');
 // Check that ace plugin is loaded after include-codeblock
 export function aceCheck() {
     // Check ace is used.

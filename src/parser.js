@@ -1,13 +1,49 @@
 // LICENSE : MIT
 "use strict";
+const immutable = require("immutable");
 const fs = require("fs");
 const path = require("path");
 const Handlebars = require("handlebars");
+const logger = require('winston-color');
 import {getLang} from "./language-detection";
 import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "./marker";
 import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
 import {hasTitle, parseTitle} from "./title"
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
+
+export const defaultTemplateMap = immutable.Map({
+    default: path.join(__dirname, "..", "templates", "default-template.hbs"),
+    full: path.join(__dirname, "..", "templates", "full-template.hbs"),
+    ace: path.join(__dirname, "..", "templates", "ace-template.hbs"),
+    acefull: path.join(__dirname, "..", "templates", "acefull-template.hbs")
+});
+
+// Available options in book.json.
+export const defaultBookOptionsMap = immutable.Map({
+    template: "default",
+    unindent: "false",
+    edit: "",
+    theme: "",
+    check: "",
+    fixlang: "false"
+});
+
+// All possible key-values (kv) in the command label.
+export const defaultKeyValueMap = immutable.Map({
+    // Local
+    "title": undefined,
+    "id": undefined,
+    "class": undefined,
+    "name": undefined,
+    "marker": undefined,
+    // Global/Local
+    "template": defaultBookOptionsMap.get('template'),
+    "unindent": defaultBookOptionsMap.get('unindent'),
+    "edit": defaultBookOptionsMap.get('edit'),
+    "theme": defaultBookOptionsMap.get('theme'),
+    "check": defaultBookOptionsMap.get('check'),
+    "fixlang": defaultBookOptionsMap.get('fixlang') 
+});
 
 /**
  * A counter to count how many code are imported.
@@ -36,90 +72,12 @@ export function splitLabelToCommands(label = "") {
         return command.length > 0;
     });
 }
-/**
- * if contain "include" or "import" command, then return true
- * @param {Array} commands
- * @returns {boolean}
- */
-export function containIncludeCommand(commands = []) {
-    var reg = /^(include|import)$/;
-    return commands.some(command => {
-        return reg.test(command.trim());
-    })
-}
-/** Parse the command label and return key-value object
- * @example
- *      [import,title:"<thetitle>",label:"<thelabel>"](path/to/file.ext)
- * @param {string} label
- * @return {Object}
- */
-export function parseVariablesFromLabel(label) {
-    var keyvals = {
-        "title": undefined,
-        "id": undefined,
-        "class": undefined,
-        "name": undefined,
-        "marker": undefined,
-        "unindent": undefined,
-        "edit": undefined,
-        "theme": undefined,
-        "check": undefined,
-        "fixlang": undefined
-    };
-    Object.keys(keyvals).forEach(key => {
-        var keyReg = key;
-        if (key === "marker") {
-            keyReg = "import|include";
-        }
-
-        const regStr = "\^.*,?\\s*(" + keyReg + ")\\s*:\\s*[\"']([^'\"]*)[\"'],?.*\$";
-        const reg = new RegExp(regStr);
-        const res = label.match(reg);
-        if (res) {
-            keyvals[key] = res[2];
-        }
-    });
-    return keyvals;
-}
 
 /**
- * generate code with options
- * @param {string} lang
- * @param {string} filePath
- * @param {string} originalPath
- * @param {string} label
- * @param {string} template
+ * Unindent code
+ * @param {string} s
  * @return {string}
  */
-export function embedCode({lang, filePath, originalPath, label, template, unindent}) {
-    const code = fs.readFileSync(filePath, "utf-8");
-    const fileName = path.basename(filePath);
-    const keyValueObject = parseVariablesFromLabel(label);
-
-    var content = code;
-    // Slice content via line numbers.
-    if (hasSliceRange(label)) {
-        const [start, end] = getSliceRange(label);
-        content = sliceCode(code, start, end);
-    }
-    // Slice content via markers.
-    else if (hasMarker(keyValueObject)) {
-        const marker = getMarker(keyValueObject);
-        content = removeMarkers(markerSliceCode(code, marker));
-    }
-    if (unindent || keyValueObject.unindent) {
-      content = strip(content);
-    }
-    return generateEmbedCode({
-        keyValueObject,
-        lang,
-        fileName,
-        originalPath,
-        content,
-        template,
-    });
-}
-
 export function strip(s) {
   // inspired from https://github.com/rails/rails/blob/master/activesupport/lib/active_support/core_ext/string/strip.rb
   const indents = s.split(/\n/).map(s => s.match(/^[ \t]*(?=\S)/)).filter(m => m).map(m => m[0])
@@ -128,46 +86,160 @@ export function strip(s) {
 }
 
 /**
+ * if contain "include" or "import" command, then return true
+ * @param {Array} commands
+ * @returns {boolean}
+ */
+export function containIncludeCommand(commands = []) {
+    let reg = /^(include|import)$/;
+    return commands.some(command => {
+        return reg.test(command.trim());
+    })
+}
+
+/** Parse the command label and return a new key-value object
+ * @example
+ *      [import,title:"<thetitle>",label:"<thelabel>"](path/to/file.ext)
+ * @param {object} kvMap
+ * @param {string} label
+ * @param {object}
+ * @return {object}
+ */
+export function parseVariablesFromLabel(label, kvMap) {
+    const kv = kvMap.toObject();
+    Object.keys(kv).forEach(key => {
+        let keyReg = key;
+        if (key === "marker") {
+            keyReg = "import|include";
+        }
+        const regStr = "\^.*,?\\s*(" + keyReg + ")\\s*:\\s*[\"']([^'\"]*)[\"'],?.*\$";
+        const reg = new RegExp(regStr);
+        const res = label.match(reg);
+        if (res) {
+            kv[key] = res[2];
+        }
+    });
+    return immutable.Map(kv);
+}
+
+/**
+ * Sunc file read with path check
+ * @param {string} path
+ * @return {string}
+ */
+export function readFileFromPath(path)
+{
+    try {
+    var content = fs.readFileSync(path, 'utf8')
+    }
+    catch (err) {
+        if (err.code === 'ENOENT') {
+            logger.error(fs.join( 'File not found: ', path));
+        } else {
+            throw err;
+        }
+    }
+    return content;
+}
+
+/**
+ * Load template from template label
+ * @param {object} kvMap
+ * @return {string}
+ */
+export function getTemplateContent(kvMap)
+{
+    const t = kvMap.get('template');
+    const dt = defaultBookOptionsMap.get('template');
+    const tPath = defaultTemplateMap.get(t);
+    const dtPath = defaultTemplateMap.get(dt);
+
+    const isTemplateDefault = (t == dt);
+    const isTemplatePath = (tPath == undefined);
+
+    let p;
+    // No template option.
+    if(isTemplateDefault) {
+        p = dtPath;
+    }
+    // Template option is a path.
+    else if (isTemplatePath) {
+        p = t;
+    }
+    // Template option one of template/ directory.
+    else {
+        p = tPath || dtPath;
+    }   
+    const content = readFileFromPath(p);
+
+    return content;
+}
+
+/**
+ * generate code with options
+ * @param {object} kvMap
+ * @param {string} lang
+ * @param {string} filePath
+ * @param {string} originalPath
+ * @param {string} label
+ * @return {string}
+ */
+export function embedCode( kvMap,
+    {lang, filePath, originalPath, label} )
+{
+    const code = readFileFromPath(filePath);
+    const fileName = path.basename(filePath);
+    const kvm = parseVariablesFromLabel(label, kvMap);
+    const kv = kvm.toObject();
+    const unindent = kvm.get('unindent');
+
+    var content = code;
+    // Slice content via line numbers.
+    if (hasSliceRange(label)) {
+        const [start, end] = getSliceRange(label);
+        content = sliceCode(code, start, end);
+    }
+    // Slice content via markers.
+    else if (hasMarker(kv)) {
+        const marker = getMarker(kv);
+        content = removeMarkers(markerSliceCode(code, marker));
+    }
+    if (unindent == true) {
+        content = strip(content);
+    }
+    
+    return generateEmbedCode(
+        kvm,
+        {lang, fileName, originalPath, content}
+    );
+}
+
+/**
  * generate code from options
- * @param {Object} keyValueObject
+ * @param {object} kvMap
  * @param {string} lang
  * @param {string} fileName
  * @param {string} originalPath
  * @param {string} content
- * @param {string} template handlebars template
  * @return {string}
  */
-export function generateEmbedCode({
-    keyValueObject,
-    lang,
-    fileName,
-    originalPath,
-    content,
-    template,
-}) {
-    const count = hasTitle(keyValueObject) ? codeCounter() : -1;
+export function generateEmbedCode(
+    kvMap,
+    {lang, fileName, originalPath, content})
+{   
+
+    const tContent = getTemplateContent(kvMap);
+    const kv = kvMap.toObject();
+    const count = hasTitle(kv) ? codeCounter() : -1;
     // merge objects
-    // if keyValueObject has `lang` key, that is overwrited by `lang` of right.
-    const context = Object.assign({}, keyValueObject, {lang, fileName, originalPath, content, count});
+    // if kv has `lang` key, that is overwrited by `lang` of right.
+    const context = Object.assign({}, kv, {lang, fileName, originalPath, content, count});
 
     // compile template
-    const handlebars = Handlebars.compile(template);
+    const handlebars = Handlebars.compile(tContent);
     // compile with data
     return handlebars(context);
 }
-
-const templatePath = {
-    default: path.join(__dirname, "..", "templates", "default-template.hbs"),
-    full: path.join(__dirname, "..", "templates", "full-template.hbs"),
-    ace: path.join(__dirname, "..", "templates", "ace-template.hbs"),
-    acefull: path.join(__dirname, "..", "templates", "acefull-template.hbs")
-};
-
-const defaultOptions = {
-    template: "default",
-    unindent: false,
-    fixlang: false
-};
 
 /**
  * generate code with options
@@ -178,39 +250,33 @@ const defaultOptions = {
  */
 export function parse(content, baseDir, options = {}) {
     const results = [];
-    const isTemplateDefault = (options.template == undefined);
-    const isTemplatePath = (templatePath[options.template] == undefined);
-    let tPath;
-    // No template option.
-    if(isTemplateDefault) {
-        tPath = templatePath[defaultOptions.template];
-    }
-    // Template option is a path.
-    else if (isTemplatePath && fs.existsSync(options.template)) {
-        tPath = options.template;
-    }
-    // Template option one of template/ directory.
-    else {
-        tPath = templatePath[options.template] || templatePath[defaultOptions.template];
-    }
-    const template = fs.readFileSync( tPath, "utf-8");
-    const unindent = options.unindent || defaultOptions.unindent;
-    const fixlang = (options.fixlang != undefined) ? options.fixlang : defaultOptions.fixlang;
+    const bookOptionsMap = defaultBookOptionsMap;
+    const kv = defaultKeyValueMap.toObject();
+
+    // Overwrite default value with user book options. 
+    bookOptionsMap.keySeq().forEach( key => {
+        if (options[key] != undefined) {
+            kv[key] = options[key];
+        };
+    });
+    const kvMap = immutable.Map(kv);
+
+    console.log(kvMap)
 
     let res;
     while (res = markdownLinkFormatRegExp.exec(content)) {
         const [all, label, originalPath] = res;
         const commands = splitLabelToCommands(label);
         if (containIncludeCommand(commands)) {
-            const lang = getLang(commands, originalPath, fixlang );
+            const lang = getLang(commands, originalPath, kvMap.get('fixlang') );
             const absolutePath = path.resolve(baseDir, originalPath);
-            const replacedContent = embedCode({
+            const replacedContent = embedCode(
+                kvMap,
+                {
                 lang,
                 filePath: absolutePath,
                 originalPath: originalPath,
-                label,
-                template,
-                unindent
+                label
             });
             results.push({
                 target: all,
