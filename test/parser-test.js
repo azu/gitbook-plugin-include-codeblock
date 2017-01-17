@@ -1,10 +1,14 @@
 // LICENSE : MIT
 "use strict";
+const immutable = require('immutable');
 import assert from "power-assert"
-import {parse, parseVariablesFromLabel, containIncludeCommand, splitLabelToCommands, strip} from "../src/parser"
+import {parse, parseVariablesFromLabel, containIncludeCommand, splitLabelToCommands, strip, defaultKeyValueMap, defaultBookOptionsMap} from "../src/parser"
 var content = `
 [include,title:"test.js"](fixtures/test.js)
 `;
+
+const kvmap = defaultKeyValueMap;
+
 describe("parse", function () {
     describe("#splitLabelToCommands", function () {
         it("should split label to commands", function () {
@@ -41,25 +45,29 @@ describe("parse", function () {
     })
     context("parseVariablesFromLabel ", function () {
         it("should retrieve each attribute", function () {
-            const results = parseVariablesFromLabel(`include:"marker",title:"a test",id:"code1"`);
+            const resmap = parseVariablesFromLabel(`include:"marker",title:"a test",id:"code1"`, kvmap);
+            const results = resmap.toObject();
             assert.equal(results.title, "a test");
             assert.equal(results.id, "code1");
             assert.equal(results.marker, "marker");
         });
         it("should retrieve title,id", function () {
-            const results = parseVariablesFromLabel(`include,title:"a test",id:"code1"`);
+            const resmap = parseVariablesFromLabel(`include,title:"a test",id:"code2"`, kvmap);
+            const results = resmap.toObject();
             assert.equal(results.title, "a test");
-            assert.equal(results.id, "code1");
+            assert.equal(results.id, "code2");
             assert.equal(results.marker, undefined);
         });
         it("should retrieve title,id from full command", function () {
-            const results = parseVariablesFromLabel(`[include,title:"a test",id:"code1"](/path/to/file.ext)`);
+            const resmap = parseVariablesFromLabel(`[include,title:"a test",id:"code3"](/path/to/file.ext)`, kvmap);
+            const results = resmap.toObject();
             assert.equal(results.title, "a test");
-            assert.equal(results.id, "code1");
+            assert.equal(results.id, "code3");
             assert.equal(results.marker, undefined);
         });
         it("should retrieve nothing", function () {
-            const results = parseVariablesFromLabel(`[import](/path/to/file.ext)`);
+            const resmap = parseVariablesFromLabel(`[import](/path/to/file.ext)`, kvmap);
+            const results = resmap.toObject();
             assert.equal(results.title, undefined);
             assert.equal(results.id, undefined);
             assert.equal(results.marker, undefined);
