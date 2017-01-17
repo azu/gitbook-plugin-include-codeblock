@@ -6,23 +6,22 @@
     npm start
     open http://localhost:4000/
 
-## import/include
+## Test example
 
-[import, test.js](./src/test.js)
+Test full codes.
 
-## Hardcoded class
+test.js
 
+[import](./src/test.js)
 
-[import, test.ts, lang-typescript](src/test.ts)
+line.js
 
-### Sliced Code
+[import](./src/line.js)
 
-[import:5-8](src/line.js)
+test.ts
 
-### Snippet code
+[import](./src/test.ts)
 
-[import:marker0, lang-typescript](src/marker.ts)
+marker.ts
 
-### Custom Title
-
-[import:marker0, title:"Custom Title", lang-typescript](src/marker.ts)
+[import](./src/marker.ts)
