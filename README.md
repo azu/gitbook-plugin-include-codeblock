@@ -124,6 +124,12 @@ Result
 console.log("test");
 ```
 
+:information_source: Do not inline!
+``` js
+// won't work
+Example of code [import](fixtures/test.js)
+```
+
 ### Local options
 
 Option can be passed locally and may depend on the template your are using.
