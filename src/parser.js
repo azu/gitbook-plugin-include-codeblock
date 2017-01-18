@@ -109,10 +109,12 @@ export function parseVariablesFromLabel(label, kvMap) {
     const kv = kvMap.toObject();
     Object.keys(kv).forEach(key => {
         let keyReg = key;
+        let keyVal = "([^'\"]*)";
         if (key === "marker") {
             keyReg = "import|include";
+            keyVal = "([^'\"]*,?)*"
         }
-        const regStr = "\^.*,?\\s*(" + keyReg + ")\\s*:\\s*[\"']([^'\"]*)[\"'],?.*\$";
+        const regStr = "\^.*,?\\s*(" + keyReg + ")\\s*:\\s*[\"']" + keyVal + "[\"'],?.*\$";
         const reg = new RegExp(regStr);
         const res = label.match(reg);
         if (res) {
@@ -134,7 +136,8 @@ export function readFileFromPath(path)
     }
     catch (err) {
         if (err.code === 'ENOENT') {
-            logger.error(fs.join( 'File not found: ', path));
+            logger.warn('Error: page: file not found: ' + path);
+            return 'Error: file not found: ' + path;
         } else {
             throw err;
         }
@@ -227,7 +230,6 @@ export function generateEmbedCode(
     kvMap,
     {lang, fileName, originalPath, content})
 {   
-
     const tContent = getTemplateContent(kvMap);
     const kv = kvMap.toObject();
     const count = hasTitle(kv) ? codeCounter() : -1;
@@ -238,7 +240,7 @@ export function generateEmbedCode(
     // compile template
     const handlebars = Handlebars.compile(tContent);
     // compile with data
-    return handlebars(context);
+    return handlebars(context)
 }
 
 /**

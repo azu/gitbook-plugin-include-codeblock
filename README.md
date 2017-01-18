@@ -226,12 +226,13 @@ Snippet is doxygen compatible.
 (See also [how to document the code](https://www.stack.nl/~dimitri/doxygen/manual/docblocks.html))
 
 ```markdown
-[import:'<markername>'](path/to/file)
+[import:'<marker0,marker1,...>'](path/to/file)
 ```
 
 #### Remarks
-- :information_source: **markername** begins with an alphabet character
+- :information_source: **marker name** begins with an alphabet character
 - :information_source: tags follows the doxygen standard: **language comment for documenting code** + **tag between bracket**
+- :information_source: Several markers separated by a comma will concatene snippets into a unique snippet. Spaces are taken into account.
 
 For example, considering the following C++ source code
 
@@ -250,6 +251,10 @@ int main()
     // [notmarked]
     int d;
     // [notmarked]
+
+    //! [marker2]
+    int e;
+    //! [marker2]
 }
 
 ```
@@ -271,6 +276,12 @@ The command `[import:'marker0'](path/to/test.cpp)` will result to
     int a;
     int b;
     int c;
+```
+
+The command `[import:'marker1,marker2'](path/to/test.cpp)` will result to
+```cpp
+    int b; 
+    int e;
 ```
 
 But the command `[import:'notmarked'](path/to/test.cpp)` will fail as it
