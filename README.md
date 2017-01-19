@@ -2,6 +2,12 @@
 
 GitBook Plugin for including file.
 
+
+1. [Installation](#installation)
+2. [Plugin options](#plugin-options)
+3. [Usage](#usage)
+
+
 ## Installation
 
 book.json
@@ -20,7 +26,7 @@ and
 gitbook install
 ```
 
-## Options
+## Plugin options
 
 Several options can be set in `book.json` to customize the plugin.
 
@@ -102,6 +108,23 @@ and choose an ace temple (see [template/](templates/))
 
 ## Usage
 
+
+#### General usage:
+
+```
+[<import|include> <<:"<<markername>>">>, <<opt0>>, <<opt1>>, ...](fixtures/test.js)
+```
+
+where `<...>` are required tags, `<<...>>` are optional tags.
+
+| tag               | description |
+| --- | --- |
+| `<import>`  | use `import` or `include` tag. |
+| `<markername>`        | optional tag to include code snippet. |
+| `<optX>`               |  optional `key:value` or `key=value` option (See [Command options](#command-options)). |
+
+#### Examples
+
 **fixtures/test.js**
 ```js
 console.log("test");
@@ -130,7 +153,7 @@ console.log("test");
 Example of code [import](fixtures/test.js)
 ```
 
-### Local options
+### Command options
 
 Option can be passed locally and may depend on the template your are using.
 
@@ -148,36 +171,6 @@ Option can be passed locally and may depend on the template your are using.
 
 For more details see sections below.
 
-<!--
-### Title(from v)
-
-A title can be added using `title:<the title>`.
-In the first case, the filename will be displayed.
-
-```
-[include, title:"test.js"](fixtures/test.js)
-```
-
-Result
-
-    > <a name="test.js" href="fixtures/test.js">test.js</a>
-
-    ``` js
-    console.log("test");
-    ```
-
-```
-[include,title:"Example of title"](fixtures/test.js)
-```
-
-Result
-
-    > <a name="test.js" href="fixtures/test.js">Example of title</a>
-
-    ``` js
-    console.log("test");
-    ```
--->
 
 ### Hardcoded class
 
