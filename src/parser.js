@@ -22,27 +22,27 @@ export const defaultTemplateMap = immutable.Map({
 export const defaultBookOptionsMap = immutable.Map({
     template: "default",
     unindent: "false",
-    edit: "",
+    edit: "false",
     theme: "",
-    check: "",
+    check: "false",
     fixlang: "false"
 });
 
 // All possible key-values (kv) in the command label.
 export const defaultKeyValueMap = immutable.Map({
     // Local
-    "title": undefined,
-    "id": undefined,
-    "class": undefined,
-    "name": undefined,
-    "marker": undefined,
+    title: undefined,
+    id: undefined,
+    class: undefined,
+    name: undefined,
+    marker: undefined,
     // Global/Local
-    "template": defaultBookOptionsMap.get('template'),
-    "unindent": defaultBookOptionsMap.get('unindent'),
-    "edit": defaultBookOptionsMap.get('edit'),
-    "theme": defaultBookOptionsMap.get('theme'),
-    "check": defaultBookOptionsMap.get('check'),
-    "fixlang": defaultBookOptionsMap.get('fixlang') 
+    template: defaultBookOptionsMap.get('template'),
+    unindent: defaultBookOptionsMap.get('unindent'),
+    edit: defaultBookOptionsMap.get('edit'),
+    theme: defaultBookOptionsMap.get('theme'),
+    check: defaultBookOptionsMap.get('check'),
+    fixlang: defaultBookOptionsMap.get('fixlang') 
 });
 
 /**
@@ -114,7 +114,7 @@ export function parseVariablesFromLabel(label, kvMap) {
             keyReg = "import|include";
             keyVal = "([^'\"]*,?)*"
         }
-        const regStr = "\^.*,?\\s*(" + keyReg + ")\\s*:\\s*[\"']" + keyVal + "[\"'],?.*\$";
+        const regStr = "\^.*,?\\s*(" + keyReg + ")\\s*[:=]\\s*[\"']" + keyVal + "[\"'],?.*\$";
         const reg = new RegExp(regStr);
         const res = label.match(reg);
         if (res) {
@@ -236,10 +236,9 @@ export function generateEmbedCode(
     // merge objects
     // if kv has `lang` key, that is overwrited by `lang` of right.
     const context = Object.assign({}, kv, {lang, fileName, originalPath, content, count});
-
     // compile template
     const handlebars = Handlebars.compile(tContent);
-    // compile with data
+    // compile with data.
     return handlebars(context)
 }
 
