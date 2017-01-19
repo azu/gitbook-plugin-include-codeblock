@@ -1,5 +1,5 @@
 {% if file.type=="asciidoc" %}++++{% endif %}
-{%ace edit=true, check=false, theme="", lang="javascript" %}
+{%ace edit=true, check=false, theme="monokai", lang="javascript" %}
 foo;
 bar;
 baz;

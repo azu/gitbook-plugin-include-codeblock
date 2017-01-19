@@ -10,9 +10,6 @@ function trim(str) {
 
 describe('generate test', () => {
     const fixturesDir = path.join(__dirname, 'patterns');
-    const defaultOptions = {
-        template: path.join(__dirname,"fixtures/template.hbs")
-    };
     fs.readdirSync(fixturesDir).map((caseName) => {
         it(`should ${caseName.split('-').join(' ')}`, () => {
             const fixtureDir = path.join(fixturesDir, caseName);
@@ -22,9 +19,9 @@ describe('generate test', () => {
             let options = {};
             try {
                 const book = require(bookjs);
-                Object.assign(options, defaultOptions, book["pluginsConfig"]["include-codeblock"]);
+                Object.assign(options, book["pluginsConfig"]["include-codeblock"]);
             } catch (e) {
-                Object.assign(options, defaultOptions);
+                // no book
             }
             const results = parse(content, fixtureDir, options);
             results.forEach(result => {
