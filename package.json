@@ -41,15 +41,9 @@
   },
   "gitbook": {
     "properties": {
-      "template": {
-        "type": "string",
-        "description": "Template string",
-        "default": "default",
-        "required": false
-      },
-      "unindent": {
+      "check": {
         "type": "boolean",
-        "description": "undindent inner snippets",
+        "description": "ace syntax validation (ace* template required)",
         "default": false,
         "required": false
       },
@@ -59,10 +53,22 @@
         "default": false,
         "required": false
       },
-      "check": {
+      "lang": {
+        "type": "string",
+        "description": "language for all codes",
+        "default": "",
+        "required": false
+      },
+      "fixlang": {
         "type": "boolean",
-        "description": "ace syntax validation (ace* template required)",
+        "description": "Fix lang label (c++,...)",
         "default": false,
+        "required": false
+      },
+      "template": {
+        "type": "string",
+        "description": "Template string",
+        "default": "default",
         "required": false
       },
       "theme": {
@@ -71,9 +77,9 @@
         "default": "chrome",
         "required": false
       },
-      "fixlang": {
+      "unindent": {
         "type": "boolean",
-        "description": "Fix lang label (c++,...)",
+        "description": "undindent inner snippets",
         "default": false,
         "required": false
       }

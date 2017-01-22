@@ -10,6 +10,7 @@ import {getLang} from "./language-detection";
 import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "./marker";
 import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
 import {hasTitle, parseTitle} from "./title"
+import {getTemplateContent, readFileFromPath} from "./template"
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 
 /**
@@ -69,11 +70,11 @@ export function containIncludeCommand(commands = []) {
 /** Parse the command label and return a new key-value object
  * @example
  *      [import,title:"<thetitle>",label:"<thelabel>"](path/to/file.ext)
- * @param {string} label
  * @param {object} kvMap
+ * @param {string} label
  * @return {object}
  */
-export function parseVariablesFromLabel(label, kvMap) {
+export function parseVariablesFromLabel(kvMap,label) {
     const kv = kvMap.toObject();
     const begin_ex = "\^.*";
     const end_ex = ".*\$";
@@ -115,76 +116,22 @@ export function parseVariablesFromLabel(label, kvMap) {
 }
 
 /**
- * Sunc file read with path check
- * @param {string} path
- * @return {string}
- */
-export function readFileFromPath(path)
-{
-    try {
-    var content = fs.readFileSync(path, 'utf8')
-    }
-    catch (err) {
-        if (err.code === 'ENOENT') {
-            logger.warn('Error: page: file not found: ' + path);
-            return 'Error: file not found: ' + path;
-        } else {
-            throw err;
-        }
-    }
-    return content;
-}
-
-/**
- * Load template from template label
- * @param {object} kvMap
- * @return {string}
- */
-export function getTemplateContent(kvMap)
-{
-    const t = kvMap.get('template');
-    const dt = defaultBookOptionsMap.get('template');
-    const tPath = defaultTemplateMap.get(t);
-    const dtPath = defaultTemplateMap.get(dt);
-
-    const isTemplateDefault = (t == dt);
-    const isTemplatePath = (tPath == undefined);
-
-    let p;
-    // No template option.
-    if(isTemplateDefault) {
-        p = dtPath;
-    }
-    // Template option is a path.
-    else if (isTemplatePath) {
-        p = t;
-    }
-    // Template option one of template/ directory.
-    else {
-        p = tPath || dtPath;
-    }   
-    const content = readFileFromPath(p);
-
-    return content;
-}
-
-/**
  * generate code with options
  * @param {object} kvMap
- * @param {string} lang
  * @param {string} filePath
  * @param {string} originalPath
  * @param {string} label
  * @return {string}
  */
 export function embedCode( kvMap,
-    {lang, filePath, originalPath, label} )
+    {filePath, originalPath, label} )
 {
     const code = readFileFromPath(filePath);
     const fileName = path.basename(filePath);
-    const kvm = parseVariablesFromLabel(label, kvMap);
-    const kv = kvm.toObject();
+    const kvmparsed = parseVariablesFromLabel(kvMap, label);
+    const kvm = getLang(kvmparsed, originalPath);
     const unindent = kvm.get('unindent');
+    const kv = kvm.toObject();
 
     var content = code;
     // Slice content via line numbers.
@@ -200,17 +147,15 @@ export function embedCode( kvMap,
     if (unindent == true) {
         content = strip(content);
     }
-    
     return generateEmbedCode(
         kvm,
-        {lang, fileName, originalPath, content}
+        {fileName, originalPath, content}
     );
 }
 
 /**
  * generate code from options
  * @param {object} kvMap
- * @param {string} lang
  * @param {string} fileName
  * @param {string} originalPath
  * @param {string} content
@@ -218,7 +163,7 @@ export function embedCode( kvMap,
  */
 export function generateEmbedCode(
     kvMap,
-    {lang, fileName, originalPath, content})
+    {fileName, originalPath, content})
 {   
     const tContent = getTemplateContent(kvMap);
     const kv = kvMap.toObject();
@@ -228,7 +173,6 @@ export function generateEmbedCode(
         "content":content,
         "count":count,
         "fileName":fileName,
-        "lang":lang,
         "originalPath":originalPath
     }) );
     // compile template
@@ -241,6 +185,7 @@ export function generateEmbedCode(
  * Parse command using options from pluginConfig.
  * @param {string} content
  * @param {string} baseDir
+ * @param {{template?: string}} options
  * @return {Array}
  */
 export function parse(content, baseDir, options = {}) {
@@ -251,12 +196,10 @@ export function parse(content, baseDir, options = {}) {
         const [all, label, originalPath] = res;
         const commands = splitLabelToCommands(label);
         if (containIncludeCommand(commands)) {
-            const lang = getLang(commands, originalPath, kvMap.get('fixlang') );
             const absolutePath = path.resolve(baseDir, originalPath);
             const replacedContent = embedCode(
                 kvMap,
                 {
-                lang,
                 filePath: absolutePath,
                 originalPath: originalPath,
                 label

@@ -46,46 +46,46 @@ describe("parse", function () {
     })
     context("parseVariablesFromLabel ", function () {
         it("should retrieve edit boolean", function () {
-            const resmap = parseVariablesFromLabel(`include,edit:true`, kvmap);
+            const resmap = parseVariablesFromLabel(kvmap, `include,edit:true`);
             const results = resmap.toObject();
             assert.equal(results.edit, true);
             assert.equal(results.marker, "");
         });
         it("should retrieve edit boolean with quotes", function () {
-            const resmap = parseVariablesFromLabel(`include,edit:"true"`, kvmap);
+            const resmap = parseVariablesFromLabel(kvmap, `include,edit:"true"`);
             const results = resmap.toObject();
             assert.equal(results.edit, true);
             assert.equal(results.marker, "");
         });
         it("should retrieve string title", function () {
-            const resmap = parseVariablesFromLabel(`include,title:"a test"`, kvmap);
+            const resmap = parseVariablesFromLabel(kvmap,`include,title:"a test"`);
             const results = resmap.toObject();
             assert.equal(results.title, "a test");
             assert.equal(results.marker, "");
         });
         it("should retrieve include marker", function () {
-            const resmap = parseVariablesFromLabel(`[include:"marker0"](/path/to/file.ext)`, kvmap);
+            const resmap = parseVariablesFromLabel(kvmap, `[include:"marker0"](/path/to/file.ext)`);
             const results = resmap.toObject();
             assert.equal(results.marker, "marker0");
         });
         it("should retrieve import marker", function () {
-            const resmap = parseVariablesFromLabel(`[import:"marker0"](/path/to/file.ext)`, kvmap);
+            const resmap = parseVariablesFromLabel(kvmap, `[import:"marker0"](/path/to/file.ext)`);
             const results = resmap.toObject();
             assert.equal(results.marker, "marker0");
         });
         it("should retrieve include marker with title", function () {
-            const resmap = parseVariablesFromLabel(`[include:"marker0",title:"test"](/path/to/file.ext)`, kvmap);
+            const resmap = parseVariablesFromLabel(kvmap, `[include:"marker0",title:"test"](/path/to/file.ext)`);
             const results = resmap.toObject();
             assert.equal(results.marker, "marker0");
             assert.equal(results.title, "test");
         });
         it("should retrieve import multi markers", function () {
-            const resmap = parseVariablesFromLabel(`[import:"marker0,marker1,marker2"](/path/to/file.ext)`, kvmap);
+            const resmap = parseVariablesFromLabel(kvmap, `[import:"marker0,marker1,marker2"](/path/to/file.ext)`);
             const results = resmap.toObject();
             assert.equal(results.marker, "marker0,marker1,marker2");
         });
         it("should retrieve each attribute", function () {
-            const resmap = parseVariablesFromLabel(`include:"marker",title:"a test",id:"code1",class:"myclass",edit=false,check="true",theme:"monokai",template:"ace",unindent:true,fixlang:"false"`, kvmap);
+            const resmap = parseVariablesFromLabel(kvmap,`include:"marker",title:"a test",id:"code1",class:"myclass",edit=false,check="true",theme:"monokai",template:"ace",unindent:true,fixlang:"false"`);
             const results = resmap.toObject();
             assert.equal(results.marker, "marker");
             assert.equal(results.title, "a test");
@@ -99,7 +99,7 @@ describe("parse", function () {
             assert.equal(results.fixlang, false);
         });
         it("should retrieve nothing", function () {
-            const resmap = parseVariablesFromLabel(`[import](/path/to/file.ext)`, kvmap);
+            const resmap = parseVariablesFromLabel(kvmap, `[import](/path/to/file.ext)`);
             const results = resmap.toObject();
             assert.equal(results.marker, "");
         });

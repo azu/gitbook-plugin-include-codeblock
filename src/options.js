@@ -1,6 +1,11 @@
 // LICENSE : MIT
-// Note: if you add new options type, you have to update checks in parser.js
-// for these types (see parseVariableFromMap).
+// Notes:
+// 1) If you add new options type, you have to update type checks in parser.js
+// (see parseVariableFromMap).
+// 2) The default map are immutable (can't change). They are updated (new map
+// with different names) while parsing book.json options first, then eventually
+// overwriten by commands options.
+
 const immutable = require("immutable");
 const logger = require('winston-color');
 const path = require("path");
@@ -18,6 +23,7 @@ export const defaultTemplateMap = immutable.Map({
 export const defaultBookOptionsMap = immutable.Map({
     check: cfg.check.default,
     edit: cfg.edit.default,
+    lang: cfg.lang.default,
     fixlang: cfg.fixlang.default,
     template: cfg.template.default,
     theme: cfg.theme.default,
@@ -36,6 +42,7 @@ export const defaultKeyValueMap = immutable.Map({
     // Global/Local
     check: defaultBookOptionsMap.get('check'),
     edit: defaultBookOptionsMap.get('edit'),
+    lang: defaultBookOptionsMap.get('lang'),
     fixlang: defaultBookOptionsMap.get('fixlang'),
     template: defaultBookOptionsMap.get('template'),
     theme: defaultBookOptionsMap.get('theme'),

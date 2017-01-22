@@ -1,1 +1,1 @@
-[import, lang-typescript](test.ts)
+[import, lang:"typescript"](test.ts)

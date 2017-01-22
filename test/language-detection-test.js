@@ -1,39 +1,57 @@
 // LICENSE : MIT
 "use strict";
 const assert = require("power-assert");
+import {defaultKeyValueMap} from "../src/options.js"
 const path = require("path");
 import {getLang, lookupLanguageByAceMode, lookupLanguageByExtension} from "../src/language-detection";
+
+const kvmap = defaultKeyValueMap;
+
 describe("language-detection", function () {
     describe("#lookupLanguageByAceMode", function () {
         it("should resolve language type by acemode", function () {
-            const aceMode = lookupLanguageByAceMode(["lang-typescript"]);
+            const kvm = kvmap.set("lang","typescript");
+            const aceMode = lookupLanguageByAceMode(kvm);
             assert.equal(aceMode, "typescript");
         });
     });
     describe("#lookupLanguageByExtension", function () {
-        it("should resolve language type by acemode", function () {
-            const aceMode = lookupLanguageByExtension(".js");
-            assert.equal(aceMode, "javascript");
+        context("lang ext or file ext", function () {
+            it("should resolve acemode by lang ext", function () {
+                const kvm = kvmap.set("lang",".js");
+                const aceMode = lookupLanguageByExtension(kvm,"/path/to/file.rs");
+                assert.equal(aceMode, "javascript");
+            });
+            it("should resolve acemode by file ext", function () {
+                const aceMode = lookupLanguageByExtension(kvmap,"/path/to/file.rs");
+                assert.equal(aceMode, "rust");
+            });
         });
     });
     describe("#getLang", function () {
         context("specified aceMode", function () {
             it("should prefer use aceMode", function () {
-                const lang = getLang(["lang-typescript"], "/path/to/file.js");
+                const kvm = kvmap.set("lang","typescript");
+                const kvml = getLang( kvm, "/path/to/file.js");
+                const lang = kvml.get("lang");
                 assert.equal(lang, "typescript");
             });
             it("should detect using aceMode", function () {
-                const lang = getLang(["lang-typescript"], "/path/to/file.ts");
+                const kvm = kvmap.set("lang","typescript");
+                const kvml = getLang(kvm, "/path/to/file.ts");
+                const lang = kvml.get("lang");
                 assert.equal(lang, "typescript");
             });
-            it("should detect using aceMode, but fail, use ext as fallback", function () {
-                const lang = getLang([], "/path/to/file.ts");
-                assert.equal(lang, "xml");
+            it("should detect use default, aceMode not found (+warn)", function () {
+                const kvml = getLang(kvmap, "/path/to/file.fakext");
+                const lang = kvml.get("lang");
+                assert.equal(lang, "");
             });
         });
         context("other using ext", function () {
             it("should detect using ext", function () {
-                const lang = getLang([], "/path/to/file.rs");
+                const kvml = getLang(kvmap, "/path/to/file.rs");
+                const lang = kvml.get("lang");
                 assert.equal(lang, "rust");
             });
         });
