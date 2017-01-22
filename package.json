@@ -44,31 +44,37 @@
       "template": {
         "type": "string",
         "description": "Template string",
+        "default": "default",
         "required": false
       },
       "unindent": {
-        "type": "string",
+        "type": "boolean",
         "description": "undindent inner snippets",
+        "default": false,
         "required": false
       },
       "edit": {
-        "type": "string",
+        "type": "boolean",
         "description": "ace code edition (ace* template required)",
+        "default": false,
         "required": false
       },
       "check": {
-        "type": "string",
+        "type": "boolean",
         "description": "ace syntax validation (ace* template required)",
+        "default": false,
         "required": false
       },
       "theme": {
         "type": "string",
         "description": "ace code editor theme (ace* template required)",
+        "default": "chrome",
         "required": false
       },
       "fixlang": {
-        "type": "Fix lang label (c++,...)",
-        "description": "",
+        "type": "boolean",
+        "description": "Fix lang label (c++,...)",
+        "default": false,
         "required": false
       }
     }
