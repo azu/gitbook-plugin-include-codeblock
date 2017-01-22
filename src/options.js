@@ -14,7 +14,7 @@ export const defaultTemplateMap = immutable.Map({
 });
 
 // Map for Book.json options. (avoid `undefined` for ace options),
-// NN: Default book option, type, desc are set in the package.json file.
+// NB: Default book option, type, desc are set in the package.json file.
 export const defaultBookOptionsMap = immutable.Map({
     check: cfg.check.default,
     edit: cfg.edit.default,
@@ -78,12 +78,4 @@ export function checkMapTypes( kvMap, funcLabel ) {
             }
         }
     });
-}
-
-export function convertValue( valstr, valtype )
-{
-    if ( valtype === "boolean" | "number" ) {   
-        return JSON.parse(valstr);
-    }
-    return valstr
 }
