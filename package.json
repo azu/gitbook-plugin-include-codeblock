@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/azu/gitbook-plugin-include-codeblock/issues"
   },
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "GitBook plugin for including file",
   "main": "lib/include-codeblock.js",
   "files": [
@@ -76,7 +76,7 @@
   "dependencies": {
     "language-map": "^1.1.1",
     "handlebars": "^4.0.5",
-    "ace": "^0.3.2"
+    "winston-color": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.7.7",
