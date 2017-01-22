@@ -40,7 +40,7 @@ export function getMarker(keyValObject) {
  */
 export function hasMarker(keyValObject) {
     const marker = getMarker(keyValObject);
-    return (marker !== undefined);
+    return ( (marker !== undefined) && (marker !== "") );
 }
 
 /* Parse the code from given markers
@@ -54,7 +54,7 @@ export function hasMarker(keyValObject) {
  * @returns {string}
  */
 export function markerSliceCode(code, markers) {
-    if (markers === undefined) {
+    if (( markers === undefined) || (markers === "") ) {
         return code;
     }
     var parsedcode="";
