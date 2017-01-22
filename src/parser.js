@@ -5,45 +5,12 @@ const fs = require("fs");
 const path = require("path");
 const Handlebars = require("handlebars");
 const logger = require('winston-color');
+import {defaultBookOptionsMap, defaultKeyValueMap, defaultTemplateMap, initOptions, checkMapTypes, convertValue} from "./options.js";
 import {getLang} from "./language-detection";
 import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "./marker";
 import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
 import {hasTitle, parseTitle} from "./title"
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
-
-export const defaultTemplateMap = immutable.Map({
-    default: path.join(__dirname, "..", "templates", "default-template.hbs"),
-    full: path.join(__dirname, "..", "templates", "full-template.hbs"),
-    ace: path.join(__dirname, "..", "templates", "ace-template.hbs"),
-    acefull: path.join(__dirname, "..", "templates", "acefull-template.hbs")
-});
-
-// Available options in book.json.
-export const defaultBookOptionsMap = immutable.Map({
-    template: "default",
-    unindent: "false",
-    edit: "false",
-    theme: "",
-    check: "false",
-    fixlang: "false"
-});
-
-// All possible key-values (kv) in the command label.
-export const defaultKeyValueMap = immutable.Map({
-    // Local
-    title: undefined,
-    id: undefined,
-    class: undefined,
-    name: undefined,
-    marker: undefined,
-    // Global/Local
-    template: defaultBookOptionsMap.get('template'),
-    unindent: defaultBookOptionsMap.get('unindent'),
-    edit: defaultBookOptionsMap.get('edit'),
-    theme: defaultBookOptionsMap.get('theme'),
-    check: defaultBookOptionsMap.get('check'),
-    fixlang: defaultBookOptionsMap.get('fixlang') 
-});
 
 /**
  * A counter to count how many code are imported.
@@ -80,6 +47,8 @@ export function splitLabelToCommands(label = "") {
  */
 export function strip(s) {
   // inspired from https://github.com/rails/rails/blob/master/activesupport/lib/active_support/core_ext/string/strip.rb
+  if((s === undefined) || (s === "") )
+        return s;
   const indents = s.split(/\n/).map(s => s.match(/^[ \t]*(?=\S)/)).filter(m => m).map(m => m[0])
   const smallestIndent = indents.sort((a,b) => a.length-b.length)[0]
   return s.replace(new RegExp(`^${smallestIndent}`, 'gm'), '')
@@ -100,25 +69,46 @@ export function containIncludeCommand(commands = []) {
 /** Parse the command label and return a new key-value object
  * @example
  *      [import,title:"<thetitle>",label:"<thelabel>"](path/to/file.ext)
- * @param {object} kvMap
  * @param {string} label
- * @param {object}
+ * @param {object} kvMap
  * @return {object}
  */
 export function parseVariablesFromLabel(label, kvMap) {
     const kv = kvMap.toObject();
+    const begin_ex = "\^.*";
+    const end_ex = ".*\$";
+    const sep_ex = ",?";
+    const kvsep_ex = "[:=]";
+    const spaces_ex = "\\s*";
+    const quotes_ex = "[\"']";
+
     Object.keys(kv).forEach(key => {
-        let keyReg = key;
-        let keyVal = "([^'\"]*)";
+        let key_ex = "(" + key + ")";
+        let val_ex = "([-\\w\\s]*)";
         if (key === "marker") {
-            keyReg = "import|include";
-            keyVal = "([^'\"]*,?)*"
+            key_ex = "(import|include)";
+            val_ex = "(([-\\w\\s]*,?)*)";
         }
-        const regStr = "\^.*,?\\s*(" + keyReg + ")\\s*[:=]\\s*[\"']" + keyVal + "[\"'],?.*\$";
+        // Add value check here
+        switch( typeof defaultKeyValueMap.get(key) ) {
+            case "string":
+                val_ex = quotes_ex + val_ex + quotes_ex;
+                break;
+            case "boolean":
+                // no quotes
+                val_ex = quotes_ex + "?" + "(true|false)" + quotes_ex + "?";
+                break;
+            default:
+                logger.error("include-codeblock: parseVariablesFromLabel: key type `"
+                    + typeof defaultKeyValueMap.get(key) + "` unknown (see options.js)");
+        }
+        // Val type cast to string.
+        const regStr = begin_ex + sep_ex +  spaces_ex + key_ex +
+            spaces_ex + kvsep_ex + spaces_ex + val_ex + spaces_ex + sep_ex + end_ex;
         const reg = new RegExp(regStr);
         const res = label.match(reg);
         if (res) {
-            kv[key] = res[2];
+            kv[key] = convertValue(res[2], typeof defaultKeyValueMap.get(key));
         }
     });
     return immutable.Map(kv);
@@ -233,35 +223,29 @@ export function generateEmbedCode(
     const tContent = getTemplateContent(kvMap);
     const kv = kvMap.toObject();
     const count = hasTitle(kv) ? codeCounter() : -1;
-    // merge objects
-    // if kv has `lang` key, that is overwrited by `lang` of right.
-    const context = Object.assign({}, kv, {lang, fileName, originalPath, content, count});
+    checkMapTypes( kvMap, "generatedEmbedCode" );
+    const contextMap = kvMap.concat( immutable.Map({
+        "content":content,
+        "count":count,
+        "fileName":fileName,
+        "lang":lang,
+        "originalPath":originalPath
+    }) );
     // compile template
     const handlebars = Handlebars.compile(tContent);
     // compile with data.
-    return handlebars(context)
+    return handlebars(contextMap.toObject());
 }
 
 /**
- * generate code with options
+ * Parse command using options from pluginConfig.
  * @param {string} content
  * @param {string} baseDir
- * @param {{template?: string}} options
  * @return {Array}
  */
 export function parse(content, baseDir, options = {}) {
     const results = [];
-    const bookOptionsMap = defaultBookOptionsMap;
-    const kv = defaultKeyValueMap.toObject();
-
-    // Overwrite default value with user book options. 
-    bookOptionsMap.keySeq().forEach( key => {
-        if (options[key] != undefined) {
-            kv[key] = options[key];
-        };
-    });
-    const kvMap = immutable.Map(kv);
-
+    const kvMap = initOptions( options );
     let res;
     while (res = markdownLinkFormatRegExp.exec(content)) {
         const [all, label, originalPath] = res;
