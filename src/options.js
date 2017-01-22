@@ -79,3 +79,16 @@ export function checkMapTypes( kvMap, funcLabel ) {
         }
     });
 }
+
+/** 
+ * Convert string value to value type.
+ * @param {string} valtype
+ */
+export function convertValue( valstr, valtype )
+{
+    // remove quotes
+    if ( valtype === "boolean" | "number" ) {   
+        return JSON.parse(valstr);
+    }
+    return valstr
+}
