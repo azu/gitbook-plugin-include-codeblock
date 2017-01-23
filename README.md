@@ -170,14 +170,15 @@ Option can be passed locally and may depend on the template your are using.
 | --- | --- | --- |
 | `unindent` | `{"true","false"}` | reindent code if marker or slice is used |
 | `title`| `"<your title>"` | Title for the code **full template required**|
-| `filename` | `"<your_filename>"` | name of the included file  **full template required** |
-| `originalPath` | `"</path/to/file/>"` | name of the included file  **full template required** |
+| `name` | `"<your_filename>"` | name of the included file  **full template required** |
+| `class` | `"<your_classname>"` | html class for the title  **full template required** |
 | `id` | `"<your_id>"` | hmlt class for custom style **full template required** |
 | `label` | `"<your_ref_label>"` | reference label (latex like) **full template required** |
 | `edit` | `{"true","false"}` | allow edit code (**ace template required**) |
 | `check` | `{"true","false"}` | check syntax (**ace template required**) |
 | `template` | `{default,full,ace,...}` or custom path | reindent code if marker or slice is used |
 | `lang` | `{"c_cpp","javascript", ...}` | lang color syntax (not set => auto deduce, see [lang section](#hardcoded-class)). |
+| `fixlang` | `{true,false}` default:`false` | fix some errors with code lang (e.g C++, ...) |
 | `theme` | `{"monokai","coffee",...}` | check syntax (**ace template required**) |
 
 For more details see sections below.
