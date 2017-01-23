@@ -1,5 +1,6 @@
 // LICENSE : MIT
 const fs = require("fs");
+const logger = require('winston-color');
 import {defaultBookOptionsMap, defaultKeyValueMap, defaultTemplateMap} from "./options.js";
 /**
  * Load template from template label
@@ -45,7 +46,7 @@ export function readFileFromPath(path)
     }
     catch (err) {
         if (err.code === 'ENOENT') {
-            logger.warn('Error: page: file not found: ' + path);
+            logger.warn('Error: file not found: ' + path);
             return 'Error: file not found: ' + path;
         } else {
             throw err;

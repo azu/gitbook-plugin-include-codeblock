@@ -3,7 +3,7 @@
 const immutable = require('immutable');
 import assert from "power-assert"
 import {defaultKeyValueMap} from "../src/options.js"
-import {parse, containIncludeCommand, splitLabelToCommands, strip, parseVariablesFromLabel} from "../src/parser"
+import {parse, containIncludeCommand, splitLabelToCommands, strip, parseVariablesFromLabel, getContent} from "../src/parser"
 var content = `
 [include,title:"test.js"](fixtures/test.js)
 `;
@@ -123,4 +123,13 @@ describe("parse", function () {
             assert.equal(stripped, "foo\n  bar\nbaz\n");
         });
     })
+    describe("parse URL", function () {
+        it("should retrieve url file", function () {
+            const code = getContent("","http://pastebin.com/raw/jMYQ8Nrt");
+            assert.equal( code, "Url works!");
+        });
+        it("should fail retrieve url file (+warn)", function () {
+            const code = getContent("","http://google.com/fakeurl");
+        });
+    });
 });
