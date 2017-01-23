@@ -32,12 +32,13 @@ Several options can be set in `book.json` to customize the plugin.
 
 | option | value | Description |
 | --- | --- | --- |
-| `template` | `{default,full,ace,...}` or custom path | reindent code if marker or slice is used |
+| `template` | `{"default","full","ace",...}` or custom path | reindent code if marker or slice is used |
 | `unindent` | `{true,false}` default:`false` | reindent code if marker or slice is used |
 | `fixlang` | `{true,false}` default:`false` | fix some errors with code lang (e.g C++, ...) |
+| `lang` | `{"c_cpp","javascript", ...}` | lang color syntax (not set => auto deduce, see [lang section](#hardcoded-class)). |
 | `edit` | `{true,false}` | [allow edit code](https://github.com/ymcatar/gitbook-plugin-ace/blob/master/README.md) (**ace template required**) |
 | `check` | `{true,false}` | [syntax validation](https://github.com/ymcatar/gitbook-plugin-ace/blob/master/README.md) (**ace template required**) |
-| `theme` | `{monokai,coffee,...}` | [check syntax](https://github.com/ymcatar/gitbook-plugin-ace/blob/master/README.md) (**ace template required**) |
+| `theme` | `{"monokai","coffee",...}` | [check syntax](https://github.com/ymcatar/gitbook-plugin-ace/blob/master/README.md) (**ace template required**) |
 
 Just add the desired optin under `pluginConfig` in the `book.json` file
 
@@ -60,10 +61,10 @@ Templates let customize the rendered code. Several default templates are availab
 
 | template | description |
 | --- | --- |
-| `default` | default template, standard markdown code style |
-| `full` | enable title, labeling, id, ... |
-| `ace` | enable ace code rendering (**ace plugin required**) |
-| `acefull` | enable ace code rendering with title, label, id, ... (**ace plugin required**) |
+| `"default"` | default template, standard markdown code style |
+| `"full"` | enable title, labeling, id, ... |
+| `"ace"` | enable ace code rendering (**ace plugin required**) |
+| `"acefull"` | enable ace code rendering with title, label, id, ... (**ace plugin required**) |
 
 - :information_source: For ace template, see [Ace section](#ace-plugin)
 - :information_source: For more template, consult the list in [template/](templates/).
@@ -112,16 +113,18 @@ and choose an ace temple (see [template/](templates/))
 #### General usage:
 
 ```
-[<import|include> <<:"<<markername>>">>, <<opt0>>, <<opt1>>, ...](fixtures/test.js)
+[import:"tag",option0:"value0", ...](url/or/path/to/file)
 ```
 
 where `<...>` are required tags, `<<...>>` are optional tags.
 
 | tag               | description |
 | --- | --- |
-| `<import>`  | use `import` or `include` tag. |
-| `<markername>`        | optional tag to include code snippet. |
-| `<optX>`               |  optional `key:value` or `key=value` option (See [Command options](#command-options)). |
+| `import`  | use `import` or `include` tag. |
+| `tag` | optional tag to include code snippet (see [snippet](#snippet-code). |
+| `optionX` |  optional `key:value` or `key=value` option (See [Command options](#command-options)). |
+
+See [examples](#examples) for more details.
 
 #### Examples
 
@@ -153,6 +156,12 @@ console.log("test");
 Example of code [import](fixtures/test.js)
 ```
 
+You could import the same code directly from the repository with nice color template
+```markdown
+[import, template:"acefull", title:"example of code", theme:"monokai"](https://raw.githubusercontent.com/azu/gitbook-plugin-include-codeblock/master/test/fixtures/test.js)
+```
+
+
 ### Command options
 
 Option can be passed locally and may depend on the template your are using.
@@ -167,6 +176,8 @@ Option can be passed locally and may depend on the template your are using.
 | `label` | `"<your_ref_label>"` | reference label (latex like) **full template required** |
 | `edit` | `{"true","false"}` | allow edit code (**ace template required**) |
 | `check` | `{"true","false"}` | check syntax (**ace template required**) |
+| `template` | `{default,full,ace,...}` or custom path | reindent code if marker or slice is used |
+| `lang` | `{"c_cpp","javascript", ...}` | lang color syntax (not set => auto deduce, see [lang section](#hardcoded-class)). |
 | `theme` | `{"monokai","coffee",...}` | check syntax (**ace template required**) |
 
 For more details see sections below.
@@ -175,12 +186,14 @@ For more details see sections below.
 ### Hardcoded class
 
 When you import a TypeScript file `.ts`:
-The parser correctly finds `.ts` in the [language-map](https://github.com/blakeembrey/language-map "language-map") extensions for both TypeScript and XML, then automatically chooses `XML`.
+The parser correctly finds `.ts` in the
+[language-map](https://github.com/blakeembrey/language-map "language-map")
+extensions for both TypeScript and XML, then automatically chooses `XML`.
 
-If you want to specify language type, put `lang-<lang-name>` to label.
+If you want to specify language type, put `lang:"<lang-name>"` to label.
 
 ```markdown
-[import, lang-typescript](hello-world.ts)
+[import, lang:"typescript"](hello-world.ts)
 ```
 
 - :information_source: choose `<lang-name>` of `lang-<lang-name>` from language-map's `aceMode` value.
