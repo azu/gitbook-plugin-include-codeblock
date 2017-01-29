@@ -2,16 +2,15 @@
 // Notes:
 // 1) If you add new options type, you have to update type checks in parser.js
 // (see parseVariableFromMap).
-// 2) The default map are immutable (can't change). They are updated (new map
+// 2) The default map (objects) are immutable (frozen). They are updated (new map
 // with different names) while parsing book.json options first, then eventually
 // overwriten by commands options.
-
-const immutable = require("immutable");
+"use strict";
 const logger = require('winston-color');
 const path = require("path");
 const cfg = require("../package").gitbook.properties;
 
-export const defaultTemplateMap = immutable.Map({
+export const defaultTemplateMap = Object.freeze({
     default: path.join(__dirname, "..", "templates", "default-template.hbs"),
     full: path.join(__dirname, "..", "templates", "full-template.hbs"),
     ace: path.join(__dirname, "..", "templates", "ace-template.hbs"),
@@ -20,7 +19,7 @@ export const defaultTemplateMap = immutable.Map({
 
 // Map for Book.json options. (avoid `undefined` for ace options),
 // NB: Default book option, type, desc are set in the package.json file.
-export const defaultBookOptionsMap = immutable.Map({
+export const defaultBookOptionsMap = Object.freeze({
     check: cfg.check.default,
     edit: cfg.edit.default,
     lang: cfg.lang.default,
@@ -32,7 +31,7 @@ export const defaultBookOptionsMap = immutable.Map({
 
 // Possible command key-values (kv).
 // (avoid undefined default value because we check value types).
-export const defaultKeyValueMap = immutable.Map({
+export const defaultKeyValueMap = Object.freeze({
     // Local
     class: "",
     id: "",
@@ -40,13 +39,13 @@ export const defaultKeyValueMap = immutable.Map({
     name: "",
     title: "",
     // Global/Local
-    check: defaultBookOptionsMap.get('check'),
-    edit: defaultBookOptionsMap.get('edit'),
-    lang: defaultBookOptionsMap.get('lang'),
-    fixlang: defaultBookOptionsMap.get('fixlang'),
-    template: defaultBookOptionsMap.get('template'),
-    theme: defaultBookOptionsMap.get('theme'),
-    unindent: defaultBookOptionsMap.get('unindent')
+    check: defaultBookOptionsMap['check'],
+    edit: defaultBookOptionsMap['edit'],
+    lang: defaultBookOptionsMap['lang'],
+    fixlang: defaultBookOptionsMap['fixlang'],
+    template: defaultBookOptionsMap['template'],
+    theme: defaultBookOptionsMap['theme'],
+    unindent: defaultBookOptionsMap['unindent']
 });
 
 /**
@@ -57,14 +56,14 @@ export const defaultKeyValueMap = immutable.Map({
 export function initOptions( options )
 {
     const dbom = defaultBookOptionsMap;
-    const kv = defaultKeyValueMap.toObject();
+    const kv = Object.assign({}, defaultKeyValueMap);
     // Overwrite default value with user book options.
-    dbom.keySeq().forEach( key => {
+    Object.keys(dbom).forEach( key => {
         if (options[key] != undefined) {
-            kv[key] = convertValue(options[key],typeof dbom.get(key));
+            kv[key] = convertValue(options[key],typeof dbom[key]);
         };
     });
-    const kvmap = immutable.Map(kv);
+    const kvmap = Object.freeze(kv);
     checkMapTypes( kvmap, "initOptions" );
     return kvmap
 }
@@ -75,13 +74,13 @@ export function initOptions( options )
  * @param {string} funcLabel
  */
 export function checkMapTypes( kvMap, funcLabel ) {
-    kvMap.keySeq().forEach( key => {
-        if( defaultKeyValueMap.get(key) != undefined ) {
-            if( !(typeof kvMap.get(key) === typeof defaultKeyValueMap.get(key)) ) {
+    Object.keys(kvMap).forEach( key => {
+        if( defaultKeyValueMap[key] != undefined ) {
+            if( !(typeof kvMap[key] === typeof defaultKeyValueMap[key]) ) {
                 logger.error("include-codeblock: checkMapTypes (" + funcLabel +
                     ") : wrong value type for key `" + key + "`: "+
-                    "key type: `"+ typeof kvMap.get(key) +
-                    "` (!= `" + typeof defaultKeyValueMap.get(key) + "`)");
+                    "key type: `"+ typeof kvMap[key] +
+                    "` (!= `" + typeof defaultKeyValueMap[key] + "`)");
             }
         }
     });

@@ -11,7 +11,7 @@
  * NB: markername must begin with a letter to avoid conflict with slice
  *     line range.
  */
-
+"use strict";
 const logger = require('winston-color');
 const commentOpen = "(\/+\/+|#|%|\/\\*)";
 const commentClose = "(\\*\/)?";

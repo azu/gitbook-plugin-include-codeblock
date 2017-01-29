@@ -1,4 +1,5 @@
 // LICENSE : MIT
+"use strict";
 const fs = require("fs");
 const logger = require('winston-color');
 import {defaultBookOptionsMap, defaultKeyValueMap, defaultTemplateMap} from "./options.js";
@@ -9,10 +10,10 @@ import {defaultBookOptionsMap, defaultKeyValueMap, defaultTemplateMap} from "./o
  */
 export function getTemplateContent(kvMap)
 {
-    const t = kvMap.get('template');
-    const dt = defaultBookOptionsMap.get('template');
-    const tPath = defaultTemplateMap.get(t);
-    const dtPath = defaultTemplateMap.get(dt);
+    const t = kvMap['template'];
+    const dt = defaultBookOptionsMap['template'];
+    const tPath = defaultTemplateMap[t];
+    const dtPath = defaultTemplateMap[dt];
 
     const isTemplateDefault = (t == dt);
     const isTemplatePath = (tPath == undefined);

@@ -1,6 +1,5 @@
 // LICENSE : MIT
 "use strict";
-const immutable = require("immutable");
 const fs = require("fs");
 const path = require("path");
 const Handlebars = require("handlebars");
@@ -77,7 +76,7 @@ export function containIncludeCommand(commands = []) {
  * @return {object}
  */
 export function parseVariablesFromLabel(kvMap,label) {
-    const kv = kvMap.toObject();
+    const kv = Object.assign({},kvMap);
     const begin_ex = "\^.*";
     const end_ex = ".*\$";
     const sep_ex = ",?";
@@ -93,7 +92,7 @@ export function parseVariablesFromLabel(kvMap,label) {
             val_ex = "(([-\\w\\s]*,?)*)";
         }
         // Add value check here
-        switch( typeof defaultKeyValueMap.get(key) ) {
+        switch( typeof defaultKeyValueMap[key] ) {
             case "string":
                 val_ex = quotes_ex + val_ex + quotes_ex;
                 break;
@@ -103,7 +102,7 @@ export function parseVariablesFromLabel(kvMap,label) {
                 break;
             default:
                 logger.error("include-codeblock: parseVariablesFromLabel: key type `"
-                    + typeof defaultKeyValueMap.get(key) + "` unknown (see options.js)");
+                    + typeof defaultKeyValueMap[key] + "` unknown (see options.js)");
         }
         // Val type cast to string.
         const regStr = begin_ex + sep_ex +  spaces_ex + key_ex +
@@ -111,10 +110,10 @@ export function parseVariablesFromLabel(kvMap,label) {
         const reg = new RegExp(regStr);
         const res = label.match(reg);
         if (res) {
-            kv[key] = convertValue(res[2], typeof defaultKeyValueMap.get(key));
+            kv[key] = convertValue(res[2], typeof defaultKeyValueMap[key]);
         }
     });
-    return immutable.Map(kv);
+    return Object.freeze(kv);
 }
 
 /**
@@ -161,8 +160,7 @@ export function embedCode( kvMap,
     const fileName = path.basename(filePath);
     const kvmparsed = parseVariablesFromLabel(kvMap, label);
     const kvm = getLang(kvmparsed, originalPath);
-    const unindent = kvm.get('unindent');
-    const kv = kvm.toObject();
+    const unindent = kvm['unindent'];
 
     var content = code;
     // Slice content via line numbers.
@@ -171,8 +169,8 @@ export function embedCode( kvMap,
         content = sliceCode(code, start, end);
     }
     // Slice content via markers.
-    else if (hasMarker(kv)) {
-        const marker = getMarker(kv);
+    else if (hasMarker(kvm)) {
+        const marker = getMarker(kvm);
         content = removeMarkers(markerSliceCode(code, marker));
     }
     if (unindent == true) {
@@ -197,19 +195,19 @@ export function generateEmbedCode(
     {fileName, originalPath, content})
 {   
     const tContent = getTemplateContent(kvMap);
-    const kv = kvMap.toObject();
+    const kv = Object.assign({},kvMap);
     const count = hasTitle(kv) ? codeCounter() : -1;
     checkMapTypes( kvMap, "generatedEmbedCode" );
-    const contextMap = kvMap.concat( immutable.Map({
+    const contextMap = Object.assign({},kvMap,{
         "content":content,
         "count":count,
         "fileName":fileName,
         "originalPath":originalPath
-    }) );
+    } );
     // compile template
     const handlebars = Handlebars.compile(tContent);
     // compile with data.
-    return handlebars(contextMap.toObject());
+    return handlebars(contextMap);
 }
 
 /**
