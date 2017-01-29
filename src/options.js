@@ -6,7 +6,7 @@
 // with different names) while parsing book.json options first, then eventually
 // overwriten by commands options.
 "use strict";
-const logger = require('winston-color');
+const logger = require("winston-color");
 const path = require("path");
 const cfg = require("../package").gitbook.properties;
 
@@ -39,33 +39,25 @@ export const defaultKeyValueMap = Object.freeze({
     name: "",
     title: "",
     // Global/Local
-    check: defaultBookOptionsMap['check'],
-    edit: defaultBookOptionsMap['edit'],
-    lang: defaultBookOptionsMap['lang'],
-    fixlang: defaultBookOptionsMap['fixlang'],
-    template: defaultBookOptionsMap['template'],
-    theme: defaultBookOptionsMap['theme'],
-    unindent: defaultBookOptionsMap['unindent']
+    check: defaultBookOptionsMap.check,
+    edit: defaultBookOptionsMap.edit,
+    lang: defaultBookOptionsMap.lang,
+    fixlang: defaultBookOptionsMap.fixlang,
+    template: defaultBookOptionsMap.template,
+    theme: defaultBookOptionsMap.theme,
+    unindent: defaultBookOptionsMap.unindent
 });
 
-/**
- * Check that maps types equal to default key value map. 
- * @param {{template?: string}} options
- * @return {object} kvMap
+/** 
+ * Convert string value to value type.
+ * @param {string} valtype
  */
-export function initOptions( options )
-{
-    const dbom = defaultBookOptionsMap;
-    const kv = Object.assign({}, defaultKeyValueMap);
-    // Overwrite default value with user book options.
-    Object.keys(dbom).forEach( key => {
-        if (options[key] != undefined) {
-            kv[key] = convertValue(options[key],typeof dbom[key]);
-        };
-    });
-    const kvmap = Object.freeze(kv);
-    checkMapTypes( kvmap, "initOptions" );
-    return kvmap
+export function convertValue(valstr, valtype){
+    // remove quotes
+    if ((valtype === "boolean") || (valtype === "number")) {   
+        return JSON.parse(valstr);
+    }
+    return valstr;
 }
 
 /**
@@ -73,28 +65,34 @@ export function initOptions( options )
  * @param {object} kvMap
  * @param {string} funcLabel
  */
-export function checkMapTypes( kvMap, funcLabel ) {
-    Object.keys(kvMap).forEach( key => {
-        if( defaultKeyValueMap[key] != undefined ) {
-            if( !(typeof kvMap[key] === typeof defaultKeyValueMap[key]) ) {
+export function checkMapTypes(kvMap, funcLabel) {
+    Object.keys(kvMap).forEach(key => {
+        if(defaultKeyValueMap[key] != undefined) {
+            if(!(typeof kvMap[key] === typeof defaultKeyValueMap[key])) {
                 logger.error("include-codeblock: checkMapTypes (" + funcLabel +
-                    ") : wrong value type for key `" + key + "`: "+
-                    "key type: `"+ typeof kvMap[key] +
+                    ") : wrong value type for key `" + key + "`: " +
+                    "key type: `" + typeof kvMap[key] +
                     "` (!= `" + typeof defaultKeyValueMap[key] + "`)");
             }
         }
     });
 }
 
-/** 
- * Convert string value to value type.
- * @param {string} valtype
+/**
+ * Check that maps types equal to default key value map. 
+ * @param {{template?: string}} options
+ * @return {object} kvMap
  */
-export function convertValue( valstr, valtype )
-{
-    // remove quotes
-    if ( valtype === "boolean" | "number" ) {   
-        return JSON.parse(valstr);
-    }
-    return valstr
+export function initOptions(options){
+    const dbom = defaultBookOptionsMap;
+    const kv = Object.assign({}, defaultKeyValueMap);
+    // Overwrite default value with user book options.
+    Object.keys(dbom).forEach(key => {
+        if (options[key] != undefined) {
+            kv[key] = convertValue(options[key],typeof dbom[key]);
+        }
+    });
+    const kvmap = Object.freeze(kv);
+    checkMapTypes(kvmap, "initOptions");
+    return kvmap;
 }

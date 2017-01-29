@@ -24,6 +24,7 @@
   },
   "scripts": {
     "build": "NODE_ENV=production babel src --out-dir lib --source-maps",
+    "check": "eslint src/*.js test/*.js",
     "watch": "babel src --out-dir lib --watch --source-maps",
     "prepublish": "npm run --if-present build",
     "test": "mocha",
@@ -97,6 +98,7 @@
     "babel-preset-power-assert": "^1.0.0",
     "babel-register": "^6.8.0",
     "mocha": "^2.4.5",
-    "power-assert": "^1.3.1"
+    "power-assert": "^1.3.1",
+    "eslint": "^3.14.1"
   }
 }

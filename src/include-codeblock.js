@@ -1,8 +1,8 @@
 // LICENSE : MIT
 "use strict";
-var path = require('path');
-import {parse} from "./parser"
-import {aceCheck} from "./ace-check"
+var path = require("path");
+import {parse} from "./parser";
+import {aceCheck} from "./ace-check";
 
 aceCheck();
 

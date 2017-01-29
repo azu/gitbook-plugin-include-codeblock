@@ -3,7 +3,7 @@
 const assert = require("power-assert");
 import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "../src/marker";
 
-//-------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------
 // Test C++ Code
 const cppcode = `
 // test.cpp source code
@@ -45,7 +45,7 @@ int main()
     /// [ marker 7 ]
 }
 `;
-//-------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------
 
 // Expected results.
 const expectedMarker0 = `    int a;
@@ -56,13 +56,13 @@ const expectedMarker0 = `    int a;
 const expectedMarker01 = `    int a;
     int b;
     int c;`;
-const expectedMarker1 = `    int b;`;
-const expectedMarker2 = `    int d;`;
-const expectedMarker3 = `    int e;`;
-const expectedMarker4 = `    int f;`;
-const expectedMarker5 = `    int g;`;
-const expectedMarker6 = `    int h;`;
-const expectedMarker7 = `    int i;`;
+const expectedMarker1 = "    int b;";
+const expectedMarker2 = "    int d;";
+const expectedMarker3 = "    int e;";
+const expectedMarker4 = "    int f;";
+const expectedMarker5 = "    int g;";
+const expectedMarker6 = "    int h;";
+const expectedMarker7 = "    int i;";
 
 
 describe("marker", function () {
@@ -74,14 +74,13 @@ describe("marker", function () {
         });
         context("when have marker", function () {
             it("should return true", function () {
-                assert(hasMarker({title: undefined, id: undefined, marker: 'test'}));
+                assert(hasMarker({title: undefined, id: undefined, marker: "test"}));
             });
         });
     });
     describe("marker-label", function () {
         describe("#getMarkerName", function () {
             it("should return", function () {
-                const command = "import:my marker , test.cpp";
                 const result = getMarker({title: undefined, id: undefined, marker: "my marker"});
                 assert.equal(result, "my marker");
             });

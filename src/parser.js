@@ -1,14 +1,13 @@
 // LICENSE : MIT
 "use strict";
-const fs = require("fs");
 const path = require("path");
 const Handlebars = require("handlebars");
-const logger = require('winston-color');
-import {defaultBookOptionsMap, defaultKeyValueMap, defaultTemplateMap, initOptions, checkMapTypes, convertValue} from "./options.js";
+const logger = require("winston-color");
+import {defaultKeyValueMap, initOptions, checkMapTypes, convertValue} from "./options.js";
 import {getLang} from "./language-detection";
 import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "./marker";
 import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
-import {hasTitle, parseTitle} from "./title";
+import {hasTitle} from "./title";
 import {getTemplateContent, readFileFromPath} from "./template";
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 
@@ -20,7 +19,7 @@ var codeCounter = (function() {
     return function() {
         return count++;
     };  // Return and increment
-})();
+}());
 
 /**
  * split label to commands
@@ -47,11 +46,12 @@ export function splitLabelToCommands(label = "") {
  */
 export function strip(s) {
   // inspired from https://github.com/rails/rails/blob/master/activesupport/lib/active_support/core_ext/string/strip.rb
-  if((s === undefined) || (s === "") )
-        return s;
-  const indents = s.split(/\n/).map(s => s.match(/^[ \t]*(?=\S)/)).filter(m => m).map(m => m[0])
-  const smallestIndent = indents.sort((a,b) => a.length-b.length)[0]
-  return s.replace(new RegExp(`^${smallestIndent}`, 'gm'), '')
+  if((s === undefined) || (s === "")) {
+return s;
+}
+  const indents = s.split(/\n/).map(s => s.match(/^[ \t]*(?=\S)/)).filter(m => m).map(m => m[0]);
+  const smallestIndent = indents.sort((a,b) => a.length - b.length)[0];
+  return s.replace(new RegExp(`^${smallestIndent}`, "gm"), "");
 }
 
 /**
@@ -60,10 +60,10 @@ export function strip(s) {
  * @returns {boolean}
  */
 export function containIncludeCommand(commands = []) {
-    let reg = /^(include|import)$/;
+    const reg = /^(include|import)$/;
     return commands.some(command => {
         return reg.test(command.trim());
-    })
+    });
 }
 
 /** Parse the command label and return a new key-value object
@@ -75,36 +75,36 @@ export function containIncludeCommand(commands = []) {
  */
 export function parseVariablesFromLabel(kvMap,label) {
     const kv = Object.assign({},kvMap);
-    const begin_ex = "\^.*";
-    const end_ex = ".*\$";
-    const sep_ex = ",?";
-    const kvsep_ex = "[:=]";
-    const spaces_ex = "\\s*";
-    const quotes_ex = "[\"']";
+    const beginEx = "\^.*";
+    const endEx = ".*\$";
+    const sepEx = ",?";
+    const kvsepEx = "[:=]";
+    const spacesEx = "\\s*";
+    const quotesEx = "[\"']";
 
     Object.keys(kv).forEach(key => {
-        let key_ex = "(" + key + ")";
-        let val_ex = "([-\\w\\s]*)";
+        let keyEx = "(" + key + ")";
+        let valEx = "([-\\w\\s]*)";
         if (key === "marker") {
-            key_ex = "(import|include)";
-            val_ex = "(([-\\w\\s]*,?)*)";
+            keyEx = "(import|include)";
+            valEx = "(([-\\w\\s]*,?)*)";
         }
         // Add value check here
-        switch( typeof defaultKeyValueMap[key] ) {
+        switch(typeof defaultKeyValueMap[key]) {
             case "string":
-                val_ex = quotes_ex + val_ex + quotes_ex;
+                valEx = quotesEx + valEx + quotesEx;
                 break;
             case "boolean":
                 // no quotes
-                val_ex = quotes_ex + "?" + "(true|false)" + quotes_ex + "?";
+                valEx = quotesEx + "?(true|false)" + quotesEx + "?";
                 break;
             default:
-                logger.error("include-codeblock: parseVariablesFromLabel: key type `"
-                    + typeof defaultKeyValueMap[key] + "` unknown (see options.js)");
+                logger.error("include-codeblock: parseVariablesFromLabel: key type `" +
+                    typeof defaultKeyValueMap[key] + "` unknown (see options.js)");
         }
         // Val type cast to string.
-        const regStr = begin_ex + sep_ex +  spaces_ex + key_ex +
-            spaces_ex + kvsep_ex + spaces_ex + val_ex + spaces_ex + sep_ex + end_ex;
+        const regStr = beginEx + sepEx + spacesEx + keyEx +
+            spacesEx + kvsepEx + spacesEx + valEx + spacesEx + sepEx + endEx;
         const reg = new RegExp(regStr);
         const res = label.match(reg);
         if (res) {
@@ -115,13 +115,39 @@ export function parseVariablesFromLabel(kvMap,label) {
 }
 
 /**
+ * generate code from options
+ * @param {object} kvMap
+ * @param {string} fileName
+ * @param {string} originalPath
+ * @param {string} content
+ * @return {string}
+ */
+export function generateEmbedCode(
+    kvMap,
+    {fileName, originalPath, content}){   
+    const tContent = getTemplateContent(kvMap);
+    const kv = Object.assign({},kvMap);
+    const count = hasTitle(kv) ? codeCounter() : -1;
+    checkMapTypes(kvMap, "generatedEmbedCode");
+    const contextMap = Object.assign({},kvMap,{
+        "content":content,
+        "count":count,
+        "fileName":fileName,
+        "originalPath":originalPath
+    });
+    // compile template
+    const handlebars = Handlebars.compile(tContent);
+    // compile with data.
+    return handlebars(contextMap);
+}
+
+/**
  * return content from file or url.
  * @param {string} filePath
  * @param {string} originalPath
  * @return {string}
  */
-export function getContent( filePath, originalPath )
-{
+export function getContent(filePath,originalPath){
         return readFileFromPath(filePath);
 }
 
@@ -133,24 +159,21 @@ export function getContent( filePath, originalPath )
  * @param {string} label
  * @return {string}
  */
-export function embedCode( kvMap,
-    {filePath, originalPath, label} )
-{
-    //const code = readFileFromPath(filePath);
-    const code = getContent(filePath,originalPath);
+export function embedCode(kvMap,
+    {filePath, originalPath, label}){
+    const code = getContent(filePath, originalPath);
     const fileName = path.basename(filePath);
     const kvmparsed = parseVariablesFromLabel(kvMap, label);
     const kvm = getLang(kvmparsed, originalPath);
-    const unindent = kvm['unindent'];
+    const unindent = kvm.unindent;
 
     var content = code;
     // Slice content via line numbers.
     if (hasSliceRange(label)) {
         const [start, end] = getSliceRange(label);
         content = sliceCode(code, start, end);
-    }
-    // Slice content via markers.
-    else if (hasMarker(kvm)) {
+    } else if (hasMarker(kvm)) {
+        // Slice content via markers.
         const marker = getMarker(kvm);
         content = removeMarkers(markerSliceCode(code, marker));
     }
@@ -164,34 +187,6 @@ export function embedCode( kvMap,
 }
 
 /**
- * generate code from options
- * @param {object} kvMap
- * @param {string} fileName
- * @param {string} originalPath
- * @param {string} content
- * @return {string}
- */
-export function generateEmbedCode(
-    kvMap,
-    {fileName, originalPath, content})
-{   
-    const tContent = getTemplateContent(kvMap);
-    const kv = Object.assign({},kvMap);
-    const count = hasTitle(kv) ? codeCounter() : -1;
-    checkMapTypes( kvMap, "generatedEmbedCode" );
-    const contextMap = Object.assign({},kvMap,{
-        "content":content,
-        "count":count,
-        "fileName":fileName,
-        "originalPath":originalPath
-    } );
-    // compile template
-    const handlebars = Handlebars.compile(tContent);
-    // compile with data.
-    return handlebars(contextMap);
-}
-
-/**
  * Parse command using options from pluginConfig.
  * @param {string} content
  * @param {string} baseDir
@@ -200,9 +195,9 @@ export function generateEmbedCode(
  */
 export function parse(content, baseDir, options = {}) {
     const results = [];
-    const kvMap = initOptions( options );
-    let res;
-    while (res = markdownLinkFormatRegExp.exec(content)) {
+    const kvMap = initOptions(options);
+    let res = true;
+    while ((res = markdownLinkFormatRegExp.exec(content))) {
         const [all, label, originalPath] = res;
         const commands = splitLabelToCommands(label);
         if (containIncludeCommand(commands)) {
