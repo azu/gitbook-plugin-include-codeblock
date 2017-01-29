@@ -11,8 +11,6 @@ import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
 import {hasTitle, parseTitle} from "./title";
 import {getTemplateContent, readFileFromPath} from "./template";
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
-const srequest = require("sync-request");
-const validurl = require("valid-url");
 
 /**
  * A counter to count how many code are imported.
@@ -124,24 +122,7 @@ export function parseVariablesFromLabel(kvMap,label) {
  */
 export function getContent( filePath, originalPath )
 {
-    const isUri = validurl.isUri(originalPath);
-    if(isUri) {
-        const res = srequest('GET',originalPath,{
-            cache:'file',
-            followRedirect:false
-        });
-        if(res.statusCode === 200) {
-            return res.getBody('utf8');
-        }
-        else {
-            logger.warn("include-codeblock: http request failed GET: " + originalPath);
-            return "Error 404: url not found : " + originalPath;
-        }
-    }
-    // urlPath is a path to file
-    else {
         return readFileFromPath(filePath);
-    }
 }
 
 /**

@@ -122,13 +122,4 @@ describe("parse", function () {
             assert.equal(stripped, "foo\n  bar\nbaz\n");
         });
     })
-    describe("parse URL", function () {
-        it("should retrieve url file", function () {
-            const code = getContent("","http://pastebin.com/raw/jMYQ8Nrt");
-            assert.equal( code, "Url works!");
-        });
-        it("should fail retrieve url file (+warn)", function () {
-            const code = getContent("","http://google.com/fakeurl");
-        });
-    });
 });

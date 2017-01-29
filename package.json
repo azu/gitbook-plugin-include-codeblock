@@ -86,8 +86,6 @@
     }
   },
   "dependencies": {
-    "valid-url":"^1.0.9",
-    "sync-request": "^4.0.1",
     "language-map": "^1.1.1",
     "handlebars": "^4.0.5",
     "winston-color": "^1.0.0"
