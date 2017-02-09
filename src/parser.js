@@ -47,8 +47,8 @@ export function splitLabelToCommands(label = "") {
 export function strip(s) {
   // inspired from https://github.com/rails/rails/blob/master/activesupport/lib/active_support/core_ext/string/strip.rb
   if((s === undefined) || (s === "")) {
-return s;
-}
+      return s;
+  }
   const indents = s.split(/\n/).map(s => s.match(/^[ \t]*(?=\S)/)).filter(m => m).map(m => m[0]);
   const smallestIndent = indents.sort((a,b) => a.length - b.length)[0];
   return s.replace(new RegExp(`^${smallestIndent}`, "gm"), "");
@@ -101,6 +101,7 @@ export function parseVariablesFromLabel(kvMap,label) {
             default:
                 logger.error("include-codeblock: parseVariablesFromLabel: key type `" +
                     typeof defaultKeyValueMap[key] + "` unknown (see options.js)");
+                break;
         }
         // Val type cast to string.
         const regStr = beginEx + sepEx + spacesEx + keyEx +
@@ -177,7 +178,7 @@ export function embedCode(kvMap,
         const marker = getMarker(kvm);
         content = removeMarkers(markerSliceCode(code, marker));
     }
-    if (unindent == true) {
+    if (unindent === true) {
         content = strip(content);
     }
     return generateEmbedCode(

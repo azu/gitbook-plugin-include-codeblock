@@ -11,7 +11,7 @@
   "bugs": {
     "url": "https://github.com/azu/gitbook-plugin-include-codeblock/issues"
   },
-  "version": "3.1.0",
+  "version": "3.0.1",
   "description": "GitBook plugin for including file",
   "main": "lib/include-codeblock.js",
   "files": [
@@ -25,6 +25,7 @@
   "scripts": {
     "build": "NODE_ENV=production babel src --out-dir lib --source-maps",
     "check": "eslint src/*.js test/*.js",
+    "lint:fix": "eslint --fix src/*.js test/*.js",
     "watch": "babel src --out-dir lib --watch --source-maps",
     "prepublish": "npm run --if-present build",
     "test": "mocha",
