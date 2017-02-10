@@ -12,7 +12,7 @@ import {defaultBookOptionsMap, defaultTemplateMap} from "./options.js";
 export function readFileFromPath(path){
     var content;
     try {
-    content = fs.readFileSync(path, "utf8");
+        content = fs.readFileSync(path, "utf8");
     } catch (err) {
         if (err.code === "ENOENT") {
             logger.warn("Error: file not found: " + path);

@@ -2,7 +2,6 @@ sudo: false
 language: node_js
 node_js: "stable"
 script:
-- npm run check
 - npm test
 - npm run test:example-default
 - npm run test:example-ace
