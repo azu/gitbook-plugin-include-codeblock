@@ -8,7 +8,7 @@
 "use strict";
 const logger = require("winston-color");
 const path = require("path");
-const cfg = require("../package").gitbook.properties;
+const cfg = require("../package.json").gitbook.properties;
 
 export const defaultTemplateMap = Object.freeze({
     default: path.join(__dirname, "..", "templates", "default-template.hbs"),
@@ -48,20 +48,20 @@ export const defaultKeyValueMap = Object.freeze({
     unindent: defaultBookOptionsMap.unindent
 });
 
-/** 
+/**
  * Convert string value to value type.
  * @param {string} valtype
  */
 export function convertValue(valstr, valtype){
     // remove quotes
-    if ((valtype === "boolean") || (valtype === "number")) {   
+    if ((valtype === "boolean") || (valtype === "number")) {
         return JSON.parse(valstr);
     }
     return valstr;
 }
 
 /**
- * Check that maps types equal to default key value map. 
+ * Check that maps types equal to default key value map.
  * @param {object} kvMap
  * @param {string} funcLabel
  */
@@ -79,7 +79,7 @@ export function checkMapTypes(kvMap, funcLabel) {
 }
 
 /**
- * Check that maps types equal to default key value map. 
+ * Check that maps types equal to default key value map.
  * @param {{template?: string}} options
  * @return {object} kvMap
  */
