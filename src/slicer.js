@@ -23,8 +23,8 @@ export function getSliceRange(label) {
     if (matches === null) {
         return [];
     }
-    // return [undefined, undefined] if not matched.
-    const [all, start, end] = matches;
+    // return [undefined, undefined] if not matched, else contains [all,start,end].
+    const [start, end] = matches.slice(1,3); 
     const startOrUndefined = start !== "" ? parseInt(start, 10) : undefined;
     const endOrUndefined = end !== "" ? parseInt(end, 10) : undefined;
     return [startOrUndefined, endOrUndefined];
@@ -52,12 +52,12 @@ export function sliceCode(code, start, end) {
     if (start === undefined && end === undefined) {
         return code;
     }
-    const slitted = code.split('\n');
+    const slitted = code.split("\n");
     if (start === undefined) {
         start = 1;
     }
     if (end === undefined) {
         end = slitted.length;
     }
-    return slitted.slice(start - 1, end).join('\n').trim();
+    return slitted.slice(start - 1, end).join("\n").trim();
 }

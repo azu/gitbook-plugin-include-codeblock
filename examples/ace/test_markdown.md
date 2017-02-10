@@ -21,7 +21,7 @@
 
 ### Snippet code
 
-[import:marker0, lang-typescript](src/marker.ts)
+[import:"marker0", lang-typescript](src/marker.ts)
 
 
 {% if file.type=="asciidoc" %}

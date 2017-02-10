@@ -24,6 +24,8 @@
   },
   "scripts": {
     "build": "NODE_ENV=production babel src --out-dir lib --source-maps",
+    "check": "eslint src/*.js test/*.js",
+    "lint:fix": "eslint --fix src/*.js test/*.js",
     "watch": "babel src --out-dir lib --watch --source-maps",
     "prepublish": "npm run --if-present build",
     "test": "mocha",
@@ -41,34 +43,46 @@
   },
   "gitbook": {
     "properties": {
-      "template": {
-        "type": "string",
-        "description": "Template string",
-        "required": false
-      },
-      "unindent": {
-        "type": "string",
-        "description": "undindent inner snippets",
+      "check": {
+        "type": "boolean",
+        "description": "ace syntax validation (ace* template required)",
+        "default": false,
         "required": false
       },
       "edit": {
-        "type": "string",
+        "type": "boolean",
         "description": "ace code edition (ace* template required)",
+        "default": false,
         "required": false
       },
-      "check": {
+      "lang": {
         "type": "string",
-        "description": "ace syntax validation (ace* template required)",
+        "description": "language for all codes",
+        "default": "",
+        "required": false
+      },
+      "fixlang": {
+        "type": "boolean",
+        "description": "Fix lang label (c++,...)",
+        "default": false,
+        "required": false
+      },
+      "template": {
+        "type": "string",
+        "description": "Template string",
+        "default": "default",
         "required": false
       },
       "theme": {
         "type": "string",
         "description": "ace code editor theme (ace* template required)",
+        "default": "chrome",
         "required": false
       },
-      "fixlang": {
-        "type": "Fix lang label (c++,...)",
-        "description": "",
+      "unindent": {
+        "type": "boolean",
+        "description": "undindent inner snippets",
+        "default": false,
         "required": false
       }
     }
@@ -85,6 +99,7 @@
     "babel-preset-power-assert": "^1.0.0",
     "babel-register": "^6.8.0",
     "mocha": "^2.4.5",
-    "power-assert": "^1.3.1"
+    "power-assert": "^1.3.1",
+    "eslint": "^3.14.1"
   }
 }

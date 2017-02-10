@@ -11,7 +11,8 @@
  * NB: markername must begin with a letter to avoid conflict with slice
  *     line range.
  */
-
+"use strict";
+const logger = require("winston-color");
 const commentOpen = "(\/+\/+|#|%|\/\\*)";
 const commentClose = "(\\*\/)?";
 const doxChar = "[\*!\/#]"; // doxygen documentation character
@@ -39,7 +40,7 @@ export function getMarker(keyValObject) {
  */
 export function hasMarker(keyValObject) {
     const marker = getMarker(keyValObject);
-    return (marker !== undefined);
+    return ((marker !== undefined) && (marker !== ""));
 }
 
 /* Parse the code from given markers
@@ -49,28 +50,39 @@ export function hasMarker(keyValObject) {
 /**
  * get sliced code by {@link markername}
  * @param {string} code
- * @param {string} markername
+ * @param {string} markers
  * @returns {string}
  */
-export function markerSliceCode(code, markername) {
-    if (markername === undefined) {
+export function markerSliceCode(code, markers) {
+    if ((markers === undefined) || (markers === "")) {
         return code;
     }
+    var parsedcode = "";
+    const markerlist = markers.split(",");
+
+    let i = 0;
     // regex
-    const balise = "\\[" + markername + "\\]";
-    const pattern = "\\n" + spacesAny + commentOpen + doxChar + spaces + balise
-        + spaces + commentClose + spaces;
+    markerlist.forEach(marker => {
+        const balise = "\\[" + marker + "\\]";
+        const pattern = "\\n" + spacesAny + commentOpen + doxChar + spaces + balise +
+            spaces + commentClose + spaces;
 
-    const regstr = pattern + "\\n*([\\s\\S]*)" + pattern;
-    const reg = new RegExp(regstr);
-    const res = code.match(reg);
+        const regstr = pattern + "\\n*([\\s\\S]*)" + pattern;
+        const reg = new RegExp(regstr);
+        const res = code.match(reg);
 
-    if (res) {
-        return res[3]; // count parenthesis in pattern.
-    } else {
-        console.warn('markersSliceCode(): marker `' + markername + '` not found');
-        return 'Error: marker `' + markername + '` not found'
-    }
+        if (res) {
+            parsedcode += res[3]; // count parenthesis in pattern.
+        } else {
+            logger.warn("markersSliceCode(): marker `" + marker + "` not found");
+            parsedcode += "Error: marker `" + marker + "` not found";
+        }
+        if(markerlist.length > 0 && i < markerlist.length - 1) {
+            parsedcode += "\n";
+        }
+        i++;
+    });
+    return parsedcode;
 }
 
 
@@ -81,7 +93,7 @@ export function markerSliceCode(code, markername) {
  * @return {string}
  */
 export function replaceAll(str, reg, sub) {
-    return str.replace(new RegExp(reg, 'g'), sub);
+    return str.replace(new RegExp(reg, "g"), sub);
 }
 
 /** Function that remove all markers in the given code
@@ -90,9 +102,9 @@ export function replaceAll(str, reg, sub) {
  */
 export function removeMarkers(code) {
     // various language comment
-    const balise = "\\[" + markerNameFormat + "\\]";
-    const pattern = spacesAny + commentOpen + doxChar + spaces + balise
-        + spaces + commentClose + spaces;
+    const tag = "\\[" + markerNameFormat + "\\]";
+    const pattern = spacesAny + commentOpen + doxChar + spaces + tag +
+        spaces + commentClose + spaces;
 
-    return replaceAll(code, pattern, '')
+    return replaceAll(code, pattern, "");
 }

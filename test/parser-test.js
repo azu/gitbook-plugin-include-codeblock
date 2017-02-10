@@ -1,10 +1,11 @@
 // LICENSE : MIT
 "use strict";
-import assert from "power-assert"
-import {parse, parseVariablesFromLabel, containIncludeCommand, splitLabelToCommands, strip} from "../src/parser"
-var content = `
-[include,title:"test.js"](fixtures/test.js)
-`;
+import assert from "power-assert";
+import {defaultKeyValueMap} from "../src/options.js";
+import {containIncludeCommand, splitLabelToCommands, strip, parseVariablesFromLabel} from "../src/parser";
+
+const kvmap = defaultKeyValueMap;
+
 describe("parse", function () {
     describe("#splitLabelToCommands", function () {
         it("should split label to commands", function () {
@@ -38,31 +39,65 @@ describe("parse", function () {
             const commands = splitLabelToCommands("import title");
             assert(containIncludeCommand(commands));
         });
-    })
+    });
     context("parseVariablesFromLabel ", function () {
+        it("should retrieve edit boolean", function () {
+            const resmap = parseVariablesFromLabel(kvmap, "include,edit:true");
+            const results = resmap;
+            assert.equal(results.edit, true);
+            assert.equal(results.marker, "");
+        });
+        it("should retrieve edit boolean with quotes", function () {
+            const resmap = parseVariablesFromLabel(kvmap, "include,edit:\"true\"");
+            const results = resmap;
+            assert.equal(results.edit, true);
+            assert.equal(results.marker, "");
+        });
+        it("should retrieve string title", function () {
+            const resmap = parseVariablesFromLabel(kvmap,"include,title:\"a test\"");
+            const results = resmap;
+            assert.equal(results.title, "a test");
+            assert.equal(results.marker, "");
+        });
+        it("should retrieve include marker", function () {
+            const resmap = parseVariablesFromLabel(kvmap, "[include:\"marker0\"](/path/to/file.ext)");
+            const results = resmap;
+            assert.equal(results.marker, "marker0");
+        });
+        it("should retrieve import marker", function () {
+            const resmap = parseVariablesFromLabel(kvmap, "[import:\"marker0\"](/path/to/file.ext)");
+            const results = resmap;
+            assert.equal(results.marker, "marker0");
+        });
+        it("should retrieve include marker with title", function () {
+            const resmap = parseVariablesFromLabel(kvmap, "[include:\"marker0\",title:\"test\"](/path/to/file.ext)");
+            const results = resmap;
+            assert.equal(results.marker, "marker0");
+            assert.equal(results.title, "test");
+        });
+        it("should retrieve import multi markers", function () {
+            const resmap = parseVariablesFromLabel(kvmap, "[import:\"marker0,marker1,marker2\"](/path/to/file.ext)");
+            const results = resmap;
+            assert.equal(results.marker, "marker0,marker1,marker2");
+        });
         it("should retrieve each attribute", function () {
-            const results = parseVariablesFromLabel(`include:"marker",title:"a test",id:"code1"`);
-            assert.equal(results.title, "a test");
-            assert.equal(results.id, "code1");
+            const resmap = parseVariablesFromLabel(kvmap,"include:\"marker\",title:\"a test\",id:\"code1\",class:\"myclass\",edit=false,check=\"true\",theme:\"monokai\",template:\"ace\",unindent:true,fixlang:\"false\"");
+            const results = resmap;
             assert.equal(results.marker, "marker");
-        });
-        it("should retrieve title,id", function () {
-            const results = parseVariablesFromLabel(`include,title:"a test",id:"code1"`);
             assert.equal(results.title, "a test");
             assert.equal(results.id, "code1");
-            assert.equal(results.marker, undefined);
-        });
-        it("should retrieve title,id from full command", function () {
-            const results = parseVariablesFromLabel(`[include,title:"a test",id:"code1"](/path/to/file.ext)`);
-            assert.equal(results.title, "a test");
-            assert.equal(results.id, "code1");
-            assert.equal(results.marker, undefined);
+            assert.equal(results.class, "myclass");
+            assert.equal(results.edit, false);
+            assert.equal(results.check, true);
+            assert.equal(results.theme, "monokai");
+            assert.equal(results.template, "ace");
+            assert.equal(results.unindent, true);
+            assert.equal(results.fixlang, false);
         });
         it("should retrieve nothing", function () {
-            const results = parseVariablesFromLabel(`[import](/path/to/file.ext)`);
-            assert.equal(results.title, undefined);
-            assert.equal(results.id, undefined);
-            assert.equal(results.marker, undefined);
+            const resmap = parseVariablesFromLabel(kvmap, "[import](/path/to/file.ext)");
+            const results = resmap;
+            assert.equal(results.marker, "");
         });
     });
     // inspired from https://github.com/rails/rails/blob/master/activesupport/test/core_ext/string_ext_test.rb
@@ -83,5 +118,5 @@ describe("parse", function () {
             const stripped = strip("      foo\n        bar\n      baz\n");
             assert.equal(stripped, "foo\n  bar\nbaz\n");
         });
-    })
+    });
 });

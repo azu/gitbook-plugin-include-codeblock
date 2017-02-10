@@ -1,75 +1,99 @@
 // LICENSE : MIT
 "use strict";
-const path = require('path');
-const language_map = require('language-map');
+const path = require("path");
+const languageMap = require("language-map");
+const logger = require("winston-color");
+import {defaultKeyValueMap} from "./options.js";
 
 // Workaround for not working languages.
 // Redefine aceMode locally.
+// @param {string}
+// @return {string}
 export function languageAceModeFix(resultAceMode) {
-    if (resultAceMode == 'c_cpp')
-    {
-        resultAceMode = 'cpp';
+    if (resultAceMode == "c_cpp") {
+        resultAceMode = "cpp";
     }
     return resultAceMode;
 }
 
-export function lookupLanguageByAceMode(commands, fixlang=false) {
+/**
+ * Return aceMode from lang in kvMap.
+ * @param {object} kvMap
+ * @return {object}
+ */
+export function lookupLanguageByAceMode(kvMap) {
     let resultAceMode;
-    commands.forEach(command => {
-        const matchAceModes = /lang\-(.+)/g.exec(command);
-        if (matchAceModes == null) {
-            return
+    const matchLang = kvMap.lang;
+    Object.keys(languageMap).some(langKey => {
+        const aceMode = languageMap[langKey].aceMode;
+        if (matchLang === aceMode) {
+            resultAceMode = aceMode;
+            return resultAceMode;
         }
-        const matchLang = matchAceModes[1];
-        if (!matchLang) {
-            return;
-        }
-        Object.keys(language_map).some(langKey => {
-            const aceMode = language_map[langKey]["aceMode"];
-            if (matchLang === aceMode) {
-                resultAceMode = aceMode;
-            }
-        });
-        // not found the `matchLang` in AceMode
-        if (resultAceMode === undefined) {
-            resultAceMode = matchLang;
-        }
+        return undefined;
     });
-    if(fixlang) {
-        resultAceMode = languageAceModeFix(resultAceMode);
-    }
     return resultAceMode;
 }
 
-export function lookupLanguageByExtension(ext, fixlang=false) {
+/**
+ * Return aceMode from file extension or lang in kvMap, if is 
+ * an extension.
+ * @param {object} kvMap
+ * @param {string} filePath
+ * @return {object}
+ */
+export function lookupLanguageByExtension(kvMap, filePath) {
+    const lang = kvMap.lang;
+    let ext;
+    // Check first if map `lang` is an extension string.
+    const matchext = (/(.+)/g).exec(lang);
+    if (matchext != null) {
+        ext = matchext[1];
+    } else {
+        // Load from file extension.
+        ext = path.extname(filePath);
+    }
     let aceMode;
-    Object.keys(language_map).some(langKey => {
-        const extensions = language_map[langKey]["extensions"];
-        /* TODO: These lang has not extensions
-         Ant Build System
-         Isabelle ROOT
-         Maven POMAnt Build System
-         */
+    Object.keys(languageMap).some(langKey => {
+        const extensions = languageMap[langKey].extensions;
         if (!extensions) {
             return false;
         }
         return extensions.some(extension => {
             if (ext === extension) {
-                aceMode = language_map[langKey]["aceMode"];
+                aceMode = languageMap[langKey].aceMode;
             }
+            return false;
         });
     });
-    if(fixlang) {
-        aceMode = languageAceModeFix(aceMode);
-    }
-    return aceMode;
+    return aceMode;    
 }
 
-export function getLang(commands, filePath, fixlang=false ) {
-    const lang = lookupLanguageByAceMode(commands);
-    if (lang) {
-        return lang;
+/**
+ * Update key-value map lang with aceMode lang.
+ * @param {object} kvMap
+ * @param {string} filePath
+ * @return {object}
+ */
+export function getLang(kvMap, filePath) {
+    let aceMode;
+    // Retrieve ace mode from lang.
+    if(kvMap.lang !== defaultKeyValueMap.lang) {
+        aceMode = lookupLanguageByAceMode(kvMap);
     }
-    const ext = path.extname(filePath);
-    return lookupLanguageByExtension(ext, fixlang) || ext;
+    // Retrieve ace mode from file ext or lang ext.
+    if (aceMode === undefined) {
+        aceMode = lookupLanguageByExtension(kvMap, filePath);
+    }
+    // Ace mode not found, keep default.
+    if (aceMode === undefined) {
+        logger.warn("include-codeblock: unknown language `" + kvMap.lang + "`, use default");
+        return kvMap;
+    }
+    if(kvMap.fixlang) {
+        aceMode = languageAceModeFix(aceMode);
+    }
+    const kvm = Object.assign({},kvMap);
+    kvm.lang = aceMode;
+    return Object.freeze(kvm);
 }
