@@ -48,7 +48,7 @@ Just add the desired optin under `pluginConfig` in the `book.json` file
     "pluginsConfig": {
         "include-codeblock": {
             "template": "ace",
-            "unindent": "true",
+            "unindent": true,
             "theme": "monokai"
         }
     }
