@@ -13,8 +13,8 @@
  */
 "use strict";
 const logger = require("winston-color");
-const commentOpen = "(\/+\/+|#|%|\/\\*)";
-const commentClose = "(\\*\/)?";
+const commentOpen = "(\/+\/+|#|%|\/\\*|<\!--)";
+const commentClose = "(\\*\/|-->)?";
 const doxChar = "[\*!\/#]"; // doxygen documentation character
 const spaces = "[ \t]*"; // h spaces
 const spacesAny = "\\s*"; // h+v spaces
