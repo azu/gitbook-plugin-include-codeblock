@@ -47,6 +47,24 @@ int main()
 `;
 // -------------------------------------------------------------------------------
 
+
+const htmlcode = `
+<html>
+<header><title>This is title</title></header>
+<body>
+    <!--/ [marker0] -->
+    Hello world
+    <!--/ [marker1] -->
+    Hola Mundo
+    <!--! [marker1] -->
+    <!--/ [marker2] -->
+    Hallo Welt
+    <!--! [marker2] -->
+    <!--! [marker0] -->
+</body>
+</html>
+`;
+
 // Expected results.
 const expectedMarker0 = `    int a;
     //! [marker1]
@@ -64,6 +82,18 @@ const expectedMarker5 = "    int g;";
 const expectedMarker6 = "    int h;";
 const expectedMarker7 = "    int i;";
 
+// Expected HTML results.
+const expectedHTMLMarker0 = `    Hello world
+    <!--/ [marker1] -->
+    Hola Mundo
+    <!--! [marker1] -->
+    <!--/ [marker2] -->
+    Hallo Welt
+    <!--! [marker2] -->`;
+
+const expectedHTMLMarker1 = "    Hola Mundo";
+
+const expectedHTMLMarker2 = "    Hallo Welt";
 
 describe("marker", function () {
     describe("#hasMarker", function () {
@@ -114,6 +144,21 @@ describe("marker", function () {
                 const markerName = "marker4";
                 const result = markerSliceCode(cppcode, markerName);
                 assert.equal(result, expectedMarker4);
+            });
+            it("should slice code between [marker0] with HTML comment <!-- -->", function () {
+                const markerName = "marker0";
+                const result = markerSliceCode(htmlcode, markerName);
+                assert.equal(result, expectedHTMLMarker0);
+            });
+            it("should slice code between [marker1] with HTML comment <!-- -->", function () {
+                const markerName = "marker1";
+                const result = markerSliceCode(htmlcode, markerName);
+                assert.equal(result, expectedHTMLMarker1);
+            });
+            it("should slice code between [marker2] with HTML comment <!-- -->", function () {
+                const markerName = "marker2";
+                const result = markerSliceCode(htmlcode, markerName);
+                assert.equal(result, expectedHTMLMarker2);
             });
         });
         context("#comment-style", function () {
