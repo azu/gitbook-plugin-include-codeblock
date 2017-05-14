@@ -147,11 +147,12 @@ export function generateEmbedCode(kvMap,
  * @return {string}
  */
 export function getContent(filePath, originalPath) {
-    const urlContent = readFileFromURL(originalPath);
     const fileContent = readFileFromPath(filePath);
     if (fileContent === null) {
+        const urlContent = readFileFromURL(originalPath);
         if (urlContent === null) {
-            return "Error: file not found"; 
+            logger.warn("Error: file not found: " + originalPath);
+            return "Error: file not found" + originalPath; 
         } else {
             return urlContent; 
         }
