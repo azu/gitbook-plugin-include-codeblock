@@ -327,7 +327,7 @@ Unindent behaviour can also be specified globally in the plugin configuration.
 
 ## Example
 
-Please See [example/](example/).
+Please See [examples/](examples/).
 
 [![screenshot](https://monosnap.com/file/ydUDWzqXtC2bvPPBmqtplldO8l2QJK.png)](example/)
 
@@ -394,7 +394,7 @@ module.exports = {
 };
 ```
 
-If you want to know more details, please see [template/](template/).
+If you want to know more details, please see [templates/](templates/).
 
 ## Tests
 
