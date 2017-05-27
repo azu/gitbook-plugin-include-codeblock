@@ -81,7 +81,7 @@ to the template file.
     }
 }
 ```
-See [template/](templates/) and [example/](example/) for details.
+See [templates/](templatess/) and [examples/](examples/) for details.
 
 Any contribution is welcome. Propose your new templates via pull-requests.
 
@@ -90,7 +90,7 @@ Any contribution is welcome. Propose your new templates via pull-requests.
 It is possible to use the gitbook ace plugin to have code numbering or custom themes
 (See [gitbook-ace-plugin](https://github.com/ymcatar/gitbook-plugin-ace) for more details).
 To use ace within include-codeblock, you have to **load the ace plugin after include-codeblock!**
-and choose an ace temple (see [template/](templates/))
+and choose an ace temple (see [templates/](templates/))
 
 ```js
 {
