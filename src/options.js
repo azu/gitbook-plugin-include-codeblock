@@ -52,9 +52,9 @@ export const defaultKeyValueMap = Object.freeze({
  * Convert string value to value type.
  * @param {string} valtype
  */
-export function convertValue(valstr, valtype){
+export function convertValue(valstr, valtype) {
     // remove quotes
-    if ((valtype === "boolean") || (valtype === "number")) {
+    if (valtype === "boolean" || valtype === "number") {
         return JSON.parse(valstr);
     }
     return valstr;
@@ -67,12 +67,13 @@ export function convertValue(valstr, valtype){
  */
 export function checkMapTypes(kvMap, funcLabel) {
     Object.keys(kvMap).forEach(key => {
-        if(defaultKeyValueMap[key] != undefined) {
-            if(!(typeof kvMap[key] === typeof defaultKeyValueMap[key])) {
-                logger.error("include-codeblock: checkMapTypes (" + funcLabel +
-                    ") : wrong value type for key `" + key + "`: " +
-                    "key type: `" + typeof kvMap[key] +
-                    "` (!= `" + typeof defaultKeyValueMap[key] + "`)");
+        if (defaultKeyValueMap[key] !== undefined) {
+            const leftType = typeof kvMap[key];
+            const rightType = typeof defaultKeyValueMap[key];
+            if (!(leftType === rightType)) {
+                logger.error(
+                    `include-codeblock: checkMapTypes (${funcLabel}) : wrong value type for key \`${key}\`: key type: \`${leftType}\` (!= \`${rightType}\`)`
+                );
             }
         }
     });
@@ -83,13 +84,13 @@ export function checkMapTypes(kvMap, funcLabel) {
  * @param {{template?: string}} options
  * @return {object} kvMap
  */
-export function initOptions(options){
+export function initOptions(options) {
     const dbom = defaultBookOptionsMap;
     const kv = Object.assign({}, defaultKeyValueMap);
     // Overwrite default value with user book options.
     Object.keys(dbom).forEach(key => {
         if (options[key] != undefined) {
-            kv[key] = convertValue(options[key],typeof dbom[key]);
+            kv[key] = convertValue(options[key], typeof dbom[key]);
         }
     });
     const kvmap = Object.freeze(kv);

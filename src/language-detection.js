@@ -3,7 +3,7 @@
 const path = require("path");
 const languageMap = require("language-map");
 const logger = require("winston-color");
-import {defaultKeyValueMap} from "./options.js";
+import { defaultKeyValueMap } from "./options.js";
 
 // Workaround for not working languages.
 // Redefine aceMode locally.
@@ -46,7 +46,7 @@ export function lookupLanguageByExtension(kvMap, filePath) {
     const lang = kvMap.lang;
     let ext;
     // Check first if map `lang` is an extension string.
-    const matchext = (/(.+)/g).exec(lang);
+    const matchext = /(.+)/g.exec(lang);
     if (matchext != null) {
         ext = matchext[1];
     } else {
@@ -66,7 +66,7 @@ export function lookupLanguageByExtension(kvMap, filePath) {
             return false;
         });
     });
-    return aceMode;    
+    return aceMode;
 }
 
 /**
@@ -78,7 +78,7 @@ export function lookupLanguageByExtension(kvMap, filePath) {
 export function getLang(kvMap, filePath) {
     let aceMode;
     // Retrieve ace mode from lang.
-    if(kvMap.lang !== defaultKeyValueMap.lang) {
+    if (kvMap.lang !== defaultKeyValueMap.lang) {
         aceMode = lookupLanguageByAceMode(kvMap);
     }
     // Retrieve ace mode from file ext or lang ext.
@@ -90,10 +90,10 @@ export function getLang(kvMap, filePath) {
         logger.warn("include-codeblock: unknown language `" + kvMap.lang + "`, use default");
         return kvMap;
     }
-    if(kvMap.fixlang) {
+    if (kvMap.fixlang) {
         aceMode = languageAceModeFix(aceMode);
     }
-    const kvm = Object.assign({},kvMap);
+    const kvm = Object.assign({}, kvMap);
     kvm.lang = aceMode;
     return Object.freeze(kvm);
 }

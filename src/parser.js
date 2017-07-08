@@ -3,12 +3,12 @@
 const path = require("path");
 const Handlebars = require("handlebars");
 const logger = require("winston-color");
-import {defaultKeyValueMap, initOptions, checkMapTypes, convertValue} from "./options.js";
-import {getLang} from "./language-detection";
-import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "./marker";
-import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
-import {hasTitle} from "./title";
-import {getTemplateContent, readFileFromPath} from "./template";
+import { defaultKeyValueMap, initOptions, checkMapTypes, convertValue } from "./options.js";
+import { getLang } from "./language-detection";
+import { getMarker, hasMarker, markerSliceCode, removeMarkers } from "./marker";
+import { sliceCode, hasSliceRange, getSliceRange } from "./slicer";
+import { hasTitle } from "./title";
+import { getTemplateContent, readFileFromPath } from "./template";
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 
 /**
@@ -18,8 +18,8 @@ var codeCounter = (function() {
     var count = 0;
     return function() {
         return count++;
-    };  // Return and increment
-}());
+    }; // Return and increment
+})();
 
 /**
  * split label to commands
@@ -32,11 +32,13 @@ export function splitLabelToCommands(label = "") {
         return [];
     }
     // remove null command
-    return result.map(command => {
-        return command.trim();
-    }).filter(command => {
-        return command.length > 0;
-    });
+    return result
+        .map(command => {
+            return command.trim();
+        })
+        .filter(command => {
+            return command.length > 0;
+        });
 }
 
 /**
@@ -46,7 +48,7 @@ export function splitLabelToCommands(label = "") {
  */
 export function strip(s) {
     // inspired from https://github.com/rails/rails/blob/master/activesupport/lib/active_support/core_ext/string/strip.rb
-    if ((s === undefined) || (s === "")) {
+    if (s === undefined || s === "") {
         return s;
     }
     const indents = s.split(/\n/).map(s => s.match(/^[ \t]*(?=\S)/)).filter(m => m).map(m => m[0]);
@@ -75,8 +77,8 @@ export function containIncludeCommand(commands = []) {
  */
 export function parseVariablesFromLabel(kvMap, label) {
     const kv = Object.assign({}, kvMap);
-    const beginEx = "\^.*";
-    const endEx = ".*\$";
+    const beginEx = "^.*";
+    const endEx = ".*$";
     const sepEx = ",?";
     const kvsepEx = "[:=]";
     const spacesEx = "\\s*";
@@ -91,20 +93,34 @@ export function parseVariablesFromLabel(kvMap, label) {
         }
         // Add value check here
         switch (typeof defaultKeyValueMap[key]) {
-        case "string":
-            valEx = quotesEx + valEx + quotesEx;
-            break;
-        case "boolean":
+            case "string":
+                valEx = quotesEx + valEx + quotesEx;
+                break;
+            case "boolean":
                 // no quotes
-            valEx = quotesEx + "?(true|false)" + quotesEx + "?";
-            break;
-        default:
-            logger.error("include-codeblock: parseVariablesFromLabel: key type `" + typeof defaultKeyValueMap[key] + "` unknown (see options.js)");
-            break;
+                valEx = quotesEx + "?(true|false)" + quotesEx + "?";
+                break;
+            default:
+                logger.error(
+                    "include-codeblock: parseVariablesFromLabel: key type `" +
+                        typeof defaultKeyValueMap[key] +
+                        "` unknown (see options.js)"
+                );
+                break;
         }
         // Val type cast to string.
-        const regStr = beginEx + sepEx + spacesEx + keyEx +
-            spacesEx + kvsepEx + spacesEx + valEx + spacesEx + sepEx + endEx;
+        const regStr =
+            beginEx +
+            sepEx +
+            spacesEx +
+            keyEx +
+            spacesEx +
+            kvsepEx +
+            spacesEx +
+            valEx +
+            spacesEx +
+            sepEx +
+            endEx;
         const reg = new RegExp(regStr);
         const res = label.match(reg);
         if (res) {
@@ -122,17 +138,16 @@ export function parseVariablesFromLabel(kvMap, label) {
  * @param {string} content
  * @return {string}
  */
-export function generateEmbedCode(kvMap,
-    {fileName, originalPath, content}) {
+export function generateEmbedCode(kvMap, { fileName, originalPath, content }) {
     const tContent = getTemplateContent(kvMap);
     const kv = Object.assign({}, kvMap);
     const count = hasTitle(kv) ? codeCounter() : -1;
     checkMapTypes(kvMap, "generatedEmbedCode");
     const contextMap = Object.assign({}, kvMap, {
-        "content": content,
-        "count": count,
-        "fileName": fileName,
-        "originalPath": originalPath
+        content: content,
+        count: count,
+        fileName: fileName,
+        originalPath: originalPath
     });
     // compile template
     const handlebars = Handlebars.compile(tContent);
@@ -142,11 +157,10 @@ export function generateEmbedCode(kvMap,
 
 /**
  * return content from file or url.
- * @param {string} filePath
- * @param {string} originalPath
+ * @param {string} filePath it should be absolute path
  * @return {string}
  */
-export function getContent(filePath, originalPath) {
+export function getContent(filePath) {
     return readFileFromPath(filePath);
 }
 
@@ -158,9 +172,8 @@ export function getContent(filePath, originalPath) {
  * @param {string} label
  * @return {string}
  */
-export function embedCode(kvMap,
-    {filePath, originalPath, label}) {
-    const code = getContent(filePath, originalPath);
+export function embedCode(kvMap, { filePath, originalPath, label }) {
+    const code = getContent(filePath);
     const fileName = path.basename(filePath);
     const kvmparsed = parseVariablesFromLabel(kvMap, label);
     const kvm = getLang(kvmparsed, originalPath);
@@ -179,10 +192,7 @@ export function embedCode(kvMap,
     if (unindent === true) {
         content = strip(content);
     }
-    return generateEmbedCode(
-        kvm,
-        {fileName, originalPath, content}
-    );
+    return generateEmbedCode(kvm, { fileName, originalPath, content });
 }
 
 /**
@@ -201,13 +211,11 @@ export function parse(content, baseDir, options = {}) {
         const commands = splitLabelToCommands(label);
         if (containIncludeCommand(commands)) {
             const absolutePath = path.resolve(baseDir, originalPath);
-            const replacedContent = embedCode(
-                kvMap,
-                {
-                    filePath: absolutePath,
-                    originalPath: originalPath,
-                    label
-                });
+            const replacedContent = embedCode(kvMap, {
+                filePath: absolutePath,
+                originalPath: originalPath,
+                label
+            });
             results.push({
                 target: all,
                 replaced: replacedContent

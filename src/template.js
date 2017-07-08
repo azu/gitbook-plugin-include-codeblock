@@ -2,14 +2,14 @@
 "use strict";
 const fs = require("fs");
 const logger = require("winston-color");
-import {defaultBookOptionsMap, defaultTemplateMap} from "./options.js";
+import { defaultBookOptionsMap, defaultTemplateMap } from "./options.js";
 
 /**
  * Sunc file read with path check
  * @param {string} path
  * @return {string}
  */
-export function readFileFromPath(path){
+export function readFileFromPath(path) {
     var content;
     try {
         content = fs.readFileSync(path, "utf8");
@@ -29,18 +29,18 @@ export function readFileFromPath(path){
  * @param {object} kvMap
  * @return {string}
  */
-export function getTemplateContent(kvMap){
+export function getTemplateContent(kvMap) {
     const t = kvMap.template;
     const dt = defaultBookOptionsMap.template;
     const tPath = defaultTemplateMap[t];
     const dtPath = defaultTemplateMap[dt];
 
-    const isTemplateDefault = (t == dt);
-    const isTemplatePath = (tPath == undefined);
+    const isTemplateDefault = t == dt;
+    const isTemplatePath = tPath == undefined;
 
     let p;
     // No template option.
-    if(isTemplateDefault) {
+    if (isTemplateDefault) {
         p = dtPath;
     } else if (isTemplatePath) {
         // Template option is a path.
@@ -48,7 +48,7 @@ export function getTemplateContent(kvMap){
     } else {
         // Template option one of template/ directory.
         p = tPath || dtPath;
-    }   
+    }
     const content = readFileFromPath(p);
     return content;
 }
