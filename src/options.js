@@ -70,16 +70,7 @@ export function checkMapTypes(kvMap, funcLabel) {
         if (defaultKeyValueMap[key] != undefined) {
             if (!(typeof kvMap[key] === typeof defaultKeyValueMap[key])) {
                 logger.error(
-                    "include-codeblock: checkMapTypes (" +
-                        funcLabel +
-                        ") : wrong value type for key `" +
-                        key +
-                        "`: " +
-                        "key type: `" +
-                        typeof kvMap[key] +
-                        "` (!= `" +
-                        typeof defaultKeyValueMap[key] +
-                        "`)"
+                    `include-codeblock: checkMapTypes (${funcLabel}) : wrong value type for key \`${key}\`: key type: \`${typeof kvMap[key]}\` (!= \`${typeof defaultKeyValueMap[key]}\`)`
                 );
             }
         }
