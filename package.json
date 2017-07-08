@@ -31,7 +31,8 @@
     "test": "npm run lint && mocha",
     "test:example-default": "cd examples/default && npm i && npm run build",
     "test:example-ace": "cd examples/ace && npm i && npm run build",
-    "test:example-custom": "cd examples/custom && npm i && npm run build"
+    "test:example-custom": "cd examples/custom && npm i && npm run build",
+    "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check"
   },
   "keywords": [
     "gitbook",
@@ -98,8 +99,11 @@
     "babel-preset-jsdoc-to-assert": "^1.0.1",
     "babel-preset-power-assert": "^1.0.0",
     "babel-register": "^6.8.0",
+    "eslint": "^3.14.1",
+    "eslint-config-prettier": "^2.3.0",
+    "eslint-plugin-prettier": "^2.1.2",
     "mocha": "^2.4.5",
     "power-assert": "^1.3.1",
-    "eslint": "^3.14.1"
+    "prettier": "^1.5.2"
   }
 }

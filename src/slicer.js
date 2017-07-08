@@ -24,7 +24,7 @@ export function getSliceRange(label) {
         return [];
     }
     // return [undefined, undefined] if not matched, else contains [all,start,end].
-    const [start, end] = matches.slice(1,3); 
+    const [start, end] = matches.slice(1, 3);
     const startOrUndefined = start !== "" ? parseInt(start, 10) : undefined;
     const endOrUndefined = end !== "" ? parseInt(end, 10) : undefined;
     return [startOrUndefined, endOrUndefined];

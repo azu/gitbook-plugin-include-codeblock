@@ -21,5 +21,5 @@ export function getTitle(keyValObject) {
  */
 export function hasTitle(keyValObject) {
     const title = getTitle(keyValObject);
-    return (title !== undefined);
+    return title !== undefined;
 }

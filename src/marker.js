@@ -13,9 +13,9 @@
  */
 "use strict";
 const logger = require("winston-color");
-const commentOpen = "(\/+\/+|#|%|\/\\*|<\!--)";
-const commentClose = "(\\*\/|-->)?";
-const doxChar = "[\*!\/#]"; // doxygen documentation character
+const commentOpen = "(/+/+|#|%|/\\*|<!--)";
+const commentClose = "(\\*/|-->)?";
+const doxChar = "[*!/#]"; // doxygen documentation character
 const spaces = "[ \t]*"; // h spaces
 const spacesAny = "\\s*"; // h+v spaces
 const markerNameFormat = "(\\s*[a-zA-Z][\\w\\s]*)"; // Must contain a char.
@@ -29,7 +29,6 @@ export function getMarker(keyValObject) {
     return keyValObject.marker;
 }
 
-
 /**
  * format: [import:<markername>](path/to/file)
  * check if the import filled has a markername.
@@ -40,7 +39,7 @@ export function getMarker(keyValObject) {
  */
 export function hasMarker(keyValObject) {
     const marker = getMarker(keyValObject);
-    return ((marker !== undefined) && (marker !== ""));
+    return marker !== undefined && marker !== "";
 }
 
 /* Parse the code from given markers
@@ -54,7 +53,7 @@ export function hasMarker(keyValObject) {
  * @returns {string}
  */
 export function markerSliceCode(code, markers) {
-    if ((markers === undefined) || (markers === "")) {
+    if (markers === undefined || markers === "") {
         return code;
     }
     var parsedcode = "";
@@ -64,8 +63,16 @@ export function markerSliceCode(code, markers) {
     // regex
     markerlist.forEach(marker => {
         const balise = "\\[" + marker + "\\]";
-        const pattern = "\\n" + spacesAny + commentOpen + doxChar + spaces + balise +
-            spaces + commentClose + spaces;
+        const pattern =
+            "\\n" +
+            spacesAny +
+            commentOpen +
+            doxChar +
+            spaces +
+            balise +
+            spaces +
+            commentClose +
+            spaces;
 
         const regstr = pattern + "\\n*([\\s\\S]*)" + pattern;
         const reg = new RegExp(regstr);
@@ -77,14 +84,13 @@ export function markerSliceCode(code, markers) {
             logger.warn("markersSliceCode(): marker `" + marker + "` not found");
             parsedcode += "Error: marker `" + marker + "` not found";
         }
-        if(markerlist.length > 0 && i < markerlist.length - 1) {
+        if (markerlist.length > 0 && i < markerlist.length - 1) {
             parsedcode += "\n";
         }
         i++;
     });
     return parsedcode;
 }
-
 
 /** Replace all regex occurence by sub in the string str,
  * @param {string} str
@@ -103,8 +109,8 @@ export function replaceAll(str, reg, sub) {
 export function removeMarkers(code) {
     // various language comment
     const tag = "\\[" + markerNameFormat + "\\]";
-    const pattern = spacesAny + commentOpen + doxChar + spaces + tag +
-        spaces + commentClose + spaces;
+    const pattern =
+        spacesAny + commentOpen + doxChar + spaces + tag + spaces + commentClose + spaces;
 
     return replaceAll(code, pattern, "");
 }

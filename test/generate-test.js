@@ -3,14 +3,14 @@
 const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
-import {parse} from "../src/parser";
+import { parse } from "../src/parser";
 function trim(str) {
     return str.replace(/^\s+|\s+$/, "");
 }
 
 describe("generate test", () => {
     const fixturesDir = path.join(__dirname, "patterns");
-    fs.readdirSync(fixturesDir).map((caseName) => {
+    fs.readdirSync(fixturesDir).map(caseName => {
         it(`should ${caseName.split("-").join(" ")}`, () => {
             const fixtureDir = path.join(fixturesDir, caseName);
             let actualPath = path.join(fixtureDir, "actual.md");
@@ -25,7 +25,7 @@ describe("generate test", () => {
             }
             const results = parse(content, fixtureDir, options);
             results.forEach(result => {
-                const {target, replaced} = result;
+                const { target, replaced } = result;
                 content = content.replace(target, replaced);
             });
             if (path.sep === "\\") {
@@ -33,9 +33,10 @@ describe("generate test", () => {
                 actualPath = actualPath.replace(/\\/g, "/");
             }
 
-            const expected = fs.readFileSync(
-                path.join(fixtureDir, "expected.md")
-            ).toString().replace(/%FIXTURE_PATH%/g, actualPath);
+            const expected = fs
+                .readFileSync(path.join(fixtureDir, "expected.md"))
+                .toString()
+                .replace(/%FIXTURE_PATH%/g, actualPath);
             assert.equal(trim(content), trim(expected));
             return true;
         });
