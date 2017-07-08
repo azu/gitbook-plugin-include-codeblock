@@ -8,7 +8,7 @@ import {getLang} from "./language-detection";
 import {getMarker, hasMarker, markerSliceCode, removeMarkers} from "./marker";
 import {sliceCode, hasSliceRange, getSliceRange} from "./slicer";
 import {hasTitle} from "./title";
-import {getTemplateContent, readFileFromPath} from "./template";
+import {getTemplateContent, readFileFromPath, readFileFromURL} from "./template";
 const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
 
 /**
@@ -147,7 +147,18 @@ export function generateEmbedCode(kvMap,
  * @return {string}
  */
 export function getContent(filePath, originalPath) {
-    return readFileFromPath(filePath);
+    const fileContent = readFileFromPath(filePath);
+    if (fileContent === null) {
+        const urlContent = readFileFromURL(originalPath);
+        if (urlContent === null) {
+            logger.warn("Error: file not found: " + originalPath);
+            return "Error: file not found" + originalPath; 
+        } else {
+            return urlContent; 
+        }
+    } else {
+        return fileContent; 
+    }
 }
 
 /**

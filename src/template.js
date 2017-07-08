@@ -1,11 +1,11 @@
 // LICENSE : MIT
 "use strict";
 const fs = require("fs");
-const logger = require("winston-color");
+const request = require("sync-request");
 import {defaultBookOptionsMap, defaultTemplateMap} from "./options.js";
 
 /**
- * Sunc file read with path check
+ * Sync file read with path check
  * @param {string} path
  * @return {string}
  */
@@ -15,11 +15,25 @@ export function readFileFromPath(path){
         content = fs.readFileSync(path, "utf8");
     } catch (err) {
         if (err.code === "ENOENT") {
-            logger.warn("Error: file not found: " + path);
-            return "Error: file not found: " + path;
+            return null;
         } else {
             throw err;
         }
+    }
+    return content;
+}
+
+/** 
+ * Sync file read with url check 
+ * @param {string} url 
+ * @return {string} 
+ */
+export function readFileFromURL(url) {
+    var content;
+    try {
+        content = request("GET", url).getBody("utf8");
+    } catch (err) {
+        return null;
     }
     return content;
 }
