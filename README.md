@@ -81,7 +81,7 @@ to the template file.
     }
 }
 ```
-See [templates/](templatess/) and [examples/](examples/) for details.
+See [templates/](templates/) and [examples/](examples/) for details.
 
 Any contribution is welcome. Propose your new templates via pull-requests.
 
