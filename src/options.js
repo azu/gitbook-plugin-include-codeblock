@@ -67,10 +67,12 @@ export function convertValue(valstr, valtype) {
  */
 export function checkMapTypes(kvMap, funcLabel) {
     Object.keys(kvMap).forEach(key => {
-        if (defaultKeyValueMap[key] != undefined) {
-            if (!(typeof kvMap[key] === typeof defaultKeyValueMap[key])) {
+        if (defaultKeyValueMap[key] !== undefined) {
+            const leftType = typeof kvMap[key];
+            const rightType = typeof defaultKeyValueMap[key];
+            if (!(leftType === rightType)) {
                 logger.error(
-                    `include-codeblock: checkMapTypes (${funcLabel}) : wrong value type for key \`${key}\`: key type: \`${typeof kvMap[key]}\` (!= \`${typeof defaultKeyValueMap[key]}\`)`
+                    `include-codeblock: checkMapTypes (${funcLabel}) : wrong value type for key \`${key}\`: key type: \`${leftType}\` (!= \`${rightType}\`)`
                 );
             }
         }
