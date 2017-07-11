@@ -6,6 +6,7 @@ import {
     containIncludeCommand,
     splitLabelToCommands,
     strip,
+    parseValue,
     parseVariablesFromLabel
 } from "../src/parser";
 
@@ -45,7 +46,45 @@ describe("parse", function() {
             assert(containIncludeCommand(commands));
         });
     });
-    context("parseVariablesFromLabel ", function() {
+    describe("parseValue", function() {
+        it("should unescape string parameter", function() {
+            const result = parseValue(
+                '"\\!\\"\\#\\$\\%\\&\\\'\\(\\)\\*\\+\\,\\-\\.\\/' +
+                    "\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~" +
+                    '&amp;&lt;&gt;&#65;&#x41;"',
+                "string",
+                ""
+            );
+            assert.equal(result, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~&<>AA");
+        });
+        it("should backslash unescape commonmark defined characters only", function() {
+            const result = parseValue('"\\r\\n\\[\\]"', "string", "");
+            assert.equal(result, "\\r\\n[]"); // \r and \n should not be unescaped.
+        });
+        it("should validate markers", function() {
+            let result = parseValue('" marker0 , marker1 "', "string", "marker");
+            assert.equal(result, " marker0 , marker1 ");
+
+            result = parseValue('"~invalid~"', "string", "marker");
+            assert.equal(result, undefined);
+        });
+        it("should parse boolean values", function() {
+            let result = parseValue("true", "boolean", "");
+            assert.equal(result, true);
+            result = parseValue('"true"', "boolean", "");
+            assert.equal(result, true);
+            result = parseValue("'true'", "boolean", "");
+            assert.equal(result, true);
+
+            result = parseValue("false", "boolean", "");
+            assert.equal(result, false);
+            result = parseValue('"false"', "boolean", "");
+            assert.equal(result, false);
+            result = parseValue("'false'", "boolean", "");
+            assert.equal(result, false);
+        });
+    });
+    describe("parseVariablesFromLabel ", function() {
         it("should retrieve edit boolean", function() {
             const resmap = parseVariablesFromLabel(kvmap, "include,edit:true");
             const results = resmap;
@@ -112,6 +151,36 @@ describe("parse", function() {
             const resmap = parseVariablesFromLabel(kvmap, "[import](/path/to/file.ext)");
             const results = resmap;
             assert.equal(results.marker, "");
+        });
+        it("should handle characters for string parameter", function() {
+            const resmap = parseVariablesFromLabel(
+                kvmap,
+                'import,title="test+with-special*string"'
+            );
+            const results = resmap;
+            assert.equal(results.title, "test+with-special*string");
+        });
+        it("should unescape string parameter", function() {
+            const resmap = parseVariablesFromLabel(
+                kvmap,
+                'import,title="\\!\\"\\#\\$\\%\\&\\\'\\(\\)\\*\\+\\,\\-\\.\\/' +
+                    "\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~" +
+                    '&amp;&lt;&gt;&#65;&#x41;"'
+            );
+            const results = resmap;
+            assert.equal(results.title, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~&<>AA");
+        });
+        it("should backslash unescape commonmark defined characters only", function() {
+            const resmap = parseVariablesFromLabel(kvmap, 'import,title="\\r\\n\\[\\]"');
+            const results = resmap;
+            assert.equal(results.title, "\\r\\n[]"); // \r and \n should not be unescaped.
+        });
+        it("should not parse string argument into another key-value pair", function() {
+            assert.equal(kvmap.edit, false);
+            const resmap = parseVariablesFromLabel(kvmap, 'import,title="edit:true"');
+            const results = resmap;
+            assert.equal(results.edit, false);
+            assert.equal(results.title, "edit:true");
         });
     });
     // inspired from https://github.com/rails/rails/blob/master/activesupport/test/core_ext/string_ext_test.rb
