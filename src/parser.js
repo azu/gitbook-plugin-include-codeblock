@@ -81,15 +81,6 @@ export function containIncludeCommand(commands = []) {
 }
 
 /**
- * unescapes a value, which is a commonmark string enclosed by quotes.
- * @param {string} value
- * @returns {string}
- */
-export function unescapeValue(value) {
-    return unescapeString(value.substring(1, value.length - 1));
-}
-
-/**
  * Parse the given value to the given type. Returns the value if valid, otherwise returns undefined.
  * @param {string} value
  * @param {string} type "string", "boolean"
@@ -97,32 +88,32 @@ export function unescapeValue(value) {
  * @return {boolean|string|undefined}
  */
 export function parseValue(value, type, key) {
-    switch (type) {
-        case "string":
-            value = unescapeValue(value);
-            if (key === "marker" && !markerRegExp.test(value)) {
-                logger.error(
-                    "include-codeblock: parseVariablesFromLabel: invalid value " +
-                        `\`${value}\` in key \`marker\``
-                );
-                return undefined;
-            }
-            return value;
-
-        case "boolean":
-            if (["true", '"true"', "'true'"].indexOf(value) >= 0) {
-                return true;
-            }
-
-            if (["false", '"false"', "'false'"].indexOf(value) >= 0) {
-                return false;
-            }
-
+    if (type === "string") {
+        const unescapedvalue = unescapeString(value.substring(1, value.length - 1));
+        if (key === "marker" && !markerRegExp.test(unescapedvalue)) {
             logger.error(
                 "include-codeblock: parseVariablesFromLabel: invalid value " +
-                    `\`${value}\` in key \`${key}\`. Expect true or false.`
+                    `\`${unescapedvalue}\` in key \`marker\``
             );
             return undefined;
+        }
+        return unescapedvalue;
+    }
+
+    if (type === "boolean") {
+        if (["true", '"true"', "'true'"].indexOf(value) >= 0) {
+            return true;
+        }
+
+        if (["false", '"false"', "'false'"].indexOf(value) >= 0) {
+            return false;
+        }
+
+        logger.error(
+            "include-codeblock: parseVariablesFromLabel: invalid value " +
+                `\`${value}\` in key \`${key}\`. Expect true or false.`
+        );
+        return undefined;
     }
     logger.error(
         `include-codeblock: parseVariablesFromLabel: unknown key type \`${type}\` (see options.js)`
