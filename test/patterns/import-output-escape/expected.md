@@ -12,9 +12,6 @@ baz;
 test&amp;1.js
 test&1.js
 
-14
-14
-
 title&lt;1&gt;
 title<1>
 

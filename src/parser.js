@@ -143,7 +143,7 @@ export function parseVariablesFromLabel(kvMap, label) {
     let match = "";
     while ((match = expressionRegExp.exec(label))) {
         let key = match[1];
-        if (["include", "import"].includes(key)) {
+        if (key === "include" || key === "import") {
             key = "marker";
         }
         const value = match[2];
