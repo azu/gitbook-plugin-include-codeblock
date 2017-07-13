@@ -176,7 +176,7 @@ describe("parse", function() {
             assert.strictEqual(results.title, "\\r\\n[]"); // \r and \n should not be unescaped.
         });
         it("should not parse string argument into another key-value pair", function() {
-            assert.equal(kvmap.edit, false);
+            assert.strictEqual(kvmap.edit, false);
             const resmap = parseVariablesFromLabel(kvmap, 'import,title="edit:true"');
             const results = resmap;
             assert.strictEqual(results.edit, false);
