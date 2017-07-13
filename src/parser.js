@@ -115,6 +115,7 @@ export function parseValue(value, type, key) {
         );
         return undefined;
     }
+
     logger.error(
         `include-codeblock: parseVariablesFromLabel: unknown key type \`${type}\` (see options.js)`
     );
