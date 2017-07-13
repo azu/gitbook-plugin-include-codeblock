@@ -3,13 +3,25 @@
 const path = require("path");
 const Handlebars = require("handlebars");
 const logger = require("winston-color");
-import { defaultKeyValueMap, initOptions, checkMapTypes, convertValue } from "./options.js";
+import { defaultKeyValueMap, initOptions, checkMapTypes } from "./options.js";
+import { unescapeString } from "./unescape-string.js";
 import { getLang } from "./language-detection";
 import { getMarker, hasMarker, markerSliceCode, removeMarkers } from "./marker";
 import { sliceCode, hasSliceRange, getSliceRange } from "./slicer";
 import { hasTitle } from "./title";
 import { getTemplateContent, readFileFromPath } from "./template";
-const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
+const markdownLinkFormatRegExp = /\[((?:[^\]]|\\.)*?)\]\(((?:[^\)]|\\.)*?)\)/gm;
+
+const keyEx = "\\w+";
+const kvsepEx = "[:=]";
+const spacesEx = "\\s*";
+const quoteEx = "[\"']";
+const valEx = "(?:[^'\"\\\\]|\\\\.)*";
+const argEx = `${quoteEx}${valEx}${quoteEx}|true|false`;
+const expressionEx = `(${keyEx})${kvsepEx}${spacesEx}(${argEx})`;
+const expressionRegExp = new RegExp(expressionEx, "g");
+
+const markerRegExp = /^\s*(([-\w\s]*,?)*)$/;
 
 /**
  * A counter to count how many code are imported.
@@ -68,6 +80,48 @@ export function containIncludeCommand(commands = []) {
     });
 }
 
+/**
+ * Parse the given value to the given type. Returns the value if valid, otherwise returns undefined.
+ * @param {string} value
+ * @param {string} type "string", "boolean"
+ * @param {string} key
+ * @return {boolean|string|undefined}
+ */
+export function parseValue(value, type, key) {
+    if (type === "string") {
+        const unescapedvalue = unescapeString(value.substring(1, value.length - 1));
+        if (key === "marker" && !markerRegExp.test(unescapedvalue)) {
+            logger.error(
+                "include-codeblock: parseVariablesFromLabel: invalid value " +
+                    `\`${unescapedvalue}\` in key \`marker\``
+            );
+            return undefined;
+        }
+        return unescapedvalue;
+    }
+
+    if (type === "boolean") {
+        if (["true", '"true"', "'true'"].indexOf(value) >= 0) {
+            return true;
+        }
+
+        if (["false", '"false"', "'false'"].indexOf(value) >= 0) {
+            return false;
+        }
+
+        logger.error(
+            "include-codeblock: parseVariablesFromLabel: invalid value " +
+                `\`${value}\` in key \`${key}\`. Expect true or false.`
+        );
+        return undefined;
+    }
+
+    logger.error(
+        `include-codeblock: parseVariablesFromLabel: unknown key type \`${type}\` (see options.js)`
+    );
+    return undefined;
+}
+
 /** Parse the command label and return a new key-value object
  * @example
  *      [import,title:"<thetitle>",label:"<thelabel>"](path/to/file.ext)
@@ -77,56 +131,29 @@ export function containIncludeCommand(commands = []) {
  */
 export function parseVariablesFromLabel(kvMap, label) {
     const kv = Object.assign({}, kvMap);
-    const beginEx = "^.*";
-    const endEx = ".*$";
-    const sepEx = ",?";
-    const kvsepEx = "[:=]";
-    const spacesEx = "\\s*";
-    const quotesEx = "[\"']";
 
-    Object.keys(kv).forEach(key => {
-        let keyEx = "(" + key + ")";
-        let valEx = "([-\\w\\s]*)";
-        if (key === "marker") {
-            keyEx = "(import|include)";
-            valEx = "(([-\\w\\s]*,?)*)";
+    let match = "";
+    while ((match = expressionRegExp.exec(label))) {
+        let key = match[1];
+        if (key === "include" || key === "import") {
+            key = "marker";
         }
-        // Add value check here
-        switch (typeof defaultKeyValueMap[key]) {
-            case "string":
-                valEx = quotesEx + valEx + quotesEx;
-                break;
-            case "boolean":
-                // no quotes
-                valEx = quotesEx + "?(true|false)" + quotesEx + "?";
-                break;
-            default:
-                logger.error(
-                    "include-codeblock: parseVariablesFromLabel: key type `" +
-                        typeof defaultKeyValueMap[key] +
-                        "` unknown (see options.js)"
-                );
-                break;
+        const value = match[2];
+
+        if (!kv.hasOwnProperty(key)) {
+            logger.error(
+                "include-codeblock: parseVariablesFromLabel: unknown key " +
+                    `\`${key}\` (see options.js)`
+            );
+            return;
         }
-        // Val type cast to string.
-        const regStr =
-            beginEx +
-            sepEx +
-            spacesEx +
-            keyEx +
-            spacesEx +
-            kvsepEx +
-            spacesEx +
-            valEx +
-            spacesEx +
-            sepEx +
-            endEx;
-        const reg = new RegExp(regStr);
-        const res = label.match(reg);
-        if (res) {
-            kv[key] = convertValue(res[2], typeof defaultKeyValueMap[key]);
+
+        const parsedValue = parseValue(value, typeof defaultKeyValueMap[key], key);
+        if (parsedValue !== undefined) {
+            kv[key] = parsedValue;
         }
-    });
+    }
+
     return Object.freeze(kv);
 }
 
