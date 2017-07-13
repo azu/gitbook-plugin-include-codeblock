@@ -3,8 +3,8 @@
 const path = require("path");
 const Handlebars = require("handlebars");
 const logger = require("winston-color");
-const common = require("commonmark/lib/common.js");
 import { defaultKeyValueMap, initOptions, checkMapTypes } from "./options.js";
+import { unescapeString } from "./unescape-string.js";
 import { getLang } from "./language-detection";
 import { getMarker, hasMarker, markerSliceCode, removeMarkers } from "./marker";
 import { sliceCode, hasSliceRange, getSliceRange } from "./slicer";
@@ -81,6 +81,15 @@ export function containIncludeCommand(commands = []) {
 }
 
 /**
+ * unescapes a value, which is a commonmark string enclosed by quotes.
+ * @param {string} value
+ * @returns {string}
+ */
+export function unescapeValue(value) {
+    return unescapeString(value.substring(1, value.length - 1));
+}
+
+/**
  * Parse the given value to the given type. Returns the value if valid, otherwise returns undefined.
  * @param {string} value
  * @param {string} type "string", "boolean"
@@ -90,7 +99,7 @@ export function containIncludeCommand(commands = []) {
 export function parseValue(value, type, key) {
     switch (type) {
         case "string":
-            value = common.unescapeString(value.substring(1, value.length - 1));
+            value = unescapeValue(value);
             if (key === "marker" && !markerRegExp.test(value)) {
                 logger.error(
                     "include-codeblock: parseVariablesFromLabel: invalid value " +
@@ -101,11 +110,11 @@ export function parseValue(value, type, key) {
             return value;
 
         case "boolean":
-            if (["true", '"true"', "'true'"].includes(value)) {
+            if (["true", '"true"', "'true'"].indexOf(value) >= 0) {
                 return true;
             }
 
-            if (["false", '"false"', "'false'"].includes(value)) {
+            if (["false", '"false"', "'false'"].indexOf(value) >= 0) {
                 return false;
             }
 

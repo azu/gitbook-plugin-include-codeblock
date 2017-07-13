@@ -55,33 +55,33 @@ describe("parse", function() {
                 "string",
                 ""
             );
-            assert.equal(result, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~&<>AA");
+            assert.strictEqual(result, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~&<>AA");
         });
         it("should backslash unescape commonmark defined characters only", function() {
             const result = parseValue('"\\r\\n\\[\\]"', "string", "");
-            assert.equal(result, "\\r\\n[]"); // \r and \n should not be unescaped.
+            assert.strictEqual(result, "\\r\\n[]"); // \r and \n should not be unescaped.
         });
         it("should validate markers", function() {
             let result = parseValue('" marker0 , marker1 "', "string", "marker");
-            assert.equal(result, " marker0 , marker1 ");
+            assert.strictEqual(result, " marker0 , marker1 ");
 
             result = parseValue('"~invalid~"', "string", "marker");
-            assert.equal(result, undefined);
+            assert.strictEqual(result, undefined);
         });
         it("should parse boolean values", function() {
             let result = parseValue("true", "boolean", "");
-            assert.equal(result, true);
+            assert.strictEqual(result, true);
             result = parseValue('"true"', "boolean", "");
-            assert.equal(result, true);
+            assert.strictEqual(result, true);
             result = parseValue("'true'", "boolean", "");
-            assert.equal(result, true);
+            assert.strictEqual(result, true);
 
             result = parseValue("false", "boolean", "");
-            assert.equal(result, false);
+            assert.strictEqual(result, false);
             result = parseValue('"false"', "boolean", "");
-            assert.equal(result, false);
+            assert.strictEqual(result, false);
             result = parseValue("'false'", "boolean", "");
-            assert.equal(result, false);
+            assert.strictEqual(result, false);
         });
     });
     describe("parseVariablesFromLabel ", function() {
@@ -158,7 +158,7 @@ describe("parse", function() {
                 'import,title="test+with-special*string"'
             );
             const results = resmap;
-            assert.equal(results.title, "test+with-special*string");
+            assert.strictEqual(results.title, "test+with-special*string");
         });
         it("should unescape string parameter", function() {
             const resmap = parseVariablesFromLabel(
@@ -168,19 +168,19 @@ describe("parse", function() {
                     '&amp;&lt;&gt;&#65;&#x41;"'
             );
             const results = resmap;
-            assert.equal(results.title, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~&<>AA");
+            assert.strictEqual(results.title, "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~&<>AA");
         });
         it("should backslash unescape commonmark defined characters only", function() {
             const resmap = parseVariablesFromLabel(kvmap, 'import,title="\\r\\n\\[\\]"');
             const results = resmap;
-            assert.equal(results.title, "\\r\\n[]"); // \r and \n should not be unescaped.
+            assert.strictEqual(results.title, "\\r\\n[]"); // \r and \n should not be unescaped.
         });
         it("should not parse string argument into another key-value pair", function() {
             assert.equal(kvmap.edit, false);
             const resmap = parseVariablesFromLabel(kvmap, 'import,title="edit:true"');
             const results = resmap;
-            assert.equal(results.edit, false);
-            assert.equal(results.title, "edit:true");
+            assert.strictEqual(results.edit, false);
+            assert.strictEqual(results.title, "edit:true");
         });
     });
     // inspired from https://github.com/rails/rails/blob/master/activesupport/test/core_ext/string_ext_test.rb
