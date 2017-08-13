@@ -210,7 +210,7 @@ export function embedCode(kvMap, { filePath, originalPath, label }) {
     // Slice content via line numbers.
     if (hasSliceRange(label)) {
         const [start, end] = getSliceRange(label);
-        content = sliceCode(code, start, end);
+        content = sliceCode(code, start, end, unindent);
     } else if (hasMarker(kvm)) {
         // Slice content via markers.
         const marker = getMarker(kvm);
