@@ -12,7 +12,7 @@ import { hasTitle } from "./title";
 import { getTemplateContent, readFileFromPath } from "./template";
 import { codeBlockBacktick } from "./backtick-maker";
 
-const markdownLinkFormatRegExp = /\[((?:[^\]]|\\.)*?)\]\(((?:[^\)]|\\.)*?)\)/gm;
+const markdownLinkFormatRegExp = /\[(?=((?:[^\]]|\\.)*))\1\]\((?=((?:[^\)]|\\.)*))\2\)/gm;
 
 const keyEx = "\\w+";
 const kvsepEx = "[:=]";
