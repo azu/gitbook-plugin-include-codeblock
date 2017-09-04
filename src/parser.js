@@ -256,6 +256,5 @@ export function parse(content, baseDir, options = {}) {
             });
         }
     }
-    console.log(results);
     return results;
 }
