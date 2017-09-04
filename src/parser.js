@@ -12,8 +12,6 @@ import { hasTitle } from "./title";
 import { getTemplateContent, readFileFromPath } from "./template";
 import { codeBlockBacktick } from "./backtick-maker";
 
-const markdownLinkFormatRegExp = /\[((?:[^\]]|\\.)*?)\]\(((?:[^\)]|\\.)*?)\)/gm;
-
 const keyEx = "\\w+";
 const kvsepEx = "[:=]";
 const spacesEx = "\\s*";
@@ -21,8 +19,6 @@ const quoteEx = "[\"']";
 const valEx = "(?:[^'\"\\\\]|\\\\.)*";
 const argEx = `${quoteEx}${valEx}${quoteEx}|true|false`;
 const expressionEx = `(${keyEx})${kvsepEx}${spacesEx}(${argEx})`;
-const expressionRegExp = new RegExp(expressionEx, "g");
-
 const markerRegExp = /^\s*(([-\w\s]*,?)*)$/;
 
 /**
@@ -137,7 +133,7 @@ export function parseValue(value, type, key) {
  */
 export function parseVariablesFromLabel(kvMap, label) {
     const kv = Object.assign({}, kvMap);
-
+    const expressionRegExp = new RegExp(expressionEx, "g");
     let match = "";
     while ((match = expressionRegExp.exec(label))) {
         let key = match[1];
@@ -240,6 +236,7 @@ export function embedCode(kvMap, { filePath, originalPath, label }) {
  * @return {Array}
  */
 export function parse(content, baseDir, options = {}) {
+    const markdownLinkFormatRegExp = /\[([^\]]*?)\]\(([^\)]*?)\)/gm;
     const results = [];
     const kvMap = initOptions(options);
     let res = true;
@@ -259,5 +256,6 @@ export function parse(content, baseDir, options = {}) {
             });
         }
     }
+    console.log(results);
     return results;
 }
