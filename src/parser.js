@@ -10,6 +10,8 @@ import { getMarker, hasMarker, markerSliceCode, removeMarkers } from "./marker";
 import { sliceCode, hasSliceRange, getSliceRange } from "./slicer";
 import { hasTitle } from "./title";
 import { getTemplateContent, readFileFromPath } from "./template";
+import { codeBlockBacktick } from "./backtick-maker";
+
 const markdownLinkFormatRegExp = /\[((?:[^\]]|\\.)*?)\]\(((?:[^\)]|\\.)*?)\)/gm;
 
 const keyEx = "\\w+";
@@ -93,7 +95,7 @@ export function parseValue(value, type, key) {
         if (key === "marker" && !markerRegExp.test(unescapedvalue)) {
             logger.error(
                 "include-codeblock: parseVariablesFromLabel: invalid value " +
-                    `\`${unescapedvalue}\` in key \`marker\``
+                `\`${unescapedvalue}\` in key \`marker\``
             );
             return undefined;
         }
@@ -111,7 +113,7 @@ export function parseValue(value, type, key) {
 
         logger.error(
             "include-codeblock: parseVariablesFromLabel: invalid value " +
-                `\`${value}\` in key \`${key}\`. Expect true or false.`
+            `\`${value}\` in key \`${key}\`. Expect true or false.`
         );
         return undefined;
     }
@@ -143,7 +145,7 @@ export function parseVariablesFromLabel(kvMap, label) {
         if (!kv.hasOwnProperty(key)) {
             logger.error(
                 "include-codeblock: parseVariablesFromLabel: unknown key " +
-                    `\`${key}\` (see options.js)`
+                `\`${key}\` (see options.js)`
             );
             return;
         }
@@ -163,9 +165,10 @@ export function parseVariablesFromLabel(kvMap, label) {
  * @param {string} fileName
  * @param {string} originalPath
  * @param {string} content
+ * @param {string} backtick
  * @return {string}
  */
-export function generateEmbedCode(kvMap, { fileName, originalPath, content }) {
+export function generateEmbedCode(kvMap, { fileName, originalPath, content, backtick }) {
     const tContent = getTemplateContent(kvMap);
     const kv = Object.assign({}, kvMap);
     const count = hasTitle(kv) ? codeCounter() : -1;
@@ -174,7 +177,8 @@ export function generateEmbedCode(kvMap, { fileName, originalPath, content }) {
         content: content,
         count: count,
         fileName: fileName,
-        originalPath: originalPath
+        originalPath: originalPath,
+        backtick
     });
     // compile template
     const handlebars = Handlebars.compile(tContent);
@@ -206,7 +210,7 @@ export function embedCode(kvMap, { filePath, originalPath, label }) {
     const kvm = getLang(kvmparsed, originalPath);
     const unindent = kvm.unindent;
 
-    var content = code;
+    let content = code;
     // Slice content via line numbers.
     if (hasSliceRange(label)) {
         const [start, end] = getSliceRange(label);
@@ -219,7 +223,9 @@ export function embedCode(kvMap, { filePath, originalPath, label }) {
     if (unindent === true) {
         content = strip(content);
     }
-    return generateEmbedCode(kvm, { fileName, originalPath, content });
+
+    const backtick = codeBlockBacktick(content);
+    return generateEmbedCode(kvm, { fileName, originalPath, content, backtick });
 }
 
 /**

@@ -10,7 +10,7 @@ import { defaultBookOptionsMap, defaultTemplateMap } from "./options.js";
  * @return {string}
  */
 export function readFileFromPath(path) {
-    var content;
+    let content;
     try {
         content = fs.readFileSync(path, "utf8");
     } catch (err) {
@@ -35,8 +35,8 @@ export function getTemplateContent(kvMap) {
     const tPath = defaultTemplateMap[t];
     const dtPath = defaultTemplateMap[dt];
 
-    const isTemplateDefault = t == dt;
-    const isTemplatePath = tPath == undefined;
+    const isTemplateDefault = t === dt;
+    const isTemplatePath = tPath === undefined;
 
     let p;
     // No template option.
@@ -49,6 +49,5 @@ export function getTemplateContent(kvMap) {
         // Template option one of template/ directory.
         p = tPath || dtPath;
     }
-    const content = readFileFromPath(p);
-    return content;
+    return readFileFromPath(p);
 }
