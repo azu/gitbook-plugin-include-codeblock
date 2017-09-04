@@ -46,9 +46,10 @@ export function hasSliceRange(label) {
  * @param {string} code
  * @param {number|undefined} [start]
  * @param {number|undefined} [end]
+ * @param {boolean|undefined} [untrimmed]
  * @returns {string}
  */
-export function sliceCode(code, start, end) {
+export function sliceCode(code, start, end, untrimmed) {
     if (start === undefined && end === undefined) {
         return code;
     }
@@ -59,5 +60,6 @@ export function sliceCode(code, start, end) {
     if (end === undefined) {
         end = slitted.length;
     }
-    return slitted.slice(start - 1, end).join("\n").trim();
+    const sliced = slitted.slice(start - 1, end).join("\n");
+    return untrimmed ? sliced : sliced.trim();
 }

@@ -10,6 +10,8 @@ import { getMarker, hasMarker, markerSliceCode, removeMarkers } from "./marker";
 import { sliceCode, hasSliceRange, getSliceRange } from "./slicer";
 import { hasTitle } from "./title";
 import { getTemplateContent, readFileFromPath } from "./template";
+import { codeBlockBacktick } from "./backtick-maker";
+
 const markdownLinkFormatRegExp = /\[((?:[^\]]|\\.)*?)\]\(((?:[^\)]|\\.)*?)\)/gm;
 
 const keyEx = "\\w+";
@@ -63,7 +65,11 @@ export function strip(s) {
     if (s === undefined || s === "") {
         return s;
     }
-    const indents = s.split(/\n/).map(s => s.match(/^[ \t]*(?=\S)/)).filter(m => m).map(m => m[0]);
+    const indents = s
+        .split(/\n/)
+        .map(s => s.match(/^[ \t]*(?=\S)/))
+        .filter(m => m)
+        .map(m => m[0]);
     const smallestIndent = indents.sort((a, b) => a.length - b.length)[0];
     return s.replace(new RegExp(`^${smallestIndent}`, "gm"), "");
 }
@@ -163,9 +169,10 @@ export function parseVariablesFromLabel(kvMap, label) {
  * @param {string} fileName
  * @param {string} originalPath
  * @param {string} content
+ * @param {string} backtick
  * @return {string}
  */
-export function generateEmbedCode(kvMap, { fileName, originalPath, content }) {
+export function generateEmbedCode(kvMap, { fileName, originalPath, content, backtick }) {
     const tContent = getTemplateContent(kvMap);
     const kv = Object.assign({}, kvMap);
     const count = hasTitle(kv) ? codeCounter() : -1;
@@ -174,7 +181,8 @@ export function generateEmbedCode(kvMap, { fileName, originalPath, content }) {
         content: content,
         count: count,
         fileName: fileName,
-        originalPath: originalPath
+        originalPath: originalPath,
+        backtick
     });
     // compile template
     const handlebars = Handlebars.compile(tContent);
@@ -206,11 +214,11 @@ export function embedCode(kvMap, { filePath, originalPath, label }) {
     const kvm = getLang(kvmparsed, originalPath);
     const unindent = kvm.unindent;
 
-    var content = code;
+    let content = code;
     // Slice content via line numbers.
     if (hasSliceRange(label)) {
         const [start, end] = getSliceRange(label);
-        content = sliceCode(code, start, end);
+        content = sliceCode(code, start, end, unindent);
     } else if (hasMarker(kvm)) {
         // Slice content via markers.
         const marker = getMarker(kvm);
@@ -219,7 +227,9 @@ export function embedCode(kvMap, { filePath, originalPath, label }) {
     if (unindent === true) {
         content = strip(content);
     }
-    return generateEmbedCode(kvm, { fileName, originalPath, content });
+
+    const backtick = codeBlockBacktick(content);
+    return generateEmbedCode(kvm, { fileName, originalPath, content, backtick });
 }
 
 /**
