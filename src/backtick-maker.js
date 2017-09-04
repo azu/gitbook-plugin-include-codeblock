@@ -13,7 +13,7 @@ const codeBlockBackTick = /```/;
  */
 export function codeBlockBacktick(content) {
     if (codeBlockBackTick.test(content)) {
-        return "````"
+        return "````";
     }
     return "```";
 }

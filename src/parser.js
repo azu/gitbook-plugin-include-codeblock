@@ -65,7 +65,11 @@ export function strip(s) {
     if (s === undefined || s === "") {
         return s;
     }
-    const indents = s.split(/\n/).map(s => s.match(/^[ \t]*(?=\S)/)).filter(m => m).map(m => m[0]);
+    const indents = s
+        .split(/\n/)
+        .map(s => s.match(/^[ \t]*(?=\S)/))
+        .filter(m => m)
+        .map(m => m[0]);
     const smallestIndent = indents.sort((a, b) => a.length - b.length)[0];
     return s.replace(new RegExp(`^${smallestIndent}`, "gm"), "");
 }
@@ -95,7 +99,7 @@ export function parseValue(value, type, key) {
         if (key === "marker" && !markerRegExp.test(unescapedvalue)) {
             logger.error(
                 "include-codeblock: parseVariablesFromLabel: invalid value " +
-                `\`${unescapedvalue}\` in key \`marker\``
+                    `\`${unescapedvalue}\` in key \`marker\``
             );
             return undefined;
         }
@@ -113,7 +117,7 @@ export function parseValue(value, type, key) {
 
         logger.error(
             "include-codeblock: parseVariablesFromLabel: invalid value " +
-            `\`${value}\` in key \`${key}\`. Expect true or false.`
+                `\`${value}\` in key \`${key}\`. Expect true or false.`
         );
         return undefined;
     }
@@ -145,7 +149,7 @@ export function parseVariablesFromLabel(kvMap, label) {
         if (!kv.hasOwnProperty(key)) {
             logger.error(
                 "include-codeblock: parseVariablesFromLabel: unknown key " +
-                `\`${key}\` (see options.js)`
+                    `\`${key}\` (see options.js)`
             );
             return;
         }
