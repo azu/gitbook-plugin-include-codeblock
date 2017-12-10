@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-'use strict';
-const meow = require('meow');
-const fs = require('fs');
-const path = require('path');
+"use strict";
+const meow = require("meow");
+const fs = require("fs");
+const path = require("path");
 const parse = require("../lib/parser").parse;
 const cli = meow(`
     Usage

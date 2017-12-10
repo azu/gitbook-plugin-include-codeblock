@@ -4,6 +4,4 @@
  * a()
  * ```
  */
-function a(){
-
-}
+function a() {}

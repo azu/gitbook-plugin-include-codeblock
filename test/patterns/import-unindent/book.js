@@ -1,8 +1,8 @@
 const fs = require("fs");
 module.exports = {
-    "pluginsConfig": {
+    pluginsConfig: {
         "include-codeblock": {
-            "unindent": true
+            unindent: true
         }
     }
 };

@@ -1,7 +1,7 @@
 module.exports = {
-    "pluginsConfig": {
+    pluginsConfig: {
         "include-codeblock": {
-            "fixlang":"true"
+            fixlang: "true"
         }
     }
 };

@@ -1,4 +1,4 @@
-function test(){
+function test() {
     //! [marker0]
     var a;
     //! [marker0]

@@ -1,8 +1,8 @@
 const path = require("path");
 module.exports = {
-    "pluginsConfig": {
+    pluginsConfig: {
         "include-codeblock": {
-            "template": path.join(__dirname,"../../fixtures/custom.hbs")
+            template: path.join(__dirname, "../../fixtures/custom.hbs")
         }
     }
 };

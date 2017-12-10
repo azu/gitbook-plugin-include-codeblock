@@ -98,8 +98,7 @@ export function parseValue(value, type, key) {
         const unescapedvalue = unescapeString(value.substring(1, value.length - 1));
         if (key === "marker" && !markerRegExp.test(unescapedvalue)) {
             logger.error(
-                "include-codeblock: parseVariablesFromLabel: invalid value " +
-                    `\`${unescapedvalue}\` in key \`marker\``
+                "include-codeblock: parseVariablesFromLabel: invalid value " + `\`${unescapedvalue}\` in key \`marker\``
             );
             return undefined;
         }
@@ -122,9 +121,7 @@ export function parseValue(value, type, key) {
         return undefined;
     }
 
-    logger.error(
-        `include-codeblock: parseVariablesFromLabel: unknown key type \`${type}\` (see options.js)`
-    );
+    logger.error(`include-codeblock: parseVariablesFromLabel: unknown key type \`${type}\` (see options.js)`);
     return undefined;
 }
 
@@ -147,10 +144,7 @@ export function parseVariablesFromLabel(kvMap, label) {
         const value = match[2];
 
         if (!kv.hasOwnProperty(key)) {
-            logger.error(
-                "include-codeblock: parseVariablesFromLabel: unknown key " +
-                    `\`${key}\` (see options.js)`
-            );
+            logger.error("include-codeblock: parseVariablesFromLabel: unknown key " + `\`${key}\` (see options.js)`);
             return;
         }
 

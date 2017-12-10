@@ -63,16 +63,7 @@ export function markerSliceCode(code, markers) {
     // regex
     markerlist.forEach(marker => {
         const balise = "\\[" + marker + "\\]";
-        const pattern =
-            "\\n" +
-            spacesAny +
-            commentOpen +
-            doxChar +
-            spaces +
-            balise +
-            spaces +
-            commentClose +
-            spaces;
+        const pattern = "\\n" + spacesAny + commentOpen + doxChar + spaces + balise + spaces + commentClose + spaces;
 
         const regstr = pattern + "\\n*([\\s\\S]*)" + pattern;
         const reg = new RegExp(regstr);
@@ -109,8 +100,7 @@ export function replaceAll(str, reg, sub) {
 export function removeMarkers(code) {
     // various language comment
     const tag = "\\[" + markerNameFormat + "\\]";
-    const pattern =
-        spacesAny + commentOpen + doxChar + spaces + tag + spaces + commentClose + spaces;
+    const pattern = spacesAny + commentOpen + doxChar + spaces + tag + spaces + commentClose + spaces;
 
     return replaceAll(code, pattern, "");
 }
