@@ -6,6 +6,8 @@ GitBook Plugin for including file.
 1. [Installation](#installation)
 2. [Plugin options](#plugin-options)
 3. [Usage](#usage)
+4. [Example](#example)
+5. [CLI](#cli)
 
 
 ## Installation
@@ -172,7 +174,7 @@ Option can be passed locally and may depend on the template your are using.
 | `title`| `"<your title>"` | Title for the code **full template required**|
 | `name` | `"<your_filename>"` | name of the included file  **full template required** |
 | `class` | `"<your_classname>"` | html class for the title  **full template required** |
-| `id` | `"<your_id>"` | hmlt class for custom style **full template required** |
+| `id` | `"<your_id>"` | html class for custom style **full template required** |
 | `label` | `"<your_ref_label>"` | reference label (latex like) **full template required** |
 | `edit` | `{"true","false"}` | allow edit code (**ace template required**) |
 | `check` | `{"true","false"}` | check syntax (**ace template required**) |
@@ -330,6 +332,15 @@ Unindent behaviour can also be specified globally in the plugin configuration.
 Please See [examples/](examples/).
 
 [![screenshot](https://monosnap.com/file/ydUDWzqXtC2bvPPBmqtplldO8l2QJK.png)](example/)
+
+## CLI
+
+This gitbook plugin include Command line tools.
+It just convert markdown to markdown.
+
+    $ npm install -g gitbook-plugin-include-codeblock
+    # Convert Markdown to Markdown
+    $ include-codeblock ./README.md --output RENDER_README.md
 
 ## FAQ
 
