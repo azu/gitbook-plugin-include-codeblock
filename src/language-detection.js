@@ -36,7 +36,7 @@ export function lookupLanguageByAceMode(kvMap) {
 }
 
 /**
- * Return aceMode from file extension or lang in kvMap, if is 
+ * Return aceMode from file extension or lang in kvMap, if is
  * an extension.
  * @param {object} kvMap
  * @param {string} filePath
