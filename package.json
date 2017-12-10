@@ -18,6 +18,7 @@
     "include-codeblock": "./bin/include-codeblock.js"
   },
   "files": [
+    "bin",
     "lib",
     "templates",
     "src"
