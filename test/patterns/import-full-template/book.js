@@ -1,7 +1,7 @@
 module.exports = {
-    "pluginsConfig": {
+    pluginsConfig: {
         "include-codeblock": {
-            "template": "full",
+            template: "full"
         }
     }
 };

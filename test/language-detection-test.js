@@ -2,11 +2,7 @@
 "use strict";
 const assert = require("power-assert");
 import { defaultKeyValueMap } from "../src/options.js";
-import {
-    getLang,
-    lookupLanguageByAceMode,
-    lookupLanguageByExtension
-} from "../src/language-detection";
+import { getLang, lookupLanguageByAceMode, lookupLanguageByExtension } from "../src/language-detection";
 
 const kvmap = defaultKeyValueMap;
 

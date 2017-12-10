@@ -1,5 +1,5 @@
 module.exports = {
-    "pluginsConfig": {
+    pluginsConfig: {
         "include-codeblock": {}
     }
 };

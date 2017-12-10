@@ -2,13 +2,7 @@
 "use strict";
 import assert from "power-assert";
 import { defaultKeyValueMap } from "../src/options.js";
-import {
-    containIncludeCommand,
-    splitLabelToCommands,
-    strip,
-    parseValue,
-    parseVariablesFromLabel
-} from "../src/parser";
+import { containIncludeCommand, splitLabelToCommands, strip, parseValue, parseVariablesFromLabel } from "../src/parser";
 
 const kvmap = defaultKeyValueMap;
 
@@ -114,19 +108,13 @@ describe("parse", function() {
             assert.equal(results.marker, "marker0");
         });
         it("should retrieve include marker with title", function() {
-            const resmap = parseVariablesFromLabel(
-                kvmap,
-                '[include:"marker0",title:"test"](/path/to/file.ext)'
-            );
+            const resmap = parseVariablesFromLabel(kvmap, '[include:"marker0",title:"test"](/path/to/file.ext)');
             const results = resmap;
             assert.equal(results.marker, "marker0");
             assert.equal(results.title, "test");
         });
         it("should retrieve import multi markers", function() {
-            const resmap = parseVariablesFromLabel(
-                kvmap,
-                '[import:"marker0,marker1,marker2"](/path/to/file.ext)'
-            );
+            const resmap = parseVariablesFromLabel(kvmap, '[import:"marker0,marker1,marker2"](/path/to/file.ext)');
             const results = resmap;
             assert.equal(results.marker, "marker0,marker1,marker2");
         });
@@ -153,10 +141,7 @@ describe("parse", function() {
             assert.equal(results.marker, "");
         });
         it("should handle characters for string parameter", function() {
-            const resmap = parseVariablesFromLabel(
-                kvmap,
-                'import,title="test+with-special*string"'
-            );
+            const resmap = parseVariablesFromLabel(kvmap, 'import,title="test+with-special*string"');
             const results = resmap;
             assert.strictEqual(results.title, "test+with-special*string");
         });
