@@ -6,6 +6,8 @@ GitBook Plugin for including file.
 1. [Installation](#installation)
 2. [Plugin options](#plugin-options)
 3. [Usage](#usage)
+4. [Example](#example)
+5. [CLI](#cli)
 
 
 ## Installation
@@ -330,6 +332,15 @@ Unindent behaviour can also be specified globally in the plugin configuration.
 Please See [examples/](examples/).
 
 [![screenshot](https://monosnap.com/file/ydUDWzqXtC2bvPPBmqtplldO8l2QJK.png)](example/)
+
+## CLI
+
+This gitbook plugin include Command line tools.
+It just convert markdown to markdown.
+
+    $ npm install -g gitbook-plugin-include-codeblock
+    # Convert Markdown to Markdown
+    $ include-codeblock ./README.md --output RENDER_README.md
 
 ## FAQ
 

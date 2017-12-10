@@ -10,9 +10,13 @@ const cli = meow(`
 
     Options
       --output Output to write index json file
+  
     Other Options:
       same with gitbook config
       For example, --unindent=true 
+    
+    Example:
+      $ include-codeblock ./README.md --output RENDER_README.md
 `);
 // main
 const input = cli.input[0];
