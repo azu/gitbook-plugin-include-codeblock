@@ -172,7 +172,7 @@ Option can be passed locally and may depend on the template your are using.
 | `title`| `"<your title>"` | Title for the code **full template required**|
 | `name` | `"<your_filename>"` | name of the included file  **full template required** |
 | `class` | `"<your_classname>"` | html class for the title  **full template required** |
-| `id` | `"<your_id>"` | hmlt class for custom style **full template required** |
+| `id` | `"<your_id>"` | html class for custom style **full template required** |
 | `label` | `"<your_ref_label>"` | reference label (latex like) **full template required** |
 | `edit` | `{"true","false"}` | allow edit code (**ace template required**) |
 | `check` | `{"true","false"}` | check syntax (**ace template required**) |
