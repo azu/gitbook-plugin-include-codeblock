@@ -115,7 +115,7 @@ and choose an ace temple (see [templates/](templates/))
 #### General usage:
 
 ```
-[import:"tag",option0:"value0", ...](url/or/path/to/file)
+[import:"tag",option0:"value0", ...](path/to/file)
 ```
 
 where `<...>` are required tags, `<<...>>` are optional tags.
