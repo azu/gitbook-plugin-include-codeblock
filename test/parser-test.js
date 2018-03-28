@@ -42,8 +42,12 @@ describe("parse", function() {
             assert(containIncludeCommand(commands));
         });
         it("support command split by ,", function() {
-            const commands = splitLabelToCommands("import title");
+            const commands = splitLabelToCommands("import, title");
             assert(containIncludeCommand(commands));
+        });
+        it("only match first command", function() {
+            const commands = splitLabelToCommands("Something import title");
+            assert(!containIncludeCommand(commands));
         });
     });
     describe("parseValue", function() {
