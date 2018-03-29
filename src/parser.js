@@ -81,9 +81,7 @@ export function strip(s) {
  */
 export function containIncludeCommand(commands = []) {
     const reg = /^(include|import)$/;
-    return commands.some(command => {
-        return reg.test(command.trim());
-    });
+    return commands.length > 0 ? reg.test(commands[0].trim()) : false;
 }
 
 /**
