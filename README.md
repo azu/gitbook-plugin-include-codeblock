@@ -327,6 +327,10 @@ void world() {
 
 Unindent behaviour can also be specified globally in the plugin configuration.
 
+See also
+
+- [Allow to put marker in xml · Issue #63 · azu/gitbook-plugin-include-codeblock](https://github.com/azu/gitbook-plugin-include-codeblock/issues/63)
+
 ## Example
 
 Please See [examples/](examples/).
