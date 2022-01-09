@@ -2,7 +2,6 @@
 "use strict";
 const path = require("path");
 const Handlebars = require("handlebars");
-const logger = require("winston-color");
 import { defaultKeyValueMap, initOptions, checkMapTypes } from "./options.js";
 import { unescapeString } from "./unescape-string.js";
 import { getLang } from "./language-detection";
@@ -12,7 +11,7 @@ import { hasTitle } from "./title";
 import { getTemplateContent, readFileFromPath } from "./template";
 import { codeBlockBacktick } from "./backtick-maker";
 
-const markdownLinkFormatRegExp = /\[(?=((?:[^\]]|\\.)*))\1\]\((?=((?:[^\)]|\\.)*))\2\)/gm;
+const markdownLinkFormatRegExp = /\[(?=((?:[^\]]|\\.)*))\1\]\((?=((?:[^)]|\\.)*))\2\)/gm;
 
 const keyEx = "\\w+";
 const kvsepEx = "[:=]";
@@ -28,9 +27,9 @@ const markerRegExp = /^\s*(([-\w\s]*,?)*)$/;
 /**
  * A counter to count how many code are imported.
  */
-var codeCounter = (function() {
+var codeCounter = (function () {
     var count = 0;
-    return function() {
+    return function () {
         return count++;
     }; // Return and increment
 })();
@@ -47,10 +46,10 @@ export function splitLabelToCommands(label = "") {
     }
     // remove null command
     return result
-        .map(command => {
+        .map((command) => {
             return command.trim();
         })
-        .filter(command => {
+        .filter((command) => {
             return command.length > 0;
         });
 }
@@ -67,9 +66,9 @@ export function strip(s) {
     }
     const indents = s
         .split(/\n/)
-        .map(s => s.match(/^[ \t]*(?=\S)/))
-        .filter(m => m)
-        .map(m => m[0]);
+        .map((s) => s.match(/^[ \t]*(?=\S)/))
+        .filter((m) => m)
+        .map((m) => m[0]);
     const smallestIndent = indents.sort((a, b) => a.length - b.length)[0];
     return s.replace(new RegExp(`^${smallestIndent}`, "gm"), "");
 }
@@ -95,9 +94,8 @@ export function parseValue(value, type, key) {
     if (type === "string") {
         const unescapedvalue = unescapeString(value.substring(1, value.length - 1));
         if (key === "marker" && !markerRegExp.test(unescapedvalue)) {
-            logger.error(
-                "include-codeblock: parseVariablesFromLabel: invalid value " +
-                    `\`${unescapedvalue}\` in key \`marker\``
+            console.error(
+                "include-codeblock: parseVariablesFromLabel: invalid value " + `\`${unescapedvalue}\` in key \`marker\``
             );
             return undefined;
         }
@@ -113,16 +111,14 @@ export function parseValue(value, type, key) {
             return false;
         }
 
-        logger.error(
+        console.error(
             "include-codeblock: parseVariablesFromLabel: invalid value " +
                 `\`${value}\` in key \`${key}\`. Expect true or false.`
         );
         return undefined;
     }
 
-    logger.error(
-        `include-codeblock: parseVariablesFromLabel: unknown key type \`${type}\` (see options.js)`
-    );
+    console.error(`include-codeblock: parseVariablesFromLabel: unknown key type \`${type}\` (see options.js)`);
     return undefined;
 }
 
@@ -144,11 +140,8 @@ export function parseVariablesFromLabel(kvMap, label) {
         }
         const value = match[2];
 
-        if (!kv.hasOwnProperty(key)) {
-            logger.error(
-                "include-codeblock: parseVariablesFromLabel: unknown key " +
-                    `\`${key}\` (see options.js)`
-            );
+        if (!Object.prototype.hasOwnProperty.call(kv, key)) {
+            console.error("include-codeblock: parseVariablesFromLabel: unknown key " + `\`${key}\` (see options.js)`);
             return;
         }
 

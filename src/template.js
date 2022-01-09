@@ -1,7 +1,6 @@
 // LICENSE : MIT
 "use strict";
 const fs = require("fs");
-const logger = require("winston-color");
 import { defaultBookOptionsMap, defaultTemplateMap } from "./options.js";
 
 /**
@@ -15,7 +14,7 @@ export function readFileFromPath(path) {
         content = fs.readFileSync(path, "utf8");
     } catch (err) {
         if (err.code === "ENOENT") {
-            logger.warn("Error: file not found: " + path);
+            console.warn("Error: file not found: " + path);
             return "Error: file not found: " + path;
         } else {
             throw err;
