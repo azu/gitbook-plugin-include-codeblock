@@ -22,7 +22,7 @@ module.exports = {
             }
         ],
         "prefer-const": "error",
-        "no-console": "warn",
+        "no-console": 0,
         "no-extra-semi": 0,
         "no-mixed-spaces-and-tabs": 0
     }
