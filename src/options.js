@@ -6,7 +6,6 @@
 // with different names) while parsing book.json options first, then eventually
 // overwriten by commands options.
 "use strict";
-const logger = require("winston-color");
 const path = require("path");
 const cfg = require("../package.json").gitbook.properties;
 
@@ -66,12 +65,12 @@ export function convertValue(valstr, valtype) {
  * @param {string} funcLabel
  */
 export function checkMapTypes(kvMap, funcLabel) {
-    Object.keys(kvMap).forEach(key => {
+    Object.keys(kvMap).forEach((key) => {
         if (defaultKeyValueMap[key] !== undefined) {
             const leftType = typeof kvMap[key];
             const rightType = typeof defaultKeyValueMap[key];
             if (!(leftType === rightType)) {
-                logger.error(
+                console.error(
                     `include-codeblock: checkMapTypes (${funcLabel}) : wrong value type for key \`${key}\`: key type: \`${leftType}\` (!= \`${rightType}\`)`
                 );
             }
@@ -88,7 +87,7 @@ export function initOptions(options) {
     const dbom = defaultBookOptionsMap;
     const kv = Object.assign({}, defaultKeyValueMap);
     // Overwrite default value with user book options.
-    Object.keys(dbom).forEach(key => {
+    Object.keys(dbom).forEach((key) => {
         if (options[key] != undefined) {
             kv[key] = convertValue(options[key], typeof dbom[key]);
         }

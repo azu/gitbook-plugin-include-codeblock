@@ -10,7 +10,7 @@ function trim(str) {
 
 describe("generate test", () => {
     const fixturesDir = path.join(__dirname, "patterns");
-    fs.readdirSync(fixturesDir).map(caseName => {
+    fs.readdirSync(fixturesDir).map((caseName) => {
         it(`should ${caseName.split("-").join(" ")}`, () => {
             const fixtureDir = path.join(fixturesDir, caseName);
             let actualPath = path.join(fixtureDir, "actual.md");
@@ -24,7 +24,7 @@ describe("generate test", () => {
                 // no book
             }
             const results = parse(content, fixtureDir, options);
-            results.forEach(result => {
+            results.forEach((result) => {
                 const { target, replaced } = result;
                 content = content.replace(target, replaced);
             });

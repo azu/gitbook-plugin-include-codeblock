@@ -12,7 +12,6 @@
  *     line range.
  */
 "use strict";
-const logger = require("winston-color");
 const commentOpen = "(/+/+|#|%|/\\*|<!--)";
 const commentClose = "(\\*/|-->)?";
 const doxChar = "[*!/#]"; // doxygen documentation character
@@ -61,18 +60,9 @@ export function markerSliceCode(code, markers) {
 
     let i = 0;
     // regex
-    markerlist.forEach(marker => {
+    markerlist.forEach((marker) => {
         const balise = "\\[" + marker + "\\]";
-        const pattern =
-            "\\n" +
-            spacesAny +
-            commentOpen +
-            doxChar +
-            spaces +
-            balise +
-            spaces +
-            commentClose +
-            spaces;
+        const pattern = "\\n" + spacesAny + commentOpen + doxChar + spaces + balise + spaces + commentClose + spaces;
 
         const regstr = pattern + "\\n*([\\s\\S]*)" + pattern;
         const reg = new RegExp(regstr);
@@ -81,7 +71,7 @@ export function markerSliceCode(code, markers) {
         if (res) {
             parsedcode += res[3]; // count parenthesis in pattern.
         } else {
-            logger.warn("markersSliceCode(): marker `" + marker + "` not found");
+            console.warn("markersSliceCode(): marker `" + marker + "` not found");
             parsedcode += "Error: marker `" + marker + "` not found";
         }
         if (markerlist.length > 0 && i < markerlist.length - 1) {
@@ -109,8 +99,7 @@ export function replaceAll(str, reg, sub) {
 export function removeMarkers(code) {
     // various language comment
     const tag = "\\[" + markerNameFormat + "\\]";
-    const pattern =
-        spacesAny + commentOpen + doxChar + spaces + tag + spaces + commentClose + spaces;
+    const pattern = spacesAny + commentOpen + doxChar + spaces + tag + spaces + commentClose + spaces;
 
     return replaceAll(code, pattern, "");
 }
