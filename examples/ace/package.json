@@ -4,10 +4,9 @@
   "description": "gitbook-plugin-include-codeblock",
   "private": true,
   "scripts": {
-    "prepublish": "gitbook install",
-    "start": "gitbook serve",
-    "build": "gitbook build",
-    "test": "npm rm gitbook-plugin-include-codeblock && npm i && npm run build"
+    "start": "honkit serve",
+    "build": "honkit build",
+    "test": "yarn install && npm run build"
   },
   "keywords": [
     "gitbook"
@@ -15,7 +14,7 @@
   "author": "azu",
   "license": "MIT",
   "devDependencies": {
-    "gitbook-cli": "2.3.0 || ^2.3.2",
+    "honkit": "^3.6.23",
     "gitbook-plugin-include-codeblock": "file:../../"
   }
 }

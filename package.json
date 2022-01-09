@@ -33,9 +33,9 @@
     "watch": "babel src --out-dir lib --watch --source-maps",
     "prepublish": "npm run --if-present build",
     "test": "npm run lint && mocha",
-    "test:example-default": "cd examples/default && npm i && npm run build",
-    "test:example-ace": "cd examples/ace && npm i && npm run build",
-    "test:example-custom": "cd examples/custom && npm i && npm run build",
+    "test:example-default": "cd examples/default && yarn && npm run build",
+    "test:example-ace": "cd examples/ace && yarn && npm run build",
+    "test:example-custom": "cd examples/custom && yarn && npm run build",
     "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css}\"",
     "prepare": "git config --local core.hooksPath .githooks"
