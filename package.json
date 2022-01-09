@@ -29,7 +29,7 @@
   "scripts": {
     "build": "NODE_ENV=production babel src --out-dir lib --source-maps",
     "lint": "eslint --cache src/*.js test/*.js",
-    "lint:fix": "eslint --cache --fix src/*.js test/*.js",
+    "lint:fix": "eslint --fix src/*.js test/*.js",
     "watch": "babel src --out-dir lib --watch --source-maps",
     "prepublish": "npm run --if-present build",
     "test": "npm run lint && mocha",

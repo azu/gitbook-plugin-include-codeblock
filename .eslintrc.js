@@ -1,25 +1,26 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "commonjs": true,
-        "node": true,
-        "es6": true,
-        "mocha": true
+    env: {
+        browser: true,
+        commonjs: true,
+        node: true,
+        es6: true,
+        mocha: true
     },
-    "plugins": [
-        "prettier"
-    ],
-    "extends": [
-        "eslint:recommended"
-    ],
-    "parserOptions": {
-        "sourceType": "module"
+    plugins: ["prettier"],
+    extends: ["eslint:recommended"],
+    parserOptions: {
+        sourceType: "module"
     },
-    "rules": {
-        "prettier/prettier": ["error", {
-            "printWidth": 100,
-            "tabWidth": 4
-        }],
+    rules: {
+        "prettier/prettier": [
+            "error",
+            {
+                singleQuote: false,
+                printWidth: 120,
+                tabWidth: 4,
+                trailingComma: "none"
+            }
+        ],
         "prefer-const": "error",
         "no-console": "warn",
         "no-extra-semi": 0,
